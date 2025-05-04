@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Hands } from '@mediapipe/hands';
+import * as handsModule from '@mediapipe/hands';
 import { drawLandmarks } from '@mediapipe/drawing_utils';
 // <img> 사용: MediaPipe canvas와 겹치기 위해 SSR/최적화 목적이 아니라면 유지
+
+const Hands = handsModule.Hands;
 
 interface HandLandmarkDetectorProps {
   imageUrl?: string;
@@ -30,7 +32,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!imageUrl) return;
-    let hands: Hands | null = null;
+    let hands: any = null;
     let isMounted = true;
     setLoading(true);
     setError(null);
@@ -58,20 +60,49 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
         setLoading(false);
         return;
       }
-      // 2. MediaPipe Hands try/catch
+      // 2. MediaPipe Hands 동적 import 및 생성자 체크
       try {
-        hands = new Hands({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-        });
-        hands.setOptions({
+        const handsModule = await import('@mediapipe/hands');
+        console.log('handsModule:', handsModule);
+        // 다양한 export 케이스 지원 (default 내부도 검사)
+        const modAny = handsModule as any;
+        let exportObj: any = modAny;
+        if (modAny.default && typeof modAny.default === 'object') {
+          exportObj = modAny.default;
+        }
+        console.log('exportObj:', exportObj);
+        let handsInstance: any = null;
+        if (typeof exportObj.createHands === 'function') {
+          handsInstance = exportObj.createHands({
+            locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+        } else if (typeof exportObj.Hands === 'function') {
+          handsInstance = new exportObj.Hands({
+            locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+        } else if (typeof exportObj.default === 'function') {
+          handsInstance = new exportObj.default({
+            locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+        } else if (exportObj.Hands && typeof exportObj.Hands.create === 'function') {
+          handsInstance = exportObj.Hands.create({
+            locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+        } else {
+          setError('MediaPipe Hands 생성자를 찾을 수 없습니다. (export 구조: ' + Object.keys(exportObj).join(', ') + ')');
+          setLoading(false);
+          return;
+        }
+        hands = handsInstance;
+        hands.setOptions?.({
           maxNumHands: 1,
           modelComplexity: 1,
           minDetectionConfidence: 0.7,
           minTrackingConfidence: 0.7
         });
-        hands.onResults((results) => {
+        hands.onResults((results: any) => {
           if (!isMounted) return;
-          const points = results.multiHandLandmarks?.[0] || [];
+          const points = (results.multiHandLandmarks?.[0] || []) as { x: number; y: number }[];
           setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
           // 반지 위치/각도 계산
           const canvas = canvasRef.current;
@@ -127,7 +158,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
                   ctx.restore();
                 });
                 // 숫자 표시
-                results.multiHandLandmarks[0].forEach((pt, idx) => {
+                (results.multiHandLandmarks[0] as { x: number; y: number }[]).forEach((pt: { x: number; y: number }, idx: number) => {
                   if (hiddenPoints.has(idx)) return;
                   const px = pt.x * canvas.width;
                   const py = pt.y * canvas.height;
@@ -147,9 +178,12 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
             }
           }
         });
+        console.log('hands 인스턴스 생성 및 옵션 설정 완료');
         await hands.send({ image: imageRef.current! });
+        console.log('hands.send 호출 성공');
         setLoading(false);
       } catch (e) {
+        console.error('MediaPipe Hands 처리 중 실제 에러:', e);
         setError(typeof e === 'string' ? e : 'MediaPipe Hands 처리 중 오류 발생');
         setLoading(false);
         return;
@@ -160,7 +194,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
       isMounted = false;
       hands?.close();
     };
-  }, [imageUrl, testMode, onRingPositions, hiddenPoints]);
+  }, [imageUrl, testMode, onRingPositions]);
 
   // 포인트 클릭 시 해당 숫자 숨김
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
