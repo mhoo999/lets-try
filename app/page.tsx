@@ -77,7 +77,6 @@ export default function Home() {
 
   // 반지 선택 버튼 클릭 시
   const handleOpenRingModal = () => {
-    if (!selectedFinger) setSelectedFinger('thumb');
     setModalOpen(true);
   };
 
@@ -124,7 +123,7 @@ export default function Home() {
           <button
             className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base"
             type="button"
-            onClick={e => { e.preventDefault(); handleCameraOrFile(); }}
+            onClick={handleCameraOrFile}
           >
             사진 찍기
           </button>
@@ -177,8 +176,8 @@ export default function Home() {
       </div>
       {/* 하단 영역: FingerPills + 버튼 그룹 */}
       <div className="flex flex-col items-center w-full mb-[2vh]">
-        {/* 반지 적용 전까지 FingerPills 비활성화 */}
-        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={!isRingApplied} />
+        {/* FingerPills 항상 활성화 */}
+        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={false} />
         <div className="flex flex-col gap-[1vh] items-center w-full mt-[2.5vh]">
           {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
           <button
@@ -219,5 +218,26 @@ export default function Home() {
         <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
       )}
     </main>
+    {/* 상태 디버깅용 로그 (모바일/PC 모두 화면 하단에 출력) */}
+    <pre
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        background: 'rgba(255,255,255,0.95)',
+        zIndex: 9999,
+        fontSize: 10,
+        maxWidth: 320,
+        maxHeight: 200,
+        overflow: 'auto',
+        border: '1px solid #ccc',
+        padding: 8,
+        margin: 0,
+        borderRadius: 4,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+      }}
+    >
+      {JSON.stringify({ ringPositions, ringSelections, selectedFinger, errorMsg }, null, 2)}
+    </pre>
   );
 }
