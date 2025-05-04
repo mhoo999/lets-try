@@ -157,6 +157,15 @@ export default function Home() {
           >
             반지 선택하기
           </button>
+
+          {/* 네임택(Pill) */}
+          <div
+            className="w-[180px] h-[32px] flex items-center justify-center rounded-full bg-[#dadada] text-white text-base font-semibold mb-2"
+            style={{ margin: '0 auto' }}
+          >
+            {selectedFinger ? ringSelections[selectedFinger]?.ring.name : '-'}
+          </div>
+
           {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
           <button
             className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base flex items-center justify-center mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#1a1f26] hover:bg-[#11141a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
