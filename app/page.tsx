@@ -72,8 +72,7 @@ export default function Home() {
 
   // FingerPills에서 손가락 선택 시
   const handleFingerSelect = (finger: string) => {
-    setSelectedFinger(finger);
-    // 손가락 pill 클릭 시 팝업 오픈 제거 (요구 플로우상)
+    setSelectedFinger(finger); // finger는 항상 영문
   };
 
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
@@ -107,6 +106,13 @@ export default function Home() {
         });
       });
   }, []);
+
+  // 렌더링 직전 상태 확인용 콘솔
+  useEffect(() => {
+    console.log('ringPositions', ringPositions);
+    console.log('ringSelections', ringSelections);
+    console.log('selectedFinger', selectedFinger);
+  }, [ringPositions, ringSelections, selectedFinger]);
 
   return (
     <main className="w-full h-screen overflow-hidden bg-white flex flex-col">
