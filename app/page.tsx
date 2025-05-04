@@ -90,9 +90,9 @@ export default function Home() {
   useEffect(() => {
     fetch('/data/rings.json')
       .then(res => res.json())
-      .then((rings) => {
-        rings.forEach((ring: any) => {
-          ring.availableColors.forEach((color: any) => {
+      .then((rings: Ring[]) => {
+        rings.forEach((ring: Ring) => {
+          ring.availableColors.forEach((color: RingColor) => {
             const img = new window.Image();
             img.src = color.imageUrl;
           });

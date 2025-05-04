@@ -24,6 +24,7 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
   const [rings, setRings] = useState<Ring[]>([]);
   const [selectedRing, setSelectedRing] = useState<Ring | null>(null);
   const [selectedColor, setSelectedColor] = useState<RingColor | null>(null);
+  const [expandedRingId, setExpandedRingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -33,15 +34,14 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
     }
   }, [open]);
 
-  useEffect(() => {
-    if (selectedRing) {
-      setSelectedColor(selectedRing.availableColors[0]);
-    } else {
-      setSelectedColor(null);
-    }
-  }, [selectedRing]);
-
   if (!open) return null;
+
+  // Chevron 아이콘 (아래/위)
+  const ChevronIcon = ({ up = false }: { up?: boolean }) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d={up ? "M7 15l5-5 5 5" : "M7 10l5 5 5-5"} stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
@@ -54,42 +54,49 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
           ×
         </button>
         <div className="mb-4 text-lg font-bold">반지 선택</div>
-        {/* 반지 목록 */}
-        <div className="flex flex-row gap-4 mb-4 overflow-x-auto w-full justify-center">
-          {rings.map((ring) => (
-            <button
-              key={ring.id}
-              className={`flex flex-col items-center px-2 py-1 rounded-xl border ${selectedRing?.id === ring.id ? 'border-[#d97a7c] bg-[#fbeaec]' : 'border-gray-200 bg-gray-50'} transition`}
-              onClick={() => setSelectedRing(ring)}
-            >
-              <img src={ring.imageUrl} alt={ring.name} className="w-14 h-14 object-contain mb-1" />
-              <span className="text-xs font-medium text-gray-700">{ring.name}</span>
-            </button>
-          ))}
-        </div>
-        {/* 컬러칩 */}
-        {selectedRing && (
-          <div className="flex flex-row gap-3 mb-4">
-            {selectedRing.availableColors.map((color) => (
-              <button
-                key={color.id}
-                className={`w-8 h-8 rounded-full border-2 ${selectedColor?.id === color.id ? 'border-[#d97a7c]' : 'border-gray-200'} flex items-center justify-center`}
-                style={{ backgroundColor: color.colorCode }}
-                onClick={() => setSelectedColor(color)}
-              >
-                {selectedColor?.id === color.id && (
-                  <span className="text-white text-xs font-bold">✓</span>
+        {/* 반지 리스트 (아코디언) */}
+        <div className="w-full flex flex-col gap-2 max-h-[320px] overflow-y-auto mb-2">
+          {rings.map((ring) => {
+            const isExpanded = expandedRingId === ring.id;
+            const isSelected = selectedRing?.id === ring.id;
+            return (
+              <div key={ring.id} className="bg-[#fdf9f8] rounded-2xl border border-gray-200">
+                {/* 헤더: 닫힘/열림 토글 */}
+                <div
+                  className="flex items-center px-4 py-3 cursor-pointer"
+                  onClick={() => setExpandedRingId(isExpanded ? null : ring.id)}
+                >
+                  <img src={ring.imageUrl} alt={ring.name} className="w-12 h-12 rounded-full border" />
+                  <span className="ml-4 flex-1 font-medium text-gray-800">{ring.name}</span>
+                  {/* 닫힘 상태: 선택된 컬러칩만 */}
+                  {isSelected && selectedColor && !isExpanded && (
+                    <span className="w-6 h-6 rounded-full border ml-2" style={{ backgroundColor: selectedColor.colorCode }} />
+                  )}
+                  <span className="ml-2">
+                    <ChevronIcon up={isExpanded} />
+                  </span>
+                </div>
+                {/* 열림: 컬러칩 리스트 */}
+                {isExpanded && (
+                  <div className="flex gap-2 px-4 pb-3">
+                    {ring.availableColors.map((color) => (
+                      <button
+                        key={color.id}
+                        className={`w-8 h-8 rounded-full border-2 ${isSelected && selectedColor?.id === color.id ? 'border-[#d97a7c]' : 'border-gray-200'} flex items-center justify-center`}
+                        style={{ backgroundColor: color.colorCode }}
+                        onClick={() => { setSelectedRing(ring); setSelectedColor(color); }}
+                      >
+                        {isSelected && selectedColor?.id === color.id && (
+                          <span className="text-white text-xs font-bold">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 )}
-              </button>
-            ))}
-          </div>
-        )}
-        {/* 네임택 */}
-        {selectedRing && selectedColor && (
-          <div className="mb-4 px-4 py-2 rounded-full bg-[#fbeaec] text-[#d97a7c] font-semibold text-sm shadow">
-            {selectedRing.name} / {selectedColor.name}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
         {/* 선택 버튼 */}
         <button
           className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-bold text-base mt-2 disabled:bg-gray-300"
@@ -98,6 +105,7 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
             if (selectedRing && selectedColor) {
               onSelect(selectedRing, selectedColor);
               onClose();
+              setExpandedRingId(null);
             }
           }}
         >
