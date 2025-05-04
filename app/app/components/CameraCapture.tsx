@@ -18,7 +18,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
         if (videoRef.current) {
           videoRef.current.srcObject = s;
         }
-      } catch (e) {
+      } catch {
         setError('카메라 접근에 실패했습니다.');
       }
     })();
