@@ -18,6 +18,7 @@ export default function Home() {
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
   const [isRingApplied, setIsRingApplied] = useState(false);
+  const fingers = ['엄지', '검지', '중지', '약지', '소지'];
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -80,7 +81,9 @@ export default function Home() {
   const handleRingApply = (ring: Ring, color: RingColor) => {
     setIsRingApplied(true);
     setSelectedFinger('엄지');
-    setRingSelections({ '엄지': { ring, color } }); // 엄지에만 우선 적용
+    // 모든 손가락에 동일하게 저장
+    const all = Object.fromEntries(fingers.map(f => [f, { ring, color }]));
+    setRingSelections(all);
   };
 
   return (
