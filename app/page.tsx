@@ -18,6 +18,8 @@ export default function Home() {
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
   const [ringSelected, setRingSelected] = useState(false); // 반지 선택 여부
+  const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
+  const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -73,8 +75,12 @@ export default function Home() {
   // FingerPills에서 손가락 선택 시
   const handleFingerSelect = (finger: string) => {
     setSelectedFinger(finger);
-    // ringSelections를 강제로 리렌더링(불변성 보장)
-    setRingSelections(selected => ({ ...selected }));
+    setRingSelections(selected => {
+      if (lastSelectedRing && lastSelectedColor) {
+        return { [finger]: { ring: lastSelectedRing, color: lastSelectedColor } };
+      }
+      return { ...selected };
+    });
   };
 
   // 반지 선택 버튼 클릭 시
@@ -84,10 +90,11 @@ export default function Home() {
 
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
   const handleRingApply = (ring: Ring, color: RingColor) => {
-    // 최초 선택 시 엄지로 고정
     if (!selectedFinger) setSelectedFinger('thumb');
     const finger = selectedFinger || 'thumb';
-    setRingSelections({ [finger]: { ring, color } }); // 항상 한 손가락만 남김
+    setRingSelections({ [finger]: { ring, color } });
+    setLastSelectedRing(ring);
+    setLastSelectedColor(color);
     setRingSelected(true);
     setModalOpen(false);
   };
@@ -204,7 +211,7 @@ export default function Home() {
             className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
             style={{ margin: '0 auto' }}
           >
-            {selectedFinger && ringSelections[selectedFinger]?.ring?.name ? ringSelections[selectedFinger].ring.name : '-'}
+            {lastSelectedRing ? lastSelectedRing.name : '-'}
           </div>
 
           {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
@@ -227,27 +234,6 @@ export default function Home() {
       {cameraOpen && (
         <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
       )}
-      {/* 상태 디버깅용 로그 (모바일/PC 모두 화면 하단에 출력) */}
-      <pre
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          background: 'rgba(255,255,255,0.95)',
-          zIndex: 9999,
-          fontSize: 10,
-          maxWidth: 320,
-          maxHeight: 200,
-          overflow: 'auto',
-          border: '1px solid #ccc',
-          padding: 8,
-          margin: 0,
-          borderRadius: 4,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-        }}
-      >
-        {JSON.stringify({ ringPositions, ringSelections, selectedFinger, errorMsg }, null, 2)}
-      </pre>
     </main>
   );
 }
