@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { drawLandmarks } from '@mediapipe/drawing_utils';
-import type { Hands, HandsConfig, Results, Options } from '@mediapipe/hands';
+import type { Hands, Results } from '@mediapipe/hands';
 // <img> 사용: MediaPipe canvas와 겹치기 위해 SSR/최적화 목적이 아니라면 유지
 
 interface HandLandmarkDetectorProps {
