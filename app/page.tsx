@@ -20,6 +20,7 @@ export default function Home() {
   const [ringSelected, setRingSelected] = useState(false); // 반지 선택 여부
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -120,6 +121,44 @@ export default function Home() {
     console.log('selectedFinger', selectedFinger);
   }, [ringPositions, ringSelections, selectedFinger]);
 
+  // 공유/저장 기능 함수 추가
+  const generateFinalImage = (canvas: HTMLCanvasElement): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => {
+        if (blob) resolve(blob);
+        else reject(new Error('이미지 생성 실패'));
+      }, 'image/jpeg', 0.95);
+    });
+  };
+
+  const downloadImage = async (canvas: HTMLCanvasElement) => {
+    const blob = await generateFinalImage(canvas);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'haime-lets-try.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const shareImage = async (canvas: HTMLCanvasElement) => {
+    try {
+      if (!navigator.share) throw new Error('Web Share API 미지원');
+      const blob = await generateFinalImage(canvas);
+      const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
+      await navigator.share({
+        title: 'haime 반지 합성',
+        text: '내 손에 반지를 합성해봤어요!',
+        files: [file]
+      });
+    } catch (e) {
+      // fallback: 다운로드
+      if (canvas) downloadImage(canvas);
+    }
+  };
+
   return (
     <main className="w-full h-screen overflow-hidden bg-white flex flex-col">
       {/* 상단 영역: 헤더 + 업로드/카메라 버튼 + HandGuide */}
@@ -214,14 +253,25 @@ export default function Home() {
             {lastSelectedRing ? lastSelectedRing.name : '-'}
           </div>
 
-          {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
-          <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base flex items-center justify-center mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#1a1f26] hover:bg-[#11141a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
-            type="button"
-            disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
-          >
-            Share
-          </button>
+          {/* 공유/저장 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
+          <div className="flex gap-2 w-full justify-center mt-2">
+            <button
+              className={`w-[24vw] h-[4vh] rounded-full font-semibold text-base flex items-center justify-center mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#1a1f26] hover:bg-[#11141a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+              type="button"
+              disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
+              onClick={() => canvasRef.current && shareImage(canvasRef.current)}
+            >
+              공유
+            </button>
+            <button
+              className={`w-[24vw] h-[4vh] rounded-full font-semibold text-base flex items-center justify-center mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+              type="button"
+              disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
+              onClick={() => canvasRef.current && downloadImage(canvasRef.current)}
+            >
+              저장
+            </button>
+          </div>
         </div>
       </div>
       {/* 반지 선택 모달 */}
