@@ -87,7 +87,7 @@ export default function Home() {
     // 최초 선택 시 엄지로 고정
     if (!selectedFinger) setSelectedFinger('thumb');
     const finger = selectedFinger || 'thumb';
-    setRingSelections({ [finger]: { ring, color } });
+    setRingSelections({ [finger]: { ring, color } }); // 항상 한 손가락만 남김
     setRingSelected(true);
     setModalOpen(false);
   };
@@ -148,7 +148,8 @@ export default function Home() {
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
                 {/* 반지 합성 오버레이 */}
                 {ringPositions.map((pos) => {
-                  const selection = ringSelections[pos.finger];
+                  if (pos.finger !== selectedFinger) return null;
+                  const selection = ringSelections[selectedFinger];
                   if (!selection) return null;
                   const base = 55; // 크기 고정
                   const style = {
