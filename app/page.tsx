@@ -17,7 +17,6 @@ export default function Home() {
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length?: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [isRingApplied, setIsRingApplied] = useState(false);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -87,7 +86,6 @@ export default function Home() {
       ...prev,
       [selectedFinger]: { ring, color }
     }));
-    setIsRingApplied(true);
     setModalOpen(false);
   };
 
