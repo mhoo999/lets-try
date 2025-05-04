@@ -17,6 +17,7 @@ export default function Home() {
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length?: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
+  const [ringSelected, setRingSelected] = useState(false); // 반지 선택 여부
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -71,7 +72,13 @@ export default function Home() {
 
   // FingerPills에서 손가락 선택 시
   const handleFingerSelect = (finger: string) => {
-    setSelectedFinger(finger); // finger는 항상 영문
+    setSelectedFinger(finger);
+    // 이전 반지 선택 해제, 새 손가락만 남김
+    setRingSelections((prev) => {
+      const newSelections: typeof prev = {};
+      if (prev[finger]) newSelections[finger] = prev[finger];
+      return newSelections;
+    });
   };
 
   // 반지 선택 버튼 클릭 시
@@ -81,11 +88,11 @@ export default function Home() {
 
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
   const handleRingApply = (ring: Ring, color: RingColor) => {
-    if (!selectedFinger) return; // 방어
-    setRingSelections(prev => ({
-      ...prev,
-      [selectedFinger]: { ring, color }
-    }));
+    // 최초 선택 시 엄지로 고정
+    if (!selectedFinger) setSelectedFinger('thumb');
+    const finger = selectedFinger || 'thumb';
+    setRingSelections({ [finger]: { ring, color } });
+    setRingSelected(true);
     setModalOpen(false);
   };
 
@@ -154,7 +161,7 @@ export default function Home() {
                     top: pos.centerY,
                     width: base,
                     height: base,
-                    transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
+                    transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`, // 90도 추가 회전
                     pointerEvents: 'none',
                     border: '2px solid red', // 디버깅용 테두리
                     zIndex: 9999,
@@ -183,8 +190,8 @@ export default function Home() {
       </div>
       {/* 하단 영역: FingerPills + 버튼 그룹 */}
       <div className="flex flex-col items-center w-full mb-[2vh]">
-        {/* FingerPills 항상 활성화 */}
-        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={false} />
+        {/* FingerPills: 반지 선택 전에는 비활성화 */}
+        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={!ringSelected} />
         <div className="flex flex-col gap-[1vh] items-center w-full mt-[2.5vh]">
           {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
           <button
