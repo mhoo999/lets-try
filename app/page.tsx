@@ -121,34 +121,60 @@ export default function Home() {
   }, [ringPositions, ringSelections, selectedFinger]);
 
   const shareImage = async () => {
-    // 1. 캔버스 요소 가져오기
-    const canvas = document.querySelector('canvas');
-    if (!canvas) {
-      alert('합성 이미지가 없습니다.');
+    if (!imageUrl) {
+      alert('손 사진이 없습니다.');
       return;
     }
-    // 2. Blob 생성
-    canvas.toBlob(async (blob) => {
-      if (!blob) {
-        alert('이미지 생성 실패');
-        return;
-      }
-      const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
-      // 3. Web Share API로 파일 공유
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'haime 반지 합성',
-            text: '내 손에 반지를 합성해봤어요!',
-          });
-        } catch (err) {
-          alert('공유 실패: ' + err);
-        }
+    const handImg = new window.Image();
+    handImg.src = imageUrl;
+    handImg.onload = () => {
+      // 임시 캔버스 생성
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = handImg.width;
+      tempCanvas.height = handImg.height;
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) return;
+      // 손 사진 먼저 그림
+      ctx.drawImage(handImg, 0, 0, handImg.width, handImg.height);
+      // 반지 오버레이(선택된 손가락/반지)도 그림
+      const pos = ringPositions.find(p => p.finger === selectedFinger);
+      const selection = selectedFinger ? ringSelections[selectedFinger] : undefined;
+      if (pos && selection) {
+        const ringImg = new window.Image();
+        ringImg.src = selection.color.imageUrl;
+        ringImg.onload = () => {
+          ctx.save();
+          ctx.translate(pos.centerX, pos.centerY);
+          ctx.rotate(pos.angle + Math.PI / 2);
+          const base = 55;
+          ctx.drawImage(ringImg, -base / 2, -base / 2, base, base);
+          ctx.restore();
+          // 합성 이미지 Blob 생성 및 공유
+          tempCanvas.toBlob(async (blob) => {
+            if (!blob) {
+              alert('이미지 생성 실패');
+              return;
+            }
+            const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              try {
+                await navigator.share({
+                  files: [file],
+                  title: 'haime 반지 합성',
+                  text: '내 손에 반지를 합성해봤어요!',
+                });
+              } catch (err) {
+                alert('공유 실패: ' + err);
+              }
+            } else {
+              alert('이 브라우저/환경에서는 이미지 파일 공유가 지원되지 않습니다.');
+            }
+          }, 'image/jpeg', 0.95);
+        };
       } else {
-        alert('이 브라우저/환경에서는 이미지 파일 공유가 지원되지 않습니다.');
+        alert('반지 오버레이 정보가 없습니다.');
       }
-    }, 'image/jpeg', 0.95);
+    };
   };
 
   return (
