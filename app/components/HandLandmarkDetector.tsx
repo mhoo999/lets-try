@@ -60,7 +60,27 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
           const ctx = canvas?.getContext('2d');
           if (canvas && ctx && imageRef.current) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(imageRef.current, 0, 0, canvas.width, canvas.height);
+            // 이미지 비율 유지하며 캔버스에 최대한 크게 그리기 (object-fit: cover)
+            const img = imageRef.current;
+            const imgW = img.naturalWidth;
+            const imgH = img.naturalHeight;
+            const canvasW = canvas.width;
+            const canvasH = canvas.height;
+            const imgRatio = imgW / imgH;
+            const canvasRatio = canvasW / canvasH;
+            let drawW = canvasW, drawH = canvasH, offsetX = 0, offsetY = 0;
+            if (imgRatio > canvasRatio) {
+              // 이미지가 더 가로로 김 → 세로를 맞추고 좌우 잘라냄
+              drawH = canvasH;
+              drawW = imgW * (canvasH / imgH);
+              offsetX = (canvasW - drawW) / 2;
+            } else {
+              // 이미지가 더 세로로 김 → 가로를 맞추고 위아래 잘라냄
+              drawW = canvasW;
+              drawH = imgH * (canvasW / imgW);
+              offsetY = (canvasH - drawH) / 2;
+            }
+            ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
             if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
               drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
               // 반지 위치 가이드 표시
