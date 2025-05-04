@@ -126,7 +126,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = true }: Hand
         src={imageUrl}
         alt="손 이미지"
         className="hidden"
-        crossOrigin="anonymous"
+        {...(imageUrl && !imageUrl.startsWith('data:') ? { crossOrigin: 'anonymous' } : {})}
       />
       {loading && <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-20">분석 중...</div>}
       {error && <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-600 z-20">{error}</div>}
