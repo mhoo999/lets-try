@@ -7,7 +7,6 @@ interface CameraCaptureProps {
 
 export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,7 +30,6 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
         videoRef.current.srcObject = null;
       }
     };
-    // eslint-disable-next-line
   }, []);
 
   const handleCapture = () => {
