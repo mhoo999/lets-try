@@ -217,27 +217,27 @@ export default function Home() {
       {cameraOpen && (
         <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
       )}
+      {/* 상태 디버깅용 로그 (모바일/PC 모두 화면 하단에 출력) */}
+      <pre
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          background: 'rgba(255,255,255,0.95)',
+          zIndex: 9999,
+          fontSize: 10,
+          maxWidth: 320,
+          maxHeight: 200,
+          overflow: 'auto',
+          border: '1px solid #ccc',
+          padding: 8,
+          margin: 0,
+          borderRadius: 4,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+        }}
+      >
+        {JSON.stringify({ ringPositions, ringSelections, selectedFinger, errorMsg }, null, 2)}
+      </pre>
     </main>
-    {/* 상태 디버깅용 로그 (모바일/PC 모두 화면 하단에 출력) */}
-    <pre
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        background: 'rgba(255,255,255,0.95)',
-        zIndex: 9999,
-        fontSize: 10,
-        maxWidth: 320,
-        maxHeight: 200,
-        overflow: 'auto',
-        border: '1px solid #ccc',
-        padding: 8,
-        margin: 0,
-        borderRadius: 4,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-      }}
-    >
-      {JSON.stringify({ ringPositions, ringSelections, selectedFinger, errorMsg }, null, 2)}
-    </pre>
   );
 }
