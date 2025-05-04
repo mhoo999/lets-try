@@ -160,7 +160,7 @@ export default function Home() {
 
           {/* 네임택(Pill) */}
           <div
-            className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#d97a7c] text-white flex items-center justify-center"
+            className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
             style={{ margin: '0 auto' }}
           >
             {selectedFinger ? ringSelections[selectedFinger]?.ring.name : '-'}
