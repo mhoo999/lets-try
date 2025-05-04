@@ -5,6 +5,7 @@ import Header from './components/Header';
 import HandGuide from './components/HandGuide';
 import FingerPills from './components/FingerPills';
 import CameraCapture from './components/CameraCapture';
+import HandLandmarkDetector from './components/HandLandmarkDetector';
 
 export default function Home() {
   const [selectedFinger, setSelectedFinger] = useState<string | undefined>(undefined);
@@ -94,7 +95,11 @@ export default function Home() {
         {/* HandGuide가 남는 공간을 모두 차지 */}
         <div className="flex-1 w-full max-w-[300px] flex items-center justify-center">
           <div className="w-[80vw] aspect-square">
-            <HandGuide imageUrl={imageUrl} />
+            {imageUrl ? (
+              <HandLandmarkDetector imageUrl={imageUrl} />
+            ) : (
+              <HandGuide imageUrl={imageUrl} />
+            )}
           </div>
         </div>
       </div>

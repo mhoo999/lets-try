@@ -70,7 +70,7 @@
       "id": 3,
       "title": "이미지 업로드 및 미리보기 구현",
       "description": "Create functionality for users to upload hand images either by taking a photo or selecting from their device, with appropriate guidance for optimal hand positioning.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         2
       ],
@@ -105,7 +105,7 @@
             2
           ],
           "details": "Validate file types (jpg, png, etc.). Check file size limits. Verify image dimensions meet requirements. Implement client-side image compression if needed. Add error handling with user-friendly messages. Consider implementing basic editing features like cropping or rotation if required.",
-          "status": "in-progress"
+          "status": "done"
         },
         {
           "id": 4,
@@ -115,7 +115,7 @@
             3
           ],
           "details": "Develop a preview component that shows the uploaded/captured image. Add overlay guides (grid lines, face detection markers, etc.) to help with positioning. Implement zoom and pan functionality if needed. Ensure the preview is responsive across different screen sizes. Add confirmation step before final submission.",
-          "status": "pending"
+          "status": "done"
         }
       ]
     },
@@ -137,7 +137,7 @@
           "description": "Install and configure the MediaPipe Hands library in the project environment",
           "dependencies": [],
           "details": "Install MediaPipe library via npm or yarn, set up necessary configurations, and ensure compatibility with the current project structure. Verify the library is properly imported and initialized in the application.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 2,
@@ -146,8 +146,8 @@
           "dependencies": [
             1
           ],
-          "details": "Implement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.",
-          "status": "pending"
+          "details": "Implement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.\n<info added on 2025-05-04T08:00:13.711Z>\nImplement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.\n\nImplementation Plan:\n1. Create a new component (HandLandmarkDetector.tsx) or implement within app/page.tsx\n2. Import required MediaPipe libraries (@mediapipe/hands, @mediapipe/drawing_utils, @mediapipe/camera_utils)\n3. Initialize MediaPipe Hands with appropriate configuration:\n   - Set maxNumHands: 1\n   - Set modelComplexity: 1\n   - Configure detection confidence threshold (0.7)\n   - Configure tracking confidence threshold (0.7)\n4. Implement frame processing from video/image input\n5. Create onResults callback to extract the 21 landmark coordinates\n6. Store landmark data in component state\n7. Add basic visualization of landmarks on screen (to be enhanced in later subtasks)\n8. Handle client-side only execution to prevent SSR issues with window/document\n9. Prepare test images in public/ or assets/ folder\n\nCode structure will follow the MediaPipe Hands API pattern with proper initialization, configuration, and results handling. Performance considerations include managing resource loading time for WASM/JS files and adjusting processing based on device capabilities.\n</info added on 2025-05-04T08:00:13.711Z>\n<info added on 2025-05-04T08:02:20.752Z>\nThe HandLandmarkDetector component has been successfully implemented with the following features:\n\n1. Created new component app/components/HandLandmarkDetector.tsx that:\n   - Accepts imageUrl as a prop to process images\n   - Initializes MediaPipe Hands library\n   - Detects 21 hand landmarks from the provided image\n   - Visualizes landmarks as points on a canvas overlay\n\n2. Implementation details:\n   - Properly handles SSR environment by restricting window/document access to useEffect\n   - Includes loading state management with appropriate UI feedback\n   - Implements error handling for detection failures\n   - Manages landmarks state for potential use by other components\n\n3. Integration with main application:\n   - Modified app/page.tsx to conditionally render HandLandmarkDetector when imageUrl is available\n   - Maintained HandGuide component as fallback when no image is present\n   - Ensured automatic landmark detection triggers upon image upload or capture\n\n4. Testing and validation:\n   - Basic functionality verified with test images\n   - Component responds appropriately to different image inputs\n\nThe implementation follows the planned structure and successfully establishes the core hand landmark detection functionality. The system is now ready for the next phase of development, which will involve mapping the detected landmarks to the application data model (subtask 4.3) and enhancing visualization with connecting lines between landmarks.\n</info added on 2025-05-04T08:02:20.752Z>",
+          "status": "done"
         },
         {
           "id": 3,
