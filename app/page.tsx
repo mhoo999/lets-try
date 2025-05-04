@@ -11,13 +11,38 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [cameraOpen, setCameraOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
 
   // 파일 업로드 핸들러
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMsg(undefined);
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setImageUrl(url);
+      // 파일 타입 검사
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMsg('jpg, jpeg, png 파일만 업로드할 수 있습니다.');
+        return;
+      }
+      // 용량 검사 (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMsg('5MB 이하의 이미지만 업로드할 수 있습니다.');
+        return;
+      }
+      // 해상도 검사
+      const img = new window.Image();
+      img.onload = () => {
+        if (img.width > 3000 || img.height > 3000) {
+          setErrorMsg('이미지 해상도는 3000x3000px 이하만 허용됩니다.');
+          return;
+        }
+        const url = URL.createObjectURL(file);
+        setImageUrl(url);
+      };
+      img.onerror = () => {
+        setErrorMsg('이미지 파일을 불러올 수 없습니다.');
+      };
+      img.src = URL.createObjectURL(file);
     }
   };
 
@@ -55,6 +80,9 @@ export default function Home() {
             className="hidden"
             onChange={handleFileChange}
           />
+          {errorMsg && (
+            <div className="text-red-500 text-xs mt-2 text-center">{errorMsg}</div>
+          )}
         </div>
         {/* HandGuide가 남는 공간을 모두 차지 */}
         <div className="flex-1 w-full max-w-[300px] flex items-center justify-center">
