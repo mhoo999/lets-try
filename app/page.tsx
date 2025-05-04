@@ -147,7 +147,7 @@ export default function Home() {
                 {ringPositions.map((pos) => {
                   const selection = ringSelections[pos.finger];
                   if (!selection) return null;
-                  const base = pos.length ? Math.max(30, Math.min(80, pos.length * 1.2)) : 55;
+                  const base = 55; // 크기 고정
                   return (
                     <img
                       key={pos.finger}
