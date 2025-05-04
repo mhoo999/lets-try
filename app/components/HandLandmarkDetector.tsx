@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Hands } from '@mediapipe/hands';
 import { drawLandmarks } from '@mediapipe/drawing_utils';
-import Image from 'next/image';
+// <img> 사용: MediaPipe canvas와 겹치기 위해 SSR/최적화 목적이 아니라면 유지
 
 interface HandLandmarkDetectorProps {
   imageUrl?: string;
@@ -67,9 +67,8 @@ export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorP
 
   return (
     <div className="relative w-full h-full aspect-square">
-      {/* 이미지와 캔버스 겹치기 */}
+      {/* 이미지와 캔버스 겹치기. next/image는 SSR/최적화 목적이 아니라면 사용하지 않음 */}
       <canvas ref={canvasRef} width={300} height={300} className="absolute top-0 left-0 w-full h-full z-10" />
-      {/* next/image는 canvas와 겹치기 어려우므로, SSR/최적화가 필요할 때만 사용. 현재는 숨김 처리된 <img> 유지 */}
       <img ref={imageRef} src={imageUrl} alt="손 이미지" className="hidden" crossOrigin="anonymous" />
       {loading && <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-20">분석 중...</div>}
       {error && <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-600 z-20">{error}</div>}

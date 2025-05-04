@@ -10,11 +10,9 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let localStream: MediaStream | null = null;
     (async () => {
       try {
         const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        localStream = s;
         if (videoRef.current) {
           videoRef.current.srcObject = s;
         }
