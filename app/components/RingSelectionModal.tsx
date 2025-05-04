@@ -53,7 +53,7 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
         >
           ×
         </button>
-        <div className="mb-4 text-lg font-bold">반지 선택</div>
+        <div className="mb-4 text-lg font-bold">Select a ring</div>
         {/* 반지 리스트 (아코디언) */}
         <div className="w-full flex flex-col gap-2 max-h-[320px] overflow-y-auto mb-2">
           {rings.map((ring) => {
@@ -109,7 +109,7 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
             }
           }}
         >
-          선택하기
+          Apply
         </button>
       </div>
     </div>
