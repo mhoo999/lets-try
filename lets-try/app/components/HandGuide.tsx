@@ -4,7 +4,7 @@ export default function HandGuide({ imageUrl }: { imageUrl?: string }) {
   // 기본 이미지 경로
   const defaultImage = '/hand.png';
   return (
-    <div className="flex items-center justify-center w-[344px] h-[344px] bg-[#dadada] rounded-[8px] border border-[#dadada] mx-auto my-6 overflow-hidden">
+    <div className="flex items-center justify-center w-full h-full aspect-square bg-[#dadada] rounded-[8px] border border-[#dadada] overflow-hidden">
       {imageUrl ? (
         <img src={imageUrl} alt="손 사진" className="object-cover w-full h-full" />
       ) : (
