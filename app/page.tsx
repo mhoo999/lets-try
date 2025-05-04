@@ -13,6 +13,9 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
 
+  // 모바일/PC 환경 감지
+  const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
   // 파일 업로드 핸들러
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMsg(undefined);
@@ -46,9 +49,13 @@ export default function Home() {
     }
   };
 
-  // 카메라 모달 열기
-  const handleCameraClick = () => {
-    setCameraOpen(true);
+  // 사진 찍기/업로드 버튼 핸들러
+  const handleCameraOrFile = () => {
+    if (isMobile) {
+      setCameraOpen(true); // 모바일: 카메라 모달
+    } else {
+      fileInputRef.current?.click(); // PC: 파일 업로드
+    }
   };
 
   // 카메라 촬영 결과 처리
@@ -68,7 +75,7 @@ export default function Home() {
           <button
             className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base"
             type="button"
-            onClick={handleCameraClick}
+            onClick={handleCameraOrFile}
           >
             사진 찍기
           </button>
