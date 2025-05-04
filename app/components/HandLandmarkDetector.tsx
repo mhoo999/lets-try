@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Hands } from '@mediapipe/hands';
 import { drawLandmarks } from '@mediapipe/drawing_utils';
+import Image from 'next/image';
 
 interface HandLandmarkDetectorProps {
   imageUrl?: string;
@@ -9,7 +10,6 @@ interface HandLandmarkDetectorProps {
 export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [landmarks, setLandmarks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +19,6 @@ export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorP
     let isMounted = true;
     setLoading(true);
     setError(null);
-    setLandmarks([]);
 
     const runDetection = async () => {
       if (!imageRef.current) return;
@@ -30,7 +29,6 @@ export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorP
         imageRef.current!.onerror = () => reject('이미지 로드 실패');
       });
       try {
-        // MediaPipe Hands 인스턴스 생성
         hands = new Hands({
           locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
@@ -42,7 +40,6 @@ export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorP
         });
         hands.onResults((results) => {
           if (!isMounted) return;
-          setLandmarks(results.multiHandLandmarks?.[0] || []);
           // 캔버스에 시각화
           const canvas = canvasRef.current;
           const ctx = canvas?.getContext('2d');
@@ -54,10 +51,9 @@ export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorP
             }
           }
         });
-        // 이미지 처리
         await hands.send({ image: imageRef.current! });
         setLoading(false);
-      } catch (e: any) {
+      } catch (e) {
         setError(typeof e === 'string' ? e : 'MediaPipe Hands 처리 중 오류 발생');
         setLoading(false);
       }
@@ -73,6 +69,7 @@ export default function HandLandmarkDetector({ imageUrl }: HandLandmarkDetectorP
     <div className="relative w-full h-full aspect-square">
       {/* 이미지와 캔버스 겹치기 */}
       <canvas ref={canvasRef} width={300} height={300} className="absolute top-0 left-0 w-full h-full z-10" />
+      {/* next/image는 canvas와 겹치기 어려우므로, SSR/최적화가 필요할 때만 사용. 현재는 숨김 처리된 <img> 유지 */}
       <img ref={imageRef} src={imageUrl} alt="손 이미지" className="hidden" crossOrigin="anonymous" />
       {loading && <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-20">분석 중...</div>}
       {error && <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-600 z-20">{error}</div>}

@@ -23,11 +23,11 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
       }
     })();
     return () => {
-      if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop());
-      }
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
+      const video = videoRef.current;
+      if (video && video.srcObject) {
+        const stream = video.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+        video.srcObject = null;
       }
     };
   }, []);

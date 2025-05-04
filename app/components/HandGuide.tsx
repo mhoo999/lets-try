@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 export default function HandGuide({ imageUrl }: { imageUrl?: string }) {
   // 기본 이미지 경로
@@ -6,9 +7,9 @@ export default function HandGuide({ imageUrl }: { imageUrl?: string }) {
   return (
     <div className="flex items-center justify-center w-full h-full aspect-square bg-[#dadada] rounded-[8px] border border-[#dadada] overflow-hidden">
       {imageUrl ? (
-        <img src={imageUrl} alt="손 사진" className="object-cover w-full h-full" />
+        <Image src={imageUrl} alt="손 사진" className="object-cover w-full h-full" fill sizes="100vw" />
       ) : (
-        <img src={defaultImage} alt="기본 손 가이드" className="object-cover w-full h-full" />
+        <Image src={defaultImage} alt="기본 손 가이드" className="object-cover w-full h-full" fill sizes="100vw" />
       )}
     </div>
   );

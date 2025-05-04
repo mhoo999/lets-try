@@ -1,9 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
 
 export default function Header() {
   return (
-    <header className="w-full flex items-center justify-center h-14 md:h-[56px]">
-      <img src="/haime-logo.png" alt="haime" className="h-6 md:h-7" style={{ height: 24 }} />
+    <header className="flex items-center justify-center w-full h-12">
+      <Image src="/haime-logo.png" alt="로고" width={120} height={32} />
     </header>
   );
 } 
