@@ -242,7 +242,7 @@ export default function Home() {
             onClick={handleOpenRingModal}
             disabled={!imageUrl}
           >
-            반지 선택하기
+            Select a ring
           </button>
 
           {/* 네임택(Pill) */}
@@ -255,13 +255,11 @@ export default function Home() {
 
           {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
           <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
             onClick={() => {
-              if (canvasRef.current && imageUrl && selectedFinger && ringSelections[selectedFinger]) {
-                shareImage(canvasRef.current);
-              }
+              if (canvasRef.current) shareImage(canvasRef.current);
             }}
           >
             Share
