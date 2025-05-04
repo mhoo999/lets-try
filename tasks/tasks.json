@@ -157,7 +157,7 @@
             2
           ],
           "details": "Create mapping functions that convert the raw MediaPipe landmark data (x, y, z coordinates) into the format required by the application. Implement normalization if needed and ensure the data is properly structured for further processing.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 4,
@@ -167,7 +167,7 @@
             3
           ],
           "details": "Develop visualization components that render the detected hand landmarks on screen. Implement drawing utilities for points and connections between landmarks. Add visual feedback for detection quality and hand positioning.",
-          "status": "pending"
+          "status": "in-progress"
         },
         {
           "id": 5,

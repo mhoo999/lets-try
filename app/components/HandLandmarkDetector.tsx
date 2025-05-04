@@ -6,24 +6,26 @@ import { drawLandmarks } from '@mediapipe/drawing_utils';
 interface HandLandmarkDetectorProps {
   imageUrl?: string;
   testMode?: boolean;
+  onRingPositions?: (positions: { finger: string; centerX: number; centerY: number; angle: number }[]) => void;
 }
 
 // 반지 위치 인덱스 쌍
 const RING_PAIRS = [
-  [2, 3],   // 엄지
-  [5, 6],  // 검지
-  [9, 10], // 중지
-  [13, 14],// 약지
-  [17, 18] // 소지
+  { finger: 'thumb', idxA: 2, idxB: 3 },
+  { finger: 'index', idxA: 5, idxB: 6 },
+  { finger: 'middle', idxA: 9, idxB: 10 },
+  { finger: 'ring', idxA: 13, idxB: 14 },
+  { finger: 'pinky', idxA: 17, idxB: 18 },
 ];
 
-export default function HandLandmarkDetector({ imageUrl, testMode = false }: HandLandmarkDetectorProps) {
+export default function HandLandmarkDetector({ imageUrl, testMode = false, onRingPositions }: HandLandmarkDetectorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [landmarks, setLandmarks] = useState<{x: number, y: number}[]>([]);
   const [hiddenPoints, setHiddenPoints] = useState<Set<number>>(new Set());
+  const [ringPositions, setRingPositions] = useState<any[]>([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
     setError(null);
     setLandmarks([]);
     setHiddenPoints(new Set());
+    setRingPositions([]);
 
     const runDetection = async () => {
       if (!imageRef.current) return;
@@ -56,8 +59,20 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
           if (!isMounted) return;
           const points = results.multiHandLandmarks?.[0] || [];
           setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
-          // 캔버스에 시각화
+          // 반지 위치/각도 계산
           const canvas = canvasRef.current;
+          const ringPos = RING_PAIRS.map(({ finger, idxA, idxB }) => {
+            if (!points[idxA] || !points[idxB] || !canvas) return null;
+            const a = points[idxA];
+            const b = points[idxB];
+            const centerX = ((a.x + b.x) / 2) * canvas.width;
+            const centerY = ((a.y + b.y) / 2) * canvas.height;
+            const angle = Math.atan2(b.y - a.y, b.x - a.x); // 라디안
+            return { finger, centerX, centerY, angle };
+          }).filter(Boolean) as { finger: string; centerX: number; centerY: number; angle: number }[];
+          setRingPositions(ringPos);
+          if (onRingPositions) onRingPositions(ringPos);
+          // 캔버스에 시각화
           const ctx = canvas?.getContext('2d');
           if (canvas && ctx && imageRef.current) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -71,12 +86,10 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
             const canvasRatio = canvasW / canvasH;
             let drawW = canvasW, drawH = canvasH, offsetX = 0, offsetY = 0;
             if (imgRatio > canvasRatio) {
-              // 이미지가 더 가로로 김 → 세로를 맞추고 좌우 잘라냄
               drawH = canvasH;
               drawW = imgW * (canvasH / imgH);
               offsetX = (canvasW - drawW) / 2;
             } else {
-              // 이미지가 더 세로로 김 → 가로를 맞추고 위아래 잘라냄
               drawW = canvasW;
               drawH = imgH * (canvasW / imgW);
               offsetY = (canvasH - drawH) / 2;
@@ -87,20 +100,17 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
                 // landmark 점/선
                 drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
                 // 반지 위치 가이드 표시
-                RING_PAIRS.forEach(([a, b]) => {
-                  if (points[a] && points[b]) {
-                    const px = (points[a].x + points[b].x) / 2 * canvas.width;
-                    const py = (points[a].y + points[b].y) / 2 * canvas.height;
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(px, py, 18, 0, 2 * Math.PI);
-                    ctx.strokeStyle = '#3b82f6';
-                    ctx.lineWidth = 3;
-                    ctx.setLineDash([6, 6]);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.restore();
-                  }
+                ringPos.forEach((pos) => {
+                  if (!pos) return;
+                  ctx.save();
+                  ctx.beginPath();
+                  ctx.arc(pos.centerX, pos.centerY, 18, 0, 2 * Math.PI);
+                  ctx.strokeStyle = '#3b82f6';
+                  ctx.lineWidth = 3;
+                  ctx.setLineDash([6, 6]);
+                  ctx.stroke();
+                  ctx.setLineDash([]);
+                  ctx.restore();
                 });
                 // 숫자 표시
                 results.multiHandLandmarks[0].forEach((pt, idx) => {
@@ -176,6 +186,11 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
       />
       {loading && <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-20">분석 중...</div>}
       {error && <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-600 z-20">{error}</div>}
+      {testMode && ringPositions.length > 0 && (
+        <pre className="absolute bottom-2 left-2 bg-white/80 text-xs p-2 rounded z-20 max-w-[90%] max-h-[40%] overflow-auto">
+          {JSON.stringify(ringPositions, null, 2)}
+        </pre>
+      )}
     </div>
   );
 } 

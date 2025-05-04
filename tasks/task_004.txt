@@ -108,13 +108,13 @@ The HandLandmarkDetector component has been successfully implemented with the fo
 The implementation follows the planned structure and successfully establishes the core hand landmark detection functionality. The system is now ready for the next phase of development, which will involve mapping the detected landmarks to the application data model (subtask 4.3) and enhancing visualization with connecting lines between landmarks.
 </info added on 2025-05-04T08:02:20.752Z>
 
-## 3. Map detected landmarks to application data model [pending]
+## 3. Map detected landmarks to application data model [done]
 ### Dependencies: 4.2
 ### Description: Transform MediaPipe landmark coordinates to the application's internal data structure
 ### Details:
 Create mapping functions that convert the raw MediaPipe landmark data (x, y, z coordinates) into the format required by the application. Implement normalization if needed and ensure the data is properly structured for further processing.
 
-## 4. Implement visualization of detected hand points [pending]
+## 4. Implement visualization of detected hand points [in-progress]
 ### Dependencies: 4.3
 ### Description: Create visual representation of the detected hand landmarks
 ### Details:
