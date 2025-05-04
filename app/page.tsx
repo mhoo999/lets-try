@@ -128,7 +128,7 @@ export default function Home() {
     const handImg = new window.Image();
     handImg.src = imageUrl;
     handImg.onload = () => {
-      // 화면에 보이는 이미지 크기(예: 300x300)
+      // 화면에 보이는 이미지 크기
       const display = document.querySelector('.w-[80vw].aspect-square img') as HTMLImageElement | null;
       const displayWidth = display?.width || handImg.width;
       const displayHeight = display?.height || handImg.height;
@@ -140,52 +140,58 @@ export default function Home() {
       if (!ctx) return;
       ctx.drawImage(handImg, 0, 0, handImg.width, handImg.height);
 
-      const pos = ringPositions.find(p => p.finger === selectedFinger);
-      const selection = selectedFinger ? ringSelections[selectedFinger] : undefined;
-      if (pos && selection) {
-        const ringImg = new window.Image();
-        ringImg.src = selection.color.imageUrl;
-        ringImg.onload = () => {
-          // 좌표 변환
-          const scaleX = handImg.width / displayWidth;
-          const scaleY = handImg.height / displayHeight;
-          const realX = pos.centerX * scaleX;
-          const realY = pos.centerY * scaleY;
-          const base = 55 * scaleX;
+      // 디버깅: 좌표 기준 확인
+      console.log('ringPositions', ringPositions, 'handImg', handImg.width, handImg.height, 'display', displayWidth, displayHeight);
 
-          ctx.save();
-          ctx.translate(realX, realY);
-          ctx.rotate(pos.angle + Math.PI / 2);
-          ctx.drawImage(ringImg, -base / 2, -base / 2, base, base);
-          ctx.restore();
+      // 모든 손가락의 반지 오버레이 합성
+      Object.entries(ringSelections).forEach(([finger, selection]) => {
+        const pos = ringPositions.find(p => p.finger === finger);
+        if (pos && selection) {
+          const ringImg = new window.Image();
+          ringImg.src = selection.color.imageUrl;
+          ringImg.onload = () => {
+            // 좌표 변환(필요시)
+            const scaleX = handImg.width / displayWidth;
+            const scaleY = handImg.height / displayHeight;
+            const realX = pos.centerX * scaleX;
+            const realY = pos.centerY * scaleY;
+            const base = 55 * scaleX;
 
-          // (디버깅) 실제 합성 이미지를 body에 추가해서 눈으로 확인
-          // document.body.appendChild(tempCanvas);
+            ctx.save();
+            ctx.translate(realX, realY);
+            ctx.rotate(pos.angle + Math.PI / 2);
+            ctx.drawImage(ringImg, -base / 2, -base / 2, base, base);
+            ctx.restore();
 
-          tempCanvas.toBlob(async (blob) => {
-            if (!blob) {
-              alert('이미지 생성 실패');
-              return;
+            // (디버깅) 실제 합성 이미지를 body에 추가해서 눈으로 확인
+            document.body.appendChild(tempCanvas);
+          };
+        }
+      });
+
+      // 공유는 모든 ringImg가 로드된 후에 실행해야 함(여러 개면 Promise.all 등 필요)
+      setTimeout(() => {
+        tempCanvas.toBlob(async (blob) => {
+          if (!blob) {
+            alert('이미지 생성 실패');
+            return;
+          }
+          const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                files: [file],
+                title: 'haime 반지 합성',
+                text: '내 손에 반지를 합성해봤어요!',
+              });
+            } catch (err) {
+              alert('공유 실패: ' + err);
             }
-            const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              try {
-                await navigator.share({
-                  files: [file],
-                  title: 'haime 반지 합성',
-                  text: '내 손에 반지를 합성해봤어요!',
-                });
-              } catch (err) {
-                alert('공유 실패: ' + err);
-              }
-            } else {
-              alert('이 브라우저/환경에서는 이미지 파일 공유가 지원되지 않습니다.');
-            }
-          }, 'image/jpeg', 0.95);
-        };
-      } else {
-        alert('반지 오버레이 정보가 없습니다.');
-      }
+          } else {
+            alert('이 브라우저/환경에서는 이미지 파일 공유가 지원되지 않습니다.');
+          }
+        }, 'image/jpeg', 0.95);
+      }, 800); // ringImg 로딩 대기(임시)
     };
   };
 
