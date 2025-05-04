@@ -1,6 +1,6 @@
 # Task ID: 6
 # Title: 손가락별 반지 합성 및 시뮬레이션
-# Status: pending
+# Status: done
 # Dependencies: 3, 5
 # Priority: high
 # Description: Implement the functionality to overlay selected rings on specific fingers based on user selection, with support for different rings and colors on each finger.
@@ -96,25 +96,25 @@ const RingOverlay: React.FC<{
 6. Verify that the automatic thumb selection works correctly
 
 # Subtasks:
-## 1. 손가락 선택 컴포넌트 개발 [pending]
+## 1. 손가락 선택 컴포넌트 개발 [done]
 ### Dependencies: None
 ### Description: Develop the UI component that allows users to select which finger they want to place a ring on
 ### Details:
 Build an interactive finger selection interface that clearly shows all available finger options. Include visual indicators for selected fingers, implement touch/click interactions, and ensure the component is accessible. The component should communicate with the state management system when a finger is selected.
 
-## 2. 반지 종류 선택 UI 구현 [pending]
+## 2. 반지 종류 선택 UI 구현 [done]
 ### Dependencies: 6.1
 ### Description: Create the UI for selecting different types of rings available for each finger
 ### Details:
 Design and implement a component that displays all available ring types for the selected finger. Include thumbnail images, names, and possibly brief descriptions of each ring type. The interface should update dynamically based on the currently selected finger and communicate selections to the state management system.
 
-## 3. 컬러/재질 선택 옵션 구현 [pending]
+## 3. 컬러/재질 선택 옵션 구현 [done]
 ### Dependencies: 6.2
 ### Description: Create the UI component for selecting ring colors and materials
 ### Details:
 Create a color/material picker that shows available options for the selected ring type. Include visual swatches, material names, and possibly pricing differences. Implement hover/focus states to preview how colors look on the selected ring. Ensure the component integrates with the state management system to track color selections.
 
-## 4. 상태 관리 시스템 개발 [pending]
+## 4. 상태 관리 시스템 개발 [done]
 ### Dependencies: 6.1, 6.2, 6.3
 ### Description: Implement the state management logic to track all user selections across the ring customization process
 ### Details:

@@ -6,7 +6,7 @@ import type { Hands, Results } from '@mediapipe/hands';
 interface HandLandmarkDetectorProps {
   imageUrl?: string;
   testMode?: boolean;
-  onRingPositions?: (positions: { finger: string; centerX: number; centerY: number; angle: number }[]) => void;
+  onRingPositions?: (positions: { finger: string; centerX: number; centerY: number; angle: number; length: number }[]) => void;
 }
 
 // 반지 위치 인덱스 쌍
@@ -25,7 +25,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
   const [error, setError] = useState<string | null>(null);
   const [landmarks, setLandmarks] = useState<{x: number, y: number}[]>([]);
   const [hiddenPoints, setHiddenPoints] = useState<Set<number>>(new Set());
-  const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
+  const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length: number }[]>([]);
 
   useEffect(() => {
     if (!imageUrl) return;
@@ -110,7 +110,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
             if (!isMounted) return;
             const points = (results.multiHandLandmarks?.[0] || []) as { x: number; y: number }[];
             setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
-            // 반지 위치/각도 계산
+            // 반지 위치/각도/길이 계산
             const canvas = canvasRef.current;
             const ringPos = RING_PAIRS.map(({ finger, idxA, idxB }) => {
               if (!points[idxA] || !points[idxB] || !canvas) return null;
@@ -119,8 +119,12 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
               const centerX = ((a.x + b.x) / 2) * canvas.width;
               const centerY = ((a.y + b.y) / 2) * canvas.height;
               const angle = Math.atan2(b.y - a.y, b.x - a.x); // 라디안
-              return { finger, centerX, centerY, angle };
-            }).filter(Boolean) as { finger: string; centerX: number; centerY: number; angle: number }[];
+              // 손가락 길이(픽셀)
+              const dx = (b.x - a.x) * canvas.width;
+              const dy = (b.y - a.y) * canvas.height;
+              const length = Math.sqrt(dx * dx + dy * dy);
+              return { finger, centerX, centerY, angle, length };
+            }).filter(Boolean) as { finger: string; centerX: number; centerY: number; angle: number; length: number }[];
             setRingPositions(ringPos);
             if (onRingPositions) onRingPositions(ringPos);
             // 캔버스에 시각화

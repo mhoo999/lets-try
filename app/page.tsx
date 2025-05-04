@@ -14,7 +14,7 @@ export default function Home() {
   const [cameraOpen, setCameraOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
-  const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
+  const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length?: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
   const [isRingApplied, setIsRingApplied] = useState(false);
@@ -79,11 +79,12 @@ export default function Home() {
 
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
   const handleRingApply = (ring: Ring, color: RingColor) => {
+    if (!selectedFinger) return;
+    setRingSelections(prev => ({
+      ...prev,
+      [selectedFinger]: { ring, color }
+    }));
     setIsRingApplied(true);
-    setSelectedFinger('엄지');
-    // 모든 손가락에 동일하게 저장
-    const all = Object.fromEntries(fingers.map(f => [f, { ring, color }]));
-    setRingSelections(all);
   };
 
   // rings.json의 모든 반지/컬러 이미지 프리로드
@@ -134,22 +135,28 @@ export default function Home() {
               <>
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
                 {/* 반지 합성 오버레이 */}
-                {ringPositions.map((pos) => (
-                  <img
-                    key={pos.finger}
-                    src="/ring.png"
-                    alt={`${pos.finger} ring`}
-                    style={{
-                      position: 'absolute',
-                      left: pos.centerX,
-                      top: pos.centerY,
-                      width: 55,
-                      height: 55,
-                      transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
-                      pointerEvents: 'none',
-                    }}
-                  />
-                ))}
+                {ringPositions.map((pos) => {
+                  const selection = ringSelections[pos.finger];
+                  if (!selection) return null;
+                  // 손가락 길이에 따라 반지 이미지 크기 동적 조정 (기본값 55, 최소 30, 최대 80)
+                  const base = pos.length ? Math.max(30, Math.min(80, pos.length * 1.2)) : 55;
+                  return (
+                    <img
+                      key={pos.finger}
+                      src={selection.color.imageUrl}
+                      alt={`${pos.finger} ring`}
+                      style={{
+                        position: 'absolute',
+                        left: pos.centerX,
+                        top: pos.centerY,
+                        width: base,
+                        height: base,
+                        transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  );
+                })}
               </>
             ) : (
               <HandGuide imageUrl={imageUrl} />

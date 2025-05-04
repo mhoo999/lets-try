@@ -1,6 +1,6 @@
 # Task ID: 5
 # Title: 반지 선택 UI 및 팝업/컬러칩 구현
-# Status: pending
+# Status: done
 # Dependencies: 2, 4
 # Priority: high
 # Description: Implement the UI for selecting rings, including the selectring button, popup modal, and color chip selection according to the Figma design.
@@ -152,13 +152,13 @@ Research and select the appropriate storage solution (S3 or Supabase). Create ne
 ### Details:
 Define metadata fields (ring ID, category, material, style, dimensions, creation date, etc.). Create a JSON schema for validation. Implement naming conventions for files that reflect the metadata structure. Document the schema for team reference.
 
-## 3. 이미지 업로드 프로세스 구현 [pending]
+## 3. 이미지 업로드 프로세스 구현 [done]
 ### Dependencies: 5.1, 5.2
 ### Description: Develop scripts to organize and upload ring images with proper metadata
 ### Details:
 Create scripts to batch process images (resize, optimize, rename). Implement metadata extraction or assignment. Develop upload functionality with error handling and retry logic. Test uploads with various image types and sizes. Document the upload process.
 
-## 4. 클라이언트 이미지 캐싱 [pending]
+## 4. 클라이언트 이미지 캐싱 [done]
 ### Dependencies: 5.3
 ### Description: Develop efficient client-side image loading with proper caching
 ### Details:
