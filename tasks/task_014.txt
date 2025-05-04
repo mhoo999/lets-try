@@ -1,0 +1,55 @@
+# Task ID: 14
+# Title: 익명 사용 분석 및 트래킹
+# Status: pending
+# Dependencies: 11
+# Priority: low
+# Description: Add anonymous usage analytics to track feature usage and user flow without collecting personal data.
+# Details:
+1. Implement privacy-focused analytics (e.g., Plausible, Simple Analytics)
+2. Track key user interactions and flow completion
+3. Ensure no personal data or images are included in analytics
+4. Add opt-out option for users
+
+Example implementation:
+```tsx
+// utils/analytics.ts
+
+// Define events we want to track
+export enum AnalyticsEvent {
+  PAGE_VIEW = 'page_view',
+  IMAGE_UPLOAD = 'image_upload',
+  FINGER_DETECTION = 'finger_detection',
+  RING_SELECTION = 'ring_selection',
+  IMAGE_GENERATION = 'image_generation',
+  IMAGE_SHARE = 'image_share'
+}
+
+// Track an event without personal data
+export function trackEvent(event: AnalyticsEvent, properties: Record<string, any> = {}) {
+  // Remove any potentially sensitive data
+  const safeProperties = { ...properties }
+  delete safeProperties.image
+  delete safeProperties.imageUrl
+  delete safeProperties.fingerPositions
+  
+  // In a real implementation, you would send this to your analytics service
+  console.log('Analytics event:', event, safeProperties)
+  
+  // Example implementation with a hypothetical analytics service
+  if (typeof window !== 'undefined' && window.plausible) {
+    window.plausible(event, { props: safeProperties })
+  }
+}
+
+// Hook to track page views
+export function usePageViewTracking(pageName: string) {
+  useEffect(() => {
+    trackEvent(AnalyticsEvent.PAGE_VIEW, { page: pageName })
+  }, [pageName])
+}
+```
+
+한국어 표시: 익명 사용 분석 및 트래킹
+
+# Test Strategy:
+Verify that analytics events are triggered correctly for key user actions. Ensure no personal data or images are included in analytics events. Test the opt-out functionality to ensure it works correctly. Verify that analytics data is useful for understanding user behavior and identifying potential improvements.

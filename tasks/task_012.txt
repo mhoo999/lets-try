@@ -1,0 +1,82 @@
+# Task ID: 12
+# Title: 에러 처리 및 예외 상황 대응
+# Status: pending
+# Dependencies: 4, 7, 9
+# Priority: medium
+# Description: Add comprehensive error handling for various scenarios such as unsupported browsers, failed image processing, and network issues.
+# Details:
+1. Implement error boundaries for React components
+2. Create user-friendly error messages
+3. Add fallbacks for unsupported features
+4. Implement retry mechanisms for failed operations
+5. Add logging for error tracking (client-side only)
+
+Example implementation:
+```tsx
+import { Component, ErrorInfo, ReactNode } from 'react'
+
+interface ErrorBoundaryProps {
+  children: ReactNode
+  fallback?: ReactNode
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean
+  error?: Error
+}
+
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // Log error to client-side console only
+    console.error('Component error:', error, errorInfo)
+  }
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback
+      }
+      
+      return (
+        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <h3 className="font-bold mb-2">Something went wrong</h3>
+          <p>We're sorry, but we encountered an error. Please try again.</p>
+          <button
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+            onClick={() => this.setState({ hasError: false })}
+          >
+            Try again
+          </button>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
+
+// Usage example:
+// <ErrorBoundary>
+//   <MediaPipeHandDetection />
+// </ErrorBoundary>
+```
+
+# Test Strategy:
+Test error handling by simulating various error conditions. Verify that error messages are user-friendly and helpful. Test fallback mechanisms to ensure they work correctly. Ensure that error boundaries catch and handle errors appropriately. Test retry mechanisms for effectiveness.
+
+# Subtasks:
+## 12.1. 에러 처리 및 예외 상황 대응 [pending]
+### Dependencies: None
+### Description: 한글화된 에러 메시지 및 사용자 인터페이스 구현
+### Details:
+
+

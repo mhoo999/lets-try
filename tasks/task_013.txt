@@ -1,0 +1,97 @@
+# Task ID: 13
+# Title: 성능 최적화 및 로딩 개선
+# Status: pending
+# Dependencies: 4, 7, 11
+# Priority: medium
+# Description: Optimize the application for performance, especially on mobile devices, with appropriate loading states and optimizations.
+# Details:
+1. Implement code splitting and lazy loading
+2. Optimize image loading and processing
+3. Add loading indicators for async operations
+4. Implement performance monitoring
+5. Optimize MediaPipe initialization and processing
+
+Example implementation:
+```tsx
+import { Suspense, lazy } from 'react'
+import { useEffect, useState } from 'react'
+
+// Lazy load heavy components
+const MediaPipeHandDetection = lazy(() => import('./MediaPipeHandDetection'))
+
+export default function OptimizedImageProcessor({ imageSrc }: { imageSrc: string }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [progress, setProgress] = useState(0)
+  
+  useEffect(() => {
+    // Simulate loading progress
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setIsLoading(false)
+          return 100
+        }
+        return prev + 10
+      })
+    }, 200)
+    
+    return () => clearInterval(interval)
+  }, [])
+  
+  return (
+    <div>
+      {isLoading ? (
+        <div className="p-4 text-center">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div 
+              className="bg-blue-600 h-2.5 rounded-full" 
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="mt-2">Loading hand detection ({progress}%)...</p>
+        </div>
+      ) : (
+        <Suspense fallback={<div>Loading component...</div>}>
+          <MediaPipeHandDetection imageSrc={imageSrc} />
+        </Suspense>
+      )}
+    </div>
+  )
+}
+```
+
+# Test Strategy:
+Measure and benchmark performance metrics like load time, time to interactive, and frame rate. Test on various devices, especially lower-end mobile devices. Verify that loading indicators provide good user feedback. Test with slow network connections to ensure graceful degradation.
+
+# Subtasks:
+## 1. Implement Code Splitting and Lazy Loading [pending]
+### Dependencies: None
+### Description: Optimize application load time by implementing code splitting and lazy loading of components
+### Details:
+Use React.lazy() and Suspense to split the application code into smaller chunks that load on demand. Identify large components that aren't needed for initial render and configure them for lazy loading. Implement dynamic imports for heavy libraries and modules. Set up route-based code splitting for different application views.
+
+## 2. Optimize Image Processing and Rendering [pending]
+### Dependencies: None
+### Description: Improve performance of image processing operations and rendering efficiency
+### Details:
+Implement image compression and resizing before processing. Use WebWorkers for heavy image processing tasks to prevent UI blocking. Optimize canvas operations by minimizing redraws and using appropriate rendering contexts. Implement image caching mechanisms to prevent redundant processing of the same images. Consider using WebGL for hardware-accelerated image processing where appropriate.
+
+## 3. Add Loading Indicators for Asynchronous Operations [pending]
+### Dependencies: 13.1
+### Description: Implement visual feedback for users during loading and processing operations
+### Details:
+Create reusable loading components with appropriate animations. Implement skeleton screens for content that's loading. Add progress indicators for long-running operations like image processing or model initialization. Ensure loading states are properly managed in the application state. Implement timeouts and fallbacks for operations that take too long.
+
+## 4. Implement Performance Monitoring [pending]
+### Dependencies: 13.1, 13.2
+### Description: Set up tools and metrics to monitor application performance
+### Details:
+Integrate performance monitoring tools like Lighthouse or Web Vitals. Set up custom performance metrics for critical user journeys. Implement logging for performance bottlenecks and errors. Create a dashboard to visualize performance metrics over time. Set up alerts for performance regressions.
+
+## 5. Optimize MediaPipe Initialization and Processing [pending]
+### Dependencies: 13.2, 13.4
+### Description: Improve the performance of MediaPipe operations and initialization
+### Details:
+Optimize MediaPipe model loading by implementing progressive loading strategies. Cache MediaPipe results when appropriate to prevent redundant processing. Configure MediaPipe for different device capabilities (high/low-end devices). Implement throttling for continuous processing operations. Optimize memory usage by properly disposing of resources when not needed.
+

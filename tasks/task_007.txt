@@ -1,0 +1,105 @@
+# Task ID: 7
+# Title: 손가락에 반지 오버레이 구현
+# Status: pending
+# Dependencies: 4, 5, 6
+# Priority: high
+# Description: Create functionality to overlay selected ring images on the detected finger positions in the uploaded hand image.
+# Details:
+1. Create a canvas-based rendering system to overlay ring images on the hand image
+2. Position and scale ring images based on detected finger positions
+3. Implement proper z-index ordering for realistic appearance
+4. Add rotation and perspective adjustments based on hand orientation
+5. Optimize rendering performance for mobile devices
+
+Example implementation:
+```tsx
+import { useRef, useEffect } from 'react'
+
+interface RingOverlayProps {
+  handImageSrc: string
+  fingerPositions: Array<{ finger: string, x: number, y: number }>
+  selectedRings: Array<{ finger: string, imageUrl: string }>
+}
+
+export default function RingOverlay({ handImageSrc, fingerPositions, selectedRings }: RingOverlayProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    
+    // Load the hand image
+    const handImage = new Image()
+    handImage.src = handImageSrc
+    handImage.onload = () => {
+      // Set canvas dimensions to match image
+      canvas.width = handImage.width
+      canvas.height = handImage.height
+      
+      // Draw the hand image
+      ctx.drawImage(handImage, 0, 0)
+      
+      // Draw each selected ring
+      selectedRings.forEach(ringInfo => {
+        const fingerPosition = fingerPositions.find(pos => pos.finger === ringInfo.finger)
+        if (!fingerPosition) return
+        
+        const ringImage = new Image()
+        ringImage.src = ringInfo.imageUrl
+        ringImage.onload = () => {
+          // Calculate position and scale for the ring
+          const ringWidth = ringImage.width * 0.5 // Scale as needed
+          const ringHeight = ringImage.height * 0.5
+          
+          // Position the ring centered on the finger position
+          const x = fingerPosition.x - (ringWidth / 2)
+          const y = fingerPosition.y - (ringHeight / 2)
+          
+          // Draw the ring
+          ctx.drawImage(ringImage, x, y, ringWidth, ringHeight)
+        }
+      })
+    }
+  }, [handImageSrc, fingerPositions, selectedRings])
+  
+  return <canvas ref={canvasRef} className="max-w-full h-auto" />
+}
+```
+
+# Test Strategy:
+Test with various hand images and ring combinations. Verify that rings are positioned correctly on fingers. Test with different hand orientations and lighting conditions. Optimize and test performance on mobile devices.
+
+# Subtasks:
+## 1. Create Canvas-Based Rendering System [pending]
+### Dependencies: None
+### Description: Develop a canvas-based rendering system for displaying ring overlays on detected fingers
+### Details:
+Implement a canvas element that can be positioned over the camera feed. Create functions to load and render ring images onto the canvas. Set up the basic rendering pipeline that will be used to display rings at the correct positions. Include support for different ring designs and image formats.
+
+## 2. Implement Finger Position Detection Algorithms [pending]
+### Dependencies: 7.1
+### Description: Create algorithms to accurately position rings based on finger detection data
+### Details:
+Develop algorithms that use finger detection data to determine the exact position for ring placement. Calculate the correct position, orientation, and perspective for the ring based on knuckle and finger joint positions. Implement methods to handle different finger sizes and positions relative to the camera.
+
+## 3. Add Scaling and Rotation Adjustments [pending]
+### Dependencies: 7.1, 7.2
+### Description: Implement dynamic scaling and rotation of ring overlays to match finger movements
+### Details:
+Create functions to dynamically scale rings based on finger thickness and distance from camera. Implement rotation adjustments that follow the natural movement of fingers. Add perspective transformations to maintain realistic appearance as fingers move and rotate. Include smooth transitions when adjusting scale and rotation.
+
+## 4. Handle Z-Index and Layering [pending]
+### Dependencies: 7.1, 7.3
+### Description: Implement proper z-index and layering for realistic ring appearance
+### Details:
+Develop a system to handle proper z-indexing so rings appear correctly positioned on fingers. Implement partial occlusion for when fingers overlap or when rings should appear partially hidden by the finger. Add shadow effects and highlights to enhance the realistic appearance of rings on fingers.
+
+## 5. Optimize Performance for Mobile Devices [pending]
+### Dependencies: 7.1, 7.2, 7.3, 7.4
+### Description: Optimize the rendering system for smooth performance on mobile devices
+### Details:
+Profile and optimize the rendering pipeline for mobile performance. Implement frame rate controls and resolution adjustments based on device capabilities. Add caching mechanisms for ring images and transformation calculations. Test and optimize for various mobile devices and browsers to ensure consistent performance.
+

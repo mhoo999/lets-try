@@ -1,0 +1,102 @@
+# Task ID: 10
+# Title: 개인정보 고지 및 데이터 처리 구현
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Create privacy notices and implement client-side-only data handling to ensure user images are never stored on servers.
+# Details:
+1. Create clear privacy notices explaining that images are processed client-side only
+2. Implement technical safeguards to ensure images are never sent to servers
+3. Add visual indicators showing when image processing is happening locally
+4. Create a privacy policy page with detailed information
+
+Example implementation:
+```tsx
+import { useState } from 'react'
+
+export default function PrivacyNotice() {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  return (
+    <div className="bg-gray-100 p-4 rounded-lg my-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold">Your Privacy is Protected</h3>
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-blue-500"
+        >
+          {isExpanded ? 'Show Less' : 'Learn More'}
+        </button>
+      </div>
+      
+      <p className="mt-2">Your hand images are processed entirely on your device and are never uploaded to our servers.</p>
+      
+      {isExpanded && (
+        <div className="mt-4">
+          <h4 className="font-semibold">How it works:</h4>
+          <ul className="list-disc pl-5 mt-2">
+            <li>All image processing happens in your browser</li>
+            <li>Hand detection uses MediaPipe which runs locally</li>
+            <li>Your images are never stored or transmitted</li>
+            <li>Only ring images are loaded from our servers</li>
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+한국어 버전 예시 구현:
+```tsx
+import { useState } from 'react'
+
+export default function PrivacyNotice() {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  return (
+    <div className="bg-gray-100 p-4 rounded-lg my-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold">개인정보 보호</h3>
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-blue-500"
+        >
+          {isExpanded ? '간략히 보기' : '더 알아보기'}
+        </button>
+      </div>
+      
+      <p className="mt-2">손 이미지는 전적으로 사용자의 기기에서만 처리되며 서버로 업로드되지 않습니다.</p>
+      
+      {isExpanded && (
+        <div className="mt-4">
+          <h4 className="font-semibold">작동 방식:</h4>
+          <ul className="list-disc pl-5 mt-2">
+            <li>모든 이미지 처리는 브라우저에서 이루어집니다</li>
+            <li>손 감지는 로컬에서 실행되는 MediaPipe를 사용합니다</li>
+            <li>이미지는 저장되거나 전송되지 않습니다</li>
+            <li>반지 이미지만 서버에서 로드됩니다</li>
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+# Test Strategy:
+Verify that no image data is sent to servers by monitoring network requests during usage. Test privacy notices for clarity and visibility in both English and Korean. Conduct user testing to ensure users understand the privacy protections. Review the implementation for any potential data leakage points.
+
+# Subtasks:
+## 10.1. 한국어 개인정보 고지 구현 [pending]
+### Dependencies: None
+### Description: 한국어 사용자를 위한 개인정보 고지 및 데이터 처리 안내를 구현합니다.
+### Details:
+
+
+## 10.2. 다국어 지원 설정 [pending]
+### Dependencies: None
+### Description: 사용자 언어 설정에 따라 적절한 언어(영어/한국어)로 개인정보 고지가 표시되도록 구현합니다.
+### Details:
+
+

@@ -1,0 +1,26 @@
+# Task ID: 1
+# Title: 프로젝트 세팅: Next.js 및 TypeScript
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Initialize the project repository with Next.js, TypeScript, and Tailwind CSS according to the technical architecture requirements.
+# Details:
+1. Create a new Next.js project using `npx create-next-app@latest`
+2. Configure TypeScript support
+3. Install and configure Tailwind CSS
+4. Set up project structure with appropriate folders for components, hooks, utils, and pages
+5. Configure linting and formatting tools
+6. Set up version control with Git
+7. Configure deployment settings for Vercel
+
+Example command:
+```bash
+npx create-next-app@latest lets-try --typescript --tailwind --eslint
+cd lets-try
+git init
+git add .
+git commit -m "Initial commit"
+```
+
+# Test Strategy:
+Verify that the project builds successfully with `npm run build`. Ensure that TypeScript compilation works without errors. Test that Tailwind CSS is properly configured by creating a simple styled component.

@@ -1,0 +1,111 @@
+# Task ID: 6
+# Title: 반지 선택 UI 구현
+# Status: pending
+# Dependencies: 2, 5
+# Priority: medium
+# Description: Develop the UI for selecting ring types and colors for each finger, following the Figma design.
+# Details:
+1. Create a finger selection component that allows users to select which finger to add a ring to
+2. Implement a ring type selection UI with visual thumbnails
+3. Add color selection options for each ring type
+4. Create a state management system to track selected rings for each finger
+5. Implement UI for removing or changing ring selections
+
+Example implementation:
+```tsx
+import { useState } from 'react'
+import { RingImage } from '../utils/ringImages'
+
+interface RingSelectionProps {
+  availableRings: RingImage[]
+  onSelectRing: (finger: string, ringId: string) => void
+}
+
+export default function RingSelection({ availableRings, onSelectRing }: RingSelectionProps) {
+  const [selectedFinger, setSelectedFinger] = useState<string | null>(null)
+  const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky']
+  
+  const ringTypes = [...new Set(availableRings.map(ring => ring.type))]
+  const ringColors = [...new Set(availableRings.map(ring => ring.color))]
+  
+  const [selectedType, setSelectedType] = useState(ringTypes[0])
+  const [selectedColor, setSelectedColor] = useState(ringColors[0])
+  
+  const handleRingSelect = () => {
+    if (!selectedFinger) return
+    
+    const selectedRing = availableRings.find(
+      ring => ring.type === selectedType && ring.color === selectedColor
+    )
+    
+    if (selectedRing) {
+      onSelectRing(selectedFinger, selectedRing.id)
+    }
+  }
+  
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-bold">Select a finger</h3>
+      <div className="flex space-x-2 my-4">
+        {fingers.map(finger => (
+          <button
+            key={finger}
+            className={`px-3 py-2 rounded ${selectedFinger === finger ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            onClick={() => setSelectedFinger(finger)}
+          >
+            {finger}
+          </button>
+        ))}
+      </div>
+      
+      {selectedFinger && (
+        <>
+          <h3 className="text-lg font-bold mt-4">Select ring type</h3>
+          <div className="flex space-x-2 my-4">
+            {ringTypes.map(type => (
+              <button
+                key={type}
+                className={`px-3 py-2 rounded ${selectedType === type ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setSelectedType(type)}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+          
+          <h3 className="text-lg font-bold mt-4">Select color</h3>
+          <div className="flex space-x-2 my-4">
+            {ringColors.map(color => (
+              <button
+                key={color}
+                className={`px-3 py-2 rounded ${selectedColor === color ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setSelectedColor(color)}
+              >
+                {color}
+              </button>
+            ))}
+          </div>
+          
+          <button
+            className="px-4 py-2 bg-green-500 text-white rounded mt-4"
+            onClick={handleRingSelect}
+          >
+            Apply Ring
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
+```
+
+# Test Strategy:
+Test the UI for usability and responsiveness. Verify that all ring types and colors are displayed correctly. Test the selection flow to ensure it's intuitive. Conduct user testing to gather feedback on the selection experience.
+
+# Subtasks:
+## 6.1. 반지 선택 UI 구현 [pending]
+### Dependencies: None
+### Description: 한글화된 UI 타이틀로 작업을 진행합니다. 기존 영문 타이틀 'Create Ring Selection UI'를 한글 '반지 선택 UI 구현'으로 UI 내에서 표시합니다.
+### Details:
+
+

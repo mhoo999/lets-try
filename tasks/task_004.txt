@@ -1,0 +1,82 @@
+# Task ID: 4
+# Title: MediaPipe Hands 연동 및 손가락 인식
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Implement client-side hand and finger detection using MediaPipe Hands to identify finger positions from the uploaded image.
+# Details:
+1. Install MediaPipe Hands library
+2. Create a utility function to process the uploaded image
+3. Detect hand landmarks and extract finger positions
+4. Map the detected landmarks to the data model format: `{ finger: 'index', x: number, y: number }[]`
+5. Visualize the detected finger positions as an overlay on the image
+6. Handle edge cases (multiple hands, poor image quality, etc.)
+
+Example implementation:
+```tsx
+import * as handpose from '@tensorflow-models/handpose'
+import '@tensorflow/tfjs-backend-webgl'
+
+export async function detectFingers(imageElement: HTMLImageElement) {
+  // Load the MediaPipe Handpose model
+  const model = await handpose.load()
+  
+  // Detect the hand landmarks
+  const predictions = await model.estimateHands(imageElement)
+  
+  if (predictions.length > 0) {
+    // Map the landmarks to our data model
+    const fingerNames = ['thumb', 'index', 'middle', 'ring', 'pinky']
+    const fingerPositions = fingerNames.map((finger, idx) => {
+      // Get the tip of each finger (the last landmark of each finger)
+      const tipIdx = idx * 4 + 4
+      const landmark = predictions[0].landmarks[tipIdx]
+      
+      return {
+        finger,
+        x: landmark[0],
+        y: landmark[1]
+      }
+    })
+    
+    return fingerPositions
+  }
+  
+  return []
+}
+```
+
+# Test Strategy:
+Test with various hand images in different positions, lighting conditions, and backgrounds. Verify accuracy of finger detection. Measure and optimize performance on mobile devices. Create a test suite with sample images to ensure consistent detection across different scenarios.
+
+# Subtasks:
+## 1. Set up MediaPipe Hands library [pending]
+### Dependencies: None
+### Description: Install and configure the MediaPipe Hands library in the project environment
+### Details:
+Install MediaPipe library via npm or yarn, set up necessary configurations, and ensure compatibility with the current project structure. Verify the library is properly imported and initialized in the application.
+
+## 2. Implement hand landmark detection system [pending]
+### Dependencies: 4.1
+### Description: Create a system to detect and track hand landmarks using MediaPipe
+### Details:
+Implement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.
+
+## 3. Map detected landmarks to application data model [pending]
+### Dependencies: 4.2
+### Description: Transform MediaPipe landmark coordinates to the application's internal data structure
+### Details:
+Create mapping functions that convert the raw MediaPipe landmark data (x, y, z coordinates) into the format required by the application. Implement normalization if needed and ensure the data is properly structured for further processing.
+
+## 4. Implement visualization of detected hand points [pending]
+### Dependencies: 4.3
+### Description: Create visual representation of the detected hand landmarks
+### Details:
+Develop visualization components that render the detected hand landmarks on screen. Implement drawing utilities for points and connections between landmarks. Add visual feedback for detection quality and hand positioning.
+
+## 5. Handle edge cases and error conditions [pending]
+### Dependencies: 4.2, 4.3, 4.4
+### Description: Implement robust error handling and support for various edge cases
+### Details:
+Address scenarios such as multiple hands detection, hand occlusion, poor lighting conditions, and performance degradation. Implement graceful error handling for cases when hand detection fails or produces unreliable results. Add appropriate user feedback mechanisms.
+

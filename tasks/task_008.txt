@@ -1,0 +1,49 @@
+# Task ID: 8
+# Title: 결과 이미지 생성 기능 구현
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Create functionality to generate a final image with rings overlaid on the hand that can be saved or shared.
+# Details:
+1. Create a utility to convert the canvas with overlaid rings to a downloadable image
+2. Add branding elements to the final image (haime logo, lets try watermark)
+3. Optimize image quality and file size for sharing
+4. Implement a preview of the final image before sharing
+
+Example implementation:
+```tsx
+export function generateResultImage(canvas: HTMLCanvasElement): Promise<string> {
+  return new Promise((resolve) => {
+    // Create a new canvas for the final image with branding
+    const resultCanvas = document.createElement('canvas')
+    const ctx = resultCanvas.getContext('2d')
+    if (!ctx) {
+      resolve('')
+      return
+    }
+    
+    // Set dimensions
+    resultCanvas.width = canvas.width
+    resultCanvas.height = canvas.height + 60 // Extra space for branding
+    
+    // Draw the original canvas content
+    ctx.drawImage(canvas, 0, 0)
+    
+    // Add branding
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, canvas.height, canvas.width, 60)
+    
+    ctx.font = 'bold 24px Arial'
+    ctx.fillStyle = '#000000'
+    ctx.textAlign = 'center'
+    ctx.fillText('haime - lets try', canvas.width / 2, canvas.height + 35)
+    
+    // Convert to image URL
+    const imageUrl = resultCanvas.toDataURL('image/jpeg', 0.9)
+    resolve(imageUrl)
+  })
+}
+```
+
+# Test Strategy:
+Test image generation with various canvas inputs. Verify that branding elements are added correctly. Test image quality and file size optimization. Ensure the generated image can be downloaded and shared across different platforms and devices.

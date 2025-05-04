@@ -1,0 +1,92 @@
+# Task ID: 3
+# Title: 이미지 업로드 및 미리보기 구현
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Create functionality for users to upload hand images either by taking a photo or selecting from their device, with appropriate guidance for optimal hand positioning.
+# Details:
+1. Create an image upload component with drag-and-drop and file selection capabilities
+2. Add camera access functionality for direct photo capture
+3. Implement client-side image validation (format, size, dimensions)
+4. Create a preview component to display the uploaded image
+5. Add guidance overlay/instructions for optimal hand positioning
+6. Ensure all processing happens client-side without server uploads
+
+Example implementation:
+```tsx
+import { useState, useRef } from 'react'
+
+export default function ImageUpload() {
+  const [image, setImage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Client-side validation
+      if (!file.type.includes('image/')) {
+        alert('Please upload an image file')
+        return
+      }
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImage(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+  
+  return (
+    <div className="p-4">
+      <div 
+        className="border-2 border-dashed p-8 text-center cursor-pointer"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        {image ? (
+          <img src={image} alt="Hand preview" className="max-w-full h-auto" />
+        ) : (
+          <p>Click to upload or take a photo of your hand</p>
+        )}
+      </div>
+      <input 
+        type="file" 
+        accept="image/*" 
+        className="hidden" 
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        capture="environment"
+      />
+    </div>
+  )
+}
+```
+
+# Test Strategy:
+Test image upload with various file types and sizes to ensure proper validation. Test camera functionality on mobile devices. Verify that images are processed client-side only and not sent to any server. Test the UI guidance for clarity and effectiveness.
+
+# Subtasks:
+## 1. Implement drag-and-drop and file selection [done]
+### Dependencies: None
+### Description: Create a component that allows users to upload images via drag-and-drop or traditional file selection dialog
+### Details:
+Implement a drop zone area that highlights when files are dragged over it. Add file input for traditional selection. Handle both methods to accept image files. Provide visual feedback during the drag operation. Support multiple file selection if needed. Ensure cross-browser compatibility.
+
+## 2. Add camera access for photo capture [done]
+### Dependencies: 3.1
+### Description: Implement functionality to access device camera for direct photo capture within the application
+### Details:
+Use the MediaDevices API to access the device camera. Create a camera interface with capture button. Handle permissions requests properly. Implement fallbacks for unsupported browsers. Consider both mobile and desktop experiences. Ensure captured photos are properly formatted for upload.
+
+## 3. Create client-side image validation and processing [in-progress]
+### Dependencies: 3.1, 3.2
+### Description: Implement validation for file types, sizes, and dimensions, along with basic image processing capabilities
+### Details:
+Validate file types (jpg, png, etc.). Check file size limits. Verify image dimensions meet requirements. Implement client-side image compression if needed. Add error handling with user-friendly messages. Consider implementing basic editing features like cropping or rotation if required.
+
+## 4. Build preview component with positioning guidance [pending]
+### Dependencies: 3.3
+### Description: Create an image preview component with overlay guides to help users position their images correctly
+### Details:
+Develop a preview component that shows the uploaded/captured image. Add overlay guides (grid lines, face detection markers, etc.) to help with positioning. Implement zoom and pan functionality if needed. Ensure the preview is responsive across different screen sizes. Add confirmation step before final submission.
+

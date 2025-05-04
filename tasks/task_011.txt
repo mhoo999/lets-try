@@ -1,0 +1,140 @@
+# Task ID: 11
+# Title: 사용자 플로우 및 네비게이션 구현
+# Status: pending
+# Dependencies: 2, 3, 6, 7, 9
+# Priority: medium
+# Description: Implement the complete user flow from service access to image sharing, with intuitive navigation between steps.
+# Details:
+1. Create a step-by-step flow with clear navigation
+2. Implement progress indicators
+3. Add back/forward navigation
+4. Create smooth transitions between steps
+5. Ensure the flow works well on mobile devices
+
+Example implementation:
+```tsx
+import { useState } from 'react'
+
+enum Step {
+  UPLOAD = 'upload',
+  SELECT_RINGS = 'select_rings',
+  PREVIEW = 'preview',
+  SHARE = 'share'
+}
+
+export default function UserFlow() {
+  const [currentStep, setCurrentStep] = useState<Step>(Step.UPLOAD)
+  const [handImage, setHandImage] = useState<string | null>(null)
+  const [fingerPositions, setFingerPositions] = useState<any[]>([])
+  const [selectedRings, setSelectedRings] = useState<any[]>([])
+  const [resultImage, setResultImage] = useState<string | null>(null)
+  
+  const goToNextStep = () => {
+    switch (currentStep) {
+      case Step.UPLOAD:
+        setCurrentStep(Step.SELECT_RINGS)
+        break
+      case Step.SELECT_RINGS:
+        setCurrentStep(Step.PREVIEW)
+        break
+      case Step.PREVIEW:
+        setCurrentStep(Step.SHARE)
+        break
+    }
+  }
+  
+  const goToPreviousStep = () => {
+    switch (currentStep) {
+      case Step.SELECT_RINGS:
+        setCurrentStep(Step.UPLOAD)
+        break
+      case Step.PREVIEW:
+        setCurrentStep(Step.SELECT_RINGS)
+        break
+      case Step.SHARE:
+        setCurrentStep(Step.PREVIEW)
+        break
+    }
+  }
+  
+  return (
+    <div className="max-w-md mx-auto p-4">
+      {/* Progress indicator */}
+      <div className="flex justify-between mb-8">
+        {Object.values(Step).map((step) => (
+          <div 
+            key={step}
+            className={`w-full h-2 mx-1 rounded ${currentStep === step ? 'bg-blue-500' : 'bg-gray-200'}`}
+          />
+        ))}
+      </div>
+      
+      {/* Step content */}
+      <div className="min-h-[400px]">
+        {currentStep === Step.UPLOAD && (
+          <ImageUploadStep 
+            onImageCaptured={(image, positions) => {
+              setHandImage(image)
+              setFingerPositions(positions)
+            }} 
+          />
+        )}
+        
+        {currentStep === Step.SELECT_RINGS && (
+          <RingSelectionStep 
+            handImage={handImage!}
+            fingerPositions={fingerPositions}
+            onRingsSelected={setSelectedRings} 
+          />
+        )}
+        
+        {currentStep === Step.PREVIEW && (
+          <PreviewStep 
+            handImage={handImage!}
+            fingerPositions={fingerPositions}
+            selectedRings={selectedRings}
+            onResultImageGenerated={setResultImage}
+          />
+        )}
+        
+        {currentStep === Step.SHARE && (
+          <ShareStep resultImage={resultImage!} />
+        )}
+      </div>
+      
+      {/* Navigation buttons */}
+      <div className="flex justify-between mt-8">
+        {currentStep !== Step.UPLOAD && (
+          <button 
+            onClick={goToPreviousStep}
+            className="px-4 py-2 bg-gray-200 rounded"
+          >
+            Back
+          </button>
+        )}
+        
+        {currentStep !== Step.SHARE && (
+          <button 
+            onClick={goToNextStep}
+            className="px-4 py-2 bg-blue-500 text-white rounded ml-auto"
+            disabled={!handImage && currentStep === Step.UPLOAD}
+          >
+            Next
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+# Test Strategy:
+Test the complete user flow from start to finish. Verify that navigation between steps works correctly. Test back/forward navigation. Ensure the flow is intuitive and user-friendly. Test on various devices and screen sizes to ensure responsive behavior.
+
+# Subtasks:
+## 11.1. 사용자 플로우 및 네비게이션 구현 [pending]
+### Dependencies: None
+### Description: 한글 버전의 사용자 플로우 및 네비게이션 구현
+### Details:
+
+
