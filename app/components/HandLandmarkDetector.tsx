@@ -73,24 +73,24 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
         let handsInstance: Hands | null = null;
         const obj = exportObj as { [key: string]: unknown };
         if (typeof obj.createHands === 'function') {
-          handsInstance = (obj.createHands as Function)({
+          handsInstance = (obj.createHands as (config: unknown) => Hands)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-          }) as Hands;
+          });
         } else if (typeof obj.Hands === 'function') {
-          handsInstance = new (obj.Hands as new (config: any) => Hands)({
+          handsInstance = new (obj.Hands as new (config: unknown) => Hands)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
           });
         } else if (typeof obj.default === 'function') {
-          handsInstance = new (obj.default as new (config: any) => Hands)({
+          handsInstance = new (obj.default as new (config: unknown) => Hands)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
           });
         } else if (
           obj.Hands &&
-          typeof (obj.Hands as { create?: Function }).create === 'function'
+          typeof (obj.Hands as { create?: (config: unknown) => Hands }).create === 'function'
         ) {
-          handsInstance = ((obj.Hands as { create: Function }).create)({
+          handsInstance = ((obj.Hands as { create: (config: unknown) => Hands }).create)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-          }) as Hands;
+          });
         } else {
           setError('MediaPipe Hands 생성자를 찾을 수 없습니다. (export 구조: ' + Object.keys(obj).join(', ') + ')');
           setLoading(false);
