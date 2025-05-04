@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Header from './components/Header';
 import HandGuide from './components/HandGuide';
 import FingerPills from './components/FingerPills';
@@ -85,6 +85,20 @@ export default function Home() {
     const all = Object.fromEntries(fingers.map(f => [f, { ring, color }]));
     setRingSelections(all);
   };
+
+  // rings.json의 모든 반지/컬러 이미지 프리로드
+  useEffect(() => {
+    fetch('/data/rings.json')
+      .then(res => res.json())
+      .then((rings) => {
+        rings.forEach((ring: any) => {
+          ring.availableColors.forEach((color: any) => {
+            const img = new window.Image();
+            img.src = color.imageUrl;
+          });
+        });
+      });
+  }, []);
 
   return (
     <main className="w-full h-screen overflow-hidden bg-white flex flex-col">
