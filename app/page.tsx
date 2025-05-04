@@ -124,7 +124,7 @@ export default function Home() {
           <button
             className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base"
             type="button"
-            onClick={handleCameraOrFile}
+            onClick={e => { e.preventDefault(); handleCameraOrFile(); }}
           >
             사진 찍기
           </button>
