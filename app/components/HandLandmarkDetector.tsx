@@ -202,7 +202,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
         hands.close();
       }
     };
-  }, [imageUrl, testMode, onRingPositions, hiddenPoints]);
+  }, [imageUrl, testMode, onRingPositions]);
 
   // 포인트 클릭 시 해당 숫자 숨김
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
