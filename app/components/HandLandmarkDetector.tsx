@@ -25,7 +25,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
   const [error, setError] = useState<string | null>(null);
   const [landmarks, setLandmarks] = useState<{x: number, y: number}[]>([]);
   const [hiddenPoints, setHiddenPoints] = useState<Set<number>>(new Set());
-  const [ringPositions, setRingPositions] = useState<any[]>([]);
+  const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
       isMounted = false;
       hands?.close();
     };
-  }, [imageUrl, testMode]);
+  }, [imageUrl, testMode, onRingPositions, hiddenPoints]);
 
   // 포인트 클릭 시 해당 숫자 숨김
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {

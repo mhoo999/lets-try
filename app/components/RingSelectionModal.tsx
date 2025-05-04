@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-interface RingColor {
+export interface RingColor {
   id: string;
   name: string;
   colorCode: string;
   imageUrl: string;
 }
 
-interface Ring {
+export interface Ring {
   id: string;
   name: string;
   imageUrl: string;
