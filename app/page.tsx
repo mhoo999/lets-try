@@ -148,20 +148,26 @@ export default function Home() {
                   const selection = ringSelections[pos.finger];
                   if (!selection) return null;
                   const base = 55; // 크기 고정
+                  const style = {
+                    position: 'absolute',
+                    left: pos.centerX,
+                    top: pos.centerY,
+                    width: base,
+                    height: base,
+                    transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
+                    pointerEvents: 'none',
+                  } as React.CSSProperties;
+                  console.log('[오버레이 디버그]', {
+                    finger: pos.finger,
+                    src: selection.color.imageUrl,
+                    ...style
+                  });
                   return (
                     <img
                       key={pos.finger}
                       src={selection.color.imageUrl}
                       alt={`${pos.finger} ring`}
-                      style={{
-                        position: 'absolute',
-                        left: pos.centerX,
-                        top: pos.centerY,
-                        width: base,
-                        height: base,
-                        transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
-                        pointerEvents: 'none',
-                      }}
+                      style={style}
                     />
                   );
                 })}
