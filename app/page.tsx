@@ -132,7 +132,7 @@ export default function Home() {
       const oldCanvas = document.getElementById('share-preview-canvas');
       if (oldCanvas) document.body.removeChild(oldCanvas);
 
-      const display = document.querySelector('.w-[80vw].aspect-square img') as HTMLImageElement | null;
+      const display = document.getElementById('hand-photo') as HTMLImageElement | null;
       const displayWidth = display?.width || handImg.width;
       const displayHeight = display?.height || handImg.height;
 
@@ -218,6 +218,7 @@ export default function Home() {
             {imageUrl ? (
               <>
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
+                <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
                 {/* 반지 합성 오버레이 */}
                 {ringPositions.map((pos) => {
                   if (pos.finger !== selectedFinger) return null;
