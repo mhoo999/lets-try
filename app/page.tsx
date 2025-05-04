@@ -143,19 +143,17 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
-  const shareImage = async (canvas: HTMLCanvasElement) => {
-    try {
-      if (!navigator.share) throw new Error('Web Share API 미지원');
-      const blob = await generateFinalImage(canvas);
-      const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
-      await navigator.share({
+  const shareImage = () => {
+    if (navigator.share) {
+      navigator.share({
         title: 'haime 반지 합성',
         text: '내 손에 반지를 합성해봤어요!',
-        files: [file]
-      });
-    } catch {
-      // fallback: 다운로드
-      if (canvas) downloadImage(canvas);
+        url: window.location.href,
+      })
+        .then(() => console.log('공유 성공'))
+        .catch((error) => console.log('공유 실패', error));
+    } else {
+      alert('공유하기가 지원되지 않는 환경 입니다.');
     }
   };
 
@@ -258,9 +256,7 @@ export default function Home() {
             className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
-            onClick={() => {
-              if (canvasRef.current) shareImage(canvasRef.current);
-            }}
+            onClick={shareImage}
           >
             Share
           </button>
