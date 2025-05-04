@@ -128,28 +128,40 @@ export default function Home() {
     const handImg = new window.Image();
     handImg.src = imageUrl;
     handImg.onload = () => {
-      // 임시 캔버스 생성
+      // 화면에 보이는 이미지 크기(예: 300x300)
+      const display = document.querySelector('.w-[80vw].aspect-square img') as HTMLImageElement | null;
+      const displayWidth = display?.width || handImg.width;
+      const displayHeight = display?.height || handImg.height;
+
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = handImg.width;
       tempCanvas.height = handImg.height;
       const ctx = tempCanvas.getContext('2d');
       if (!ctx) return;
-      // 손 사진 먼저 그림
       ctx.drawImage(handImg, 0, 0, handImg.width, handImg.height);
-      // 반지 오버레이(선택된 손가락/반지)도 그림
+
       const pos = ringPositions.find(p => p.finger === selectedFinger);
       const selection = selectedFinger ? ringSelections[selectedFinger] : undefined;
       if (pos && selection) {
         const ringImg = new window.Image();
         ringImg.src = selection.color.imageUrl;
         ringImg.onload = () => {
+          // 좌표 변환
+          const scaleX = handImg.width / displayWidth;
+          const scaleY = handImg.height / displayHeight;
+          const realX = pos.centerX * scaleX;
+          const realY = pos.centerY * scaleY;
+          const base = 55 * scaleX;
+
           ctx.save();
-          ctx.translate(pos.centerX, pos.centerY);
+          ctx.translate(realX, realY);
           ctx.rotate(pos.angle + Math.PI / 2);
-          const base = 55;
           ctx.drawImage(ringImg, -base / 2, -base / 2, base, base);
           ctx.restore();
-          // 합성 이미지 Blob 생성 및 공유
+
+          // (디버깅) 실제 합성 이미지를 body에 추가해서 눈으로 확인
+          // document.body.appendChild(tempCanvas);
+
           tempCanvas.toBlob(async (blob) => {
             if (!blob) {
               alert('이미지 생성 실패');
