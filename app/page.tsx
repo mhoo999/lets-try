@@ -20,7 +20,6 @@ export default function Home() {
   const [ringSelected, setRingSelected] = useState(false); // 반지 선택 여부
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -120,28 +119,6 @@ export default function Home() {
     console.log('ringSelections', ringSelections);
     console.log('selectedFinger', selectedFinger);
   }, [ringPositions, ringSelections, selectedFinger]);
-
-  // 공유/저장 기능 함수 추가
-  const generateFinalImage = (canvas: HTMLCanvasElement): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(blob => {
-        if (blob) resolve(blob);
-        else reject(new Error('이미지 생성 실패'));
-      }, 'image/jpeg', 0.95);
-    });
-  };
-
-  const downloadImage = async (canvas: HTMLCanvasElement) => {
-    const blob = await generateFinalImage(canvas);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'haime-lets-try.jpg';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
 
   const shareImage = () => {
     if (navigator.share) {
