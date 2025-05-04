@@ -234,7 +234,7 @@ export default function Home() {
       <div className="flex flex-col items-center w-full mb-[2vh]">
         {/* FingerPills: 반지 선택 전에는 비활성화 */}
         <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={!ringSelected} />
-        <div className="flex flex-col gap-[1vh] items-center w-full mt-[2.5vh]">
+        <div className="flex flex-col gap-[1.5vh] items-center w-full mt-[2.5vh]">
           {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
           <button
             className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
@@ -242,7 +242,7 @@ export default function Home() {
             onClick={handleOpenRingModal}
             disabled={!imageUrl}
           >
-            Select a ring
+            반지 선택하기
           </button>
 
           {/* 네임택(Pill) */}
@@ -253,17 +253,19 @@ export default function Home() {
             {lastSelectedRing ? lastSelectedRing.name : '-'}
           </div>
 
-          {/* 공유/저장 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
-          <div className="flex gap-2 w-full justify-center mt-2">
-            <button
-              className={`w-[24vw] h-[4vh] rounded-full font-semibold text-base flex items-center justify-center mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#1a1f26] hover:bg-[#11141a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
-              type="button"
-              disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
-              onClick={() => canvasRef.current && shareImage(canvasRef.current)}
-            >
-              Share
-            </button>
-          </div>
+          {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
+          <button
+            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            type="button"
+            disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
+            onClick={() => {
+              if (canvasRef.current && imageUrl && selectedFinger && ringSelections[selectedFinger]) {
+                shareImage(canvasRef.current);
+              }
+            }}
+          >
+            Share
+          </button>
         </div>
       </div>
       {/* 반지 선택 모달 */}
