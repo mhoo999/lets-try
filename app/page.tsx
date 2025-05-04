@@ -18,7 +18,6 @@ export default function Home() {
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
   const [isRingApplied, setIsRingApplied] = useState(false);
-  const fingers = ['엄지', '검지', '중지', '약지', '소지'];
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
