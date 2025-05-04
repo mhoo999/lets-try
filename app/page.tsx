@@ -120,18 +120,35 @@ export default function Home() {
     console.log('selectedFinger', selectedFinger);
   }, [ringPositions, ringSelections, selectedFinger]);
 
-  const shareImage = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'haime 반지 합성',
-        text: '내 손에 반지를 합성해봤어요!',
-        url: window.location.href,
-      })
-        .then(() => console.log('공유 성공'))
-        .catch((error) => console.log('공유 실패', error));
-    } else {
-      alert('공유하기가 지원되지 않는 환경 입니다.');
+  const shareImage = async () => {
+    // 1. 캔버스 요소 가져오기
+    const canvas = document.querySelector('canvas');
+    if (!canvas) {
+      alert('합성 이미지가 없습니다.');
+      return;
     }
+    // 2. Blob 생성
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        alert('이미지 생성 실패');
+        return;
+      }
+      const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
+      // 3. Web Share API로 파일 공유
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'haime 반지 합성',
+            text: '내 손에 반지를 합성해봤어요!',
+          });
+        } catch (err) {
+          alert('공유 실패: ' + err);
+        }
+      } else {
+        alert('이 브라우저/환경에서는 이미지 파일 공유가 지원되지 않습니다.');
+      }
+    }, 'image/jpeg', 0.95);
   };
 
   return (
