@@ -8,7 +8,16 @@ interface HandLandmarkDetectorProps {
   testMode?: boolean;
 }
 
-export default function HandLandmarkDetector({ imageUrl, testMode = true }: HandLandmarkDetectorProps) {
+// 반지 위치 인덱스 쌍
+const RING_PAIRS = [
+  [2, 3],   // 엄지
+  [5, 6],  // 검지
+  [9, 10], // 중지
+  [13, 14],// 약지
+  [17, 18] // 소지
+];
+
+export default function HandLandmarkDetector({ imageUrl, testMode = false }: HandLandmarkDetectorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +36,6 @@ export default function HandLandmarkDetector({ imageUrl, testMode = true }: Hand
 
     const runDetection = async () => {
       if (!imageRef.current) return;
-      // 이미지가 로드될 때까지 대기
       await new Promise<void>((resolve, reject) => {
         if (imageRef.current?.complete) resolve();
         else imageRef.current!.onload = () => resolve();
@@ -55,6 +63,22 @@ export default function HandLandmarkDetector({ imageUrl, testMode = true }: Hand
             ctx.drawImage(imageRef.current, 0, 0, canvas.width, canvas.height);
             if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
               drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
+              // 반지 위치 가이드 표시
+              RING_PAIRS.forEach(([a, b], idx) => {
+                if (points[a] && points[b]) {
+                  const px = (points[a].x + points[b].x) / 2 * canvas.width;
+                  const py = (points[a].y + points[b].y) / 2 * canvas.height;
+                  ctx.save();
+                  ctx.beginPath();
+                  ctx.arc(px, py, 18, 0, 2 * Math.PI);
+                  ctx.strokeStyle = '#3b82f6';
+                  ctx.lineWidth = 3;
+                  ctx.setLineDash([6, 6]);
+                  ctx.stroke();
+                  ctx.setLineDash([]);
+                  ctx.restore();
+                }
+              });
               // 숫자 표시 (테스트 모드)
               if (testMode) {
                 results.multiHandLandmarks[0].forEach((pt, idx) => {
