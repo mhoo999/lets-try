@@ -75,20 +75,19 @@ export default function Home() {
     setSelectedFinger(finger); // finger는 항상 영문
   };
 
+  // 반지 선택 버튼 클릭 시
+  const handleOpenRingModal = () => {
+    if (!selectedFinger) setSelectedFinger('thumb');
+    setModalOpen(true);
+  };
+
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
   const handleRingApply = (ring: Ring, color: RingColor) => {
-    if (!selectedFinger) {
-      setSelectedFinger('thumb');
-      setRingSelections(prev => ({
-        ...prev,
-        ['thumb']: { ring, color }
-      }));
-    } else {
-      setRingSelections(prev => ({
-        ...prev,
-        [selectedFinger]: { ring, color }
-      }));
-    }
+    if (!selectedFinger) return; // 방어
+    setRingSelections(prev => ({
+      ...prev,
+      [selectedFinger]: { ring, color }
+    }));
     setIsRingApplied(true);
     setModalOpen(false);
   };
@@ -185,7 +184,7 @@ export default function Home() {
           <button
             className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
-            onClick={() => setModalOpen(true)}
+            onClick={handleOpenRingModal}
             disabled={!imageUrl}
           >
             반지 선택하기
