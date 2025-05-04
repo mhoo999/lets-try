@@ -78,12 +78,13 @@ export default function Home() {
 
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
   const handleRingApply = (ring: Ring, color: RingColor) => {
-    if (!selectedFinger) return;
     setRingSelections(prev => ({
       ...prev,
-      [selectedFinger]: { ring, color }
+      ['thumb']: { ring, color } // 엄지에 우선 적용
     }));
     setIsRingApplied(true);
+    setSelectedFinger('thumb'); // 엄지 디폴트 선택
+    setModalOpen(false);
   };
 
   // rings.json의 모든 반지/컬러 이미지 프리로드
@@ -137,7 +138,6 @@ export default function Home() {
                 {ringPositions.map((pos) => {
                   const selection = ringSelections[pos.finger];
                   if (!selection) return null;
-                  // 손가락 길이에 따라 반지 이미지 크기 동적 조정 (기본값 55, 최소 30, 최대 80)
                   const base = pos.length ? Math.max(30, Math.min(80, pos.length * 1.2)) : 55;
                   return (
                     <img
@@ -183,7 +183,7 @@ export default function Home() {
             className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
             style={{ margin: '0 auto' }}
           >
-            {selectedFinger ? ringSelections[selectedFinger]?.ring.name : '-'}
+            {selectedFinger && ringSelections[selectedFinger]?.ring?.name ? ringSelections[selectedFinger].ring.name : '-'}
           </div>
 
           {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
