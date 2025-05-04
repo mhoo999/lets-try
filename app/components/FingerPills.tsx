@@ -1,6 +1,6 @@
 import React from 'react';
 
-const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+const fingers = ['엄지', '검지', '중지', '약지', '소지'];
 
 interface FingerPillsProps {
   selected?: string;
