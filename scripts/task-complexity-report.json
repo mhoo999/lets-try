@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "generatedAt": "2025-05-04T05:09:50.573Z",
+    "tasksAnalyzed": 15,
+    "thresholdScore": 5,
+    "projectName": "Taskmaster",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "프로젝트 세팅: Next.js 및 TypeScript",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the project setup task into specific subtasks covering: 1) Next.js installation and configuration, 2) TypeScript and linting setup, and 3) project structure and version control initialization.",
+      "reasoning": "This is a standard project setup task with well-defined steps. While it requires technical knowledge, the process is straightforward with clear documentation available. The task already includes detailed steps but could benefit from being organized into logical groupings."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "기본 UI 레이아웃 및 컴포넌트 구현",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the UI implementation task into subtasks for: 1) creating the core layout components (header, footer, main content), 2) implementing reusable UI elements (buttons, modals), 3) building the responsive design system, and 4) creating placeholder screens for the user flow.",
+      "reasoning": "This task involves creating multiple UI components with responsive design considerations. It requires understanding the Figma design and implementing it with Tailwind CSS. The complexity comes from ensuring consistency across components and responsive behavior across devices."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "이미지 업로드 및 미리보기 구현",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the image upload functionality into: 1) implementing drag-and-drop and file selection, 2) adding camera access for photo capture, 3) creating client-side image validation and processing, and 4) building the preview component with positioning guidance.",
+      "reasoning": "This task involves handling file uploads, camera access, and client-side image processing. It requires working with browser APIs and ensuring good user experience across devices. The complexity comes from handling different input methods and ensuring proper validation and preview functionality."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "MediaPipe Hands 연동 및 손가락 인식",
+      "complexityScore": 9,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the MediaPipe integration task into: 1) setting up the MediaPipe Hands library, 2) creating the hand landmark detection system, 3) mapping detected landmarks to the application's data model, 4) implementing visualization of detected points, and 5) handling edge cases and error conditions.",
+      "reasoning": "This is one of the most complex tasks in the project, involving computer vision and machine learning integration. It requires working with the MediaPipe library to detect hand landmarks accurately and mapping them to the application's data model. The complexity comes from ensuring accurate detection across different hand positions and handling various edge cases."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "반지 이미지 저장소 및 불러오기 설정",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the ring image storage task into: 1) setting up the storage service (S3 or Supabase), 2) organizing and uploading ring images with proper metadata, and 3) implementing client-side fetching with caching.",
+      "reasoning": "This task involves setting up external storage and implementing client-side fetching. While it requires working with external services, the implementation is relatively straightforward. The complexity comes from organizing the images properly and implementing efficient fetching and caching."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "반지 선택 UI 구현",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the ring selection UI task into: 1) creating the finger selection component, 2) implementing the ring type selection interface, 3) building the color selection options, and 4) developing the state management system for tracking selections.",
+      "reasoning": "This task involves creating multiple interactive UI components and implementing state management for user selections. It requires coordination with the design and ensuring a good user experience. The complexity comes from managing the state of selected rings for each finger and providing an intuitive selection interface."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "손가락에 반지 오버레이 구현",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the ring overlay implementation into: 1) creating the canvas-based rendering system, 2) implementing positioning algorithms based on finger detection, 3) adding scaling and rotation adjustments, 4) handling z-index and layering for realistic appearance, and 5) optimizing performance for mobile devices.",
+      "reasoning": "This is a complex task that involves canvas manipulation, image processing, and precise positioning. It requires coordinating data from the finger detection with the ring images to create realistic overlays. The complexity comes from ensuring accurate positioning, proper scaling, and good performance across devices."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "결과 이미지 생성 기능 구현",
+      "complexityScore": 6,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide the result image generation task into: 1) implementing canvas-to-image conversion with branding elements, 2) optimizing image quality and file size for sharing, and 3) creating the preview and download functionality.",
+      "reasoning": "This task involves generating a final image from the canvas with overlaid rings. It requires working with canvas APIs and image optimization. The complexity comes from adding branding elements and ensuring good image quality while maintaining reasonable file sizes for sharing."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Web Share API 연동",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the Web Share API integration into: 1) implementing the primary sharing functionality with the Web Share API, 2) creating fallback options for unsupported browsers, and 3) designing and implementing the sharing UI with various options.",
+      "reasoning": "This task involves integrating with the Web Share API and providing fallback options. While it requires working with browser APIs, the implementation is relatively straightforward. The complexity comes from handling different browser capabilities and providing a consistent experience across platforms."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "개인정보 고지 및 데이터 처리 구현",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the privacy notice implementation into: 1) creating clear privacy notices in both Korean and English, 2) implementing technical safeguards for client-side-only processing, 3) adding visual indicators for local processing, and 4) developing the comprehensive privacy policy page.",
+      "reasoning": "This task involves creating privacy notices and implementing safeguards to ensure user data privacy. It requires careful consideration of privacy concerns and clear communication to users. The complexity comes from ensuring technical compliance and providing clear information in multiple languages."
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "사용자 플로우 및 네비게이션 구현",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the user flow implementation into: 1) creating the step-by-step navigation system, 2) implementing progress indicators and transitions, 3) building the back/forward navigation functionality, and 4) ensuring responsive behavior across devices.",
+      "reasoning": "This task involves implementing the complete user flow and navigation system. It requires coordinating multiple components and ensuring a smooth user experience. The complexity comes from managing state across steps and providing intuitive navigation with proper transitions."
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "에러 처리 및 예외 상황 대응",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the error handling implementation into: 1) creating React error boundaries for component-level errors, 2) implementing user-friendly error messages in both languages, 3) adding fallbacks for unsupported features, and 4) developing retry mechanisms for failed operations.",
+      "reasoning": "This task involves implementing comprehensive error handling throughout the application. It requires anticipating various failure scenarios and providing appropriate user feedback. The complexity comes from handling different types of errors gracefully and ensuring a good user experience even when things go wrong."
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "성능 최적화 및 로딩 개선",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the performance optimization task into: 1) implementing code splitting and lazy loading, 2) optimizing image processing and rendering, 3) adding loading indicators for async operations, 4) implementing performance monitoring, and 5) optimizing MediaPipe initialization and processing.",
+      "reasoning": "This task involves optimizing the application for performance, especially on mobile devices. It requires profiling and addressing performance bottlenecks throughout the application. The complexity comes from balancing performance with functionality and ensuring good user experience during loading and processing."
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "익명 사용 분석 및 트래킹",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide the analytics implementation into: 1) setting up privacy-focused analytics services, 2) implementing event tracking for key user interactions, and 3) adding user opt-out functionality with appropriate notices.",
+      "reasoning": "This task involves implementing anonymous usage analytics. While it requires integration with analytics services, the implementation is relatively straightforward. The complexity comes from ensuring privacy compliance and tracking meaningful events without collecting personal data."
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "배포 준비 및 런칭",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the deployment preparation into: 1) configuring production build settings and environment variables, 2) setting up Vercel deployment with proper domains, 3) implementing SEO and social sharing metadata, and 4) conducting final cross-browser and device testing.",
+      "reasoning": "This task involves finalizing the application for production deployment. It requires attention to detail across various aspects of the application. The complexity comes from ensuring everything works correctly in the production environment and addressing any issues that arise during final testing."
+    }
+  ]
+}
