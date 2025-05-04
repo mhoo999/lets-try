@@ -10,7 +10,7 @@ export default function HandGuide({ imageUrl }: { imageUrl?: string }) {
         src={imageUrl || defaultImage}
         alt={imageUrl ? '손 사진' : '기본 손 가이드'}
         fill
-        className="object-contain"
+        className="object-cover"
         sizes="100vw"
         priority
       />
