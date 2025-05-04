@@ -1,111 +1,122 @@
 # Task ID: 6
-# Title: 반지 선택 UI 구현
+# Title: 손가락별 반지 합성 및 시뮬레이션
 # Status: pending
-# Dependencies: 2, 5
-# Priority: medium
-# Description: Develop the UI for selecting ring types and colors for each finger, following the Figma design.
+# Dependencies: 3, 5
+# Priority: high
+# Description: Implement the functionality to overlay selected rings on specific fingers based on user selection, with support for different rings and colors on each finger.
 # Details:
-1. Create a finger selection component that allows users to select which finger to add a ring to
-2. Implement a ring type selection UI with visual thumbnails
-3. Add color selection options for each ring type
-4. Create a state management system to track selected rings for each finger
-5. Implement UI for removing or changing ring selections
-
-Example implementation:
-```tsx
-import { useState } from 'react'
-import { RingImage } from '../utils/ringImages'
-
-interface RingSelectionProps {
-  availableRings: RingImage[]
-  onSelectRing: (finger: string, ringId: string) => void
+1. Create a data structure to track ring selections for each finger:
+```typescript
+interface FingerRingSelection {
+  finger: string;
+  ringId: string | null;
+  colorId: string | null;
 }
 
-export default function RingSelection({ availableRings, onSelectRing }: RingSelectionProps) {
-  const [selectedFinger, setSelectedFinger] = useState<string | null>(null)
-  const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky']
-  
-  const ringTypes = [...new Set(availableRings.map(ring => ring.type))]
-  const ringColors = [...new Set(availableRings.map(ring => ring.color))]
-  
-  const [selectedType, setSelectedType] = useState(ringTypes[0])
-  const [selectedColor, setSelectedColor] = useState(ringColors[0])
-  
-  const handleRingSelect = () => {
-    if (!selectedFinger) return
-    
-    const selectedRing = availableRings.find(
-      ring => ring.type === selectedType && ring.color === selectedColor
-    )
-    
-    if (selectedRing) {
-      onSelectRing(selectedFinger, selectedRing.id)
-    }
-  }
-  
-  return (
-    <div className="p-4">
-      <h3 className="text-lg font-bold">Select a finger</h3>
-      <div className="flex space-x-2 my-4">
-        {fingers.map(finger => (
-          <button
-            key={finger}
-            className={`px-3 py-2 rounded ${selectedFinger === finger ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            onClick={() => setSelectedFinger(finger)}
-          >
-            {finger}
-          </button>
-        ))}
-      </div>
-      
-      {selectedFinger && (
-        <>
-          <h3 className="text-lg font-bold mt-4">Select ring type</h3>
-          <div className="flex space-x-2 my-4">
-            {ringTypes.map(type => (
-              <button
-                key={type}
-                className={`px-3 py-2 rounded ${selectedType === type ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                onClick={() => setSelectedType(type)}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
-          
-          <h3 className="text-lg font-bold mt-4">Select color</h3>
-          <div className="flex space-x-2 my-4">
-            {ringColors.map(color => (
-              <button
-                key={color}
-                className={`px-3 py-2 rounded ${selectedColor === color ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                onClick={() => setSelectedColor(color)}
-              >
-                {color}
-              </button>
-            ))}
-          </div>
-          
-          <button
-            className="px-4 py-2 bg-green-500 text-white rounded mt-4"
-            onClick={handleRingSelect}
-          >
-            Apply Ring
-          </button>
-        </>
-      )}
-    </div>
-  )
-}
+const [fingerSelections, setFingerSelections] = useState<FingerRingSelection[]>([
+  { finger: 'thumb', ringId: null, colorId: null },
+  { finger: 'index', ringId: null, colorId: null },
+  { finger: 'middle', ringId: null, colorId: null },
+  { finger: 'ring', ringId: null, colorId: null },
+  { finger: 'pinky', ringId: null, colorId: null },
+]);
 ```
+2. Implement a canvas-based overlay system to place rings on fingers:
+```tsx
+const RingOverlay: React.FC<{
+  handImage: string;
+  fingerPositions: {finger: string, x: number, y: number}[];
+  fingerSelections: FingerRingSelection[];
+  rings: RingInfo[];
+}> = ({ handImage, fingerPositions, fingerSelections, rings }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Load the hand image
+    const img = new Image();
+    img.src = handImage;
+    img.onload = () => {
+      // Set canvas dimensions to match image
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      // Draw the hand image
+      ctx.drawImage(img, 0, 0);
+      
+      // Draw rings on fingers
+      fingerSelections.forEach(selection => {
+        if (!selection.ringId || !selection.colorId) return;
+        
+        const fingerPos = fingerPositions.find(fp => fp.finger === selection.finger);
+        if (!fingerPos) return;
+        
+        const ring = rings.find(r => r.id === selection.ringId);
+        if (!ring) return;
+        
+        const color = ring.availableColors.find(c => c.id === selection.colorId);
+        if (!color) return;
+        
+        // Load and draw the ring image at finger position
+        const ringImg = new Image();
+        ringImg.src = color.imageUrl;
+        ringImg.onload = () => {
+          // Calculate position and scale for the ring
+          const ringWidth = ringImg.width * 0.5; // Scale as needed
+          const ringHeight = ringImg.height * 0.5;
+          const x = fingerPos.x * canvas.width - ringWidth / 2;
+          const y = fingerPos.y * canvas.height - ringHeight / 2;
+          
+          ctx.drawImage(ringImg, x, y, ringWidth, ringHeight);
+        };
+      });
+    };
+  }, [handImage, fingerPositions, fingerSelections, rings]);
+  
+  return <canvas ref={canvasRef} className="ring-overlay-canvas" />;
+};
+```
+3. Implement finger pill selection to update active finger
+4. Create a mechanism to update ring selection for specific fingers
+5. Implement automatic thumb selection after initial ring choice
+6. Add visual feedback when a finger is selected
+7. Optimize ring positioning and scaling based on finger size
 
 # Test Strategy:
-Test the UI for usability and responsiveness. Verify that all ring types and colors are displayed correctly. Test the selection flow to ensure it's intuitive. Conduct user testing to gather feedback on the selection experience.
+1. Test ring overlay with various hand images and finger positions
+2. Verify that different rings can be applied to different fingers
+3. Test changing ring selections for specific fingers
+4. Verify that the visual representation matches the expected outcome
+5. Test with different ring images and colors
+6. Verify that the automatic thumb selection works correctly
 
 # Subtasks:
-## 6.1. 반지 선택 UI 구현 [pending]
+## 1. 손가락 선택 컴포넌트 개발 [pending]
 ### Dependencies: None
-### Description: 한글화된 UI 타이틀로 작업을 진행합니다. 기존 영문 타이틀 'Create Ring Selection UI'를 한글 '반지 선택 UI 구현'으로 UI 내에서 표시합니다.
+### Description: Develop the UI component that allows users to select which finger they want to place a ring on
 ### Details:
+Build an interactive finger selection interface that clearly shows all available finger options. Include visual indicators for selected fingers, implement touch/click interactions, and ensure the component is accessible. The component should communicate with the state management system when a finger is selected.
 
+## 2. 반지 종류 선택 UI 구현 [pending]
+### Dependencies: 6.1
+### Description: Create the UI for selecting different types of rings available for each finger
+### Details:
+Design and implement a component that displays all available ring types for the selected finger. Include thumbnail images, names, and possibly brief descriptions of each ring type. The interface should update dynamically based on the currently selected finger and communicate selections to the state management system.
+
+## 3. 컬러/재질 선택 옵션 구현 [pending]
+### Dependencies: 6.2
+### Description: Create the UI component for selecting ring colors and materials
+### Details:
+Create a color/material picker that shows available options for the selected ring type. Include visual swatches, material names, and possibly pricing differences. Implement hover/focus states to preview how colors look on the selected ring. Ensure the component integrates with the state management system to track color selections.
+
+## 4. 상태 관리 시스템 개발 [pending]
+### Dependencies: 6.1, 6.2, 6.3
+### Description: Implement the state management logic to track all user selections across the ring customization process
+### Details:
+Create a comprehensive state management solution that tracks which fingers have rings, what type of ring is on each finger, and what color/material is selected for each ring. Implement functions to update state when selections change, validate selections, and prepare the final selection data for submission. Include methods for resetting selections and loading previous configurations.
 

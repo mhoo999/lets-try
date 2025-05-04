@@ -1,49 +1,60 @@
 # Task ID: 8
-# Title: 결과 이미지 생성 기능 구현
+# Title: 개인정보 안내 및 사용자 가이드
 # Status: pending
-# Dependencies: 7
+# Dependencies: 2
 # Priority: medium
-# Description: Create functionality to generate a final image with rings overlaid on the hand that can be saved or shared.
+# Description: Implement privacy notices and user guidance throughout the application to ensure users understand that their hand images are not stored on servers.
 # Details:
-1. Create a utility to convert the canvas with overlaid rings to a downloadable image
-2. Add branding elements to the final image (haime logo, lets try watermark)
-3. Optimize image quality and file size for sharing
-4. Implement a preview of the final image before sharing
-
-Example implementation:
+1. Create a privacy notice component to be displayed during image upload:
 ```tsx
-export function generateResultImage(canvas: HTMLCanvasElement): Promise<string> {
-  return new Promise((resolve) => {
-    // Create a new canvas for the final image with branding
-    const resultCanvas = document.createElement('canvas')
-    const ctx = resultCanvas.getContext('2d')
-    if (!ctx) {
-      resolve('')
-      return
-    }
-    
-    // Set dimensions
-    resultCanvas.width = canvas.width
-    resultCanvas.height = canvas.height + 60 // Extra space for branding
-    
-    // Draw the original canvas content
-    ctx.drawImage(canvas, 0, 0)
-    
-    // Add branding
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, canvas.height, canvas.width, 60)
-    
-    ctx.font = 'bold 24px Arial'
-    ctx.fillStyle = '#000000'
-    ctx.textAlign = 'center'
-    ctx.fillText('haime - lets try', canvas.width / 2, canvas.height + 35)
-    
-    // Convert to image URL
-    const imageUrl = resultCanvas.toDataURL('image/jpeg', 0.9)
-    resolve(imageUrl)
-  })
-}
+const PrivacyNotice: React.FC = () => {
+  return (
+    <div className="privacy-notice">
+      <h3>Privacy Assurance</h3>
+      <p>
+        Your hand image is processed entirely in your browser and is never uploaded or stored on our servers.
+        All image processing happens locally on your device.
+      </p>
+    </div>
+  );
+};
 ```
+2. Implement tooltips and guidance text throughout the application
+3. Create a comprehensive help section explaining the process
+4. Add visual indicators showing that processing is happening client-side
+5. Implement a cookie consent banner if necessary
+6. Create a detailed privacy policy page
+7. Add visual cues to reinforce privacy messaging during key user actions
 
 # Test Strategy:
-Test image generation with various canvas inputs. Verify that branding elements are added correctly. Test image quality and file size optimization. Ensure the generated image can be downloaded and shared across different platforms and devices.
+1. Verify that privacy notices are clearly visible at appropriate points
+2. Test that guidance text is helpful and not intrusive
+3. Conduct user testing to ensure privacy messaging is understood
+4. Verify that no network requests containing image data are made
+5. Test accessibility of privacy notices for screen readers
+
+# Subtasks:
+## 1. 캔버스→이미지 변환 기능 [pending]
+### Dependencies: None
+### Description: Create functionality to convert the canvas with rings to an image format while adding branding elements
+### Details:
+Use HTML5 Canvas API to export the current canvas state to an image format (PNG/JPEG). Add logo, watermark or other branding elements to the exported image. Ensure the conversion maintains the visual quality of the rings and other elements from the canvas.
+
+## 2. 이미지 품질/용량 최적화 [pending]
+### Dependencies: 8.1
+### Description: Implement techniques to balance image quality with file size for optimal sharing
+### Details:
+Research and implement compression techniques for the exported images. Test different quality settings for JPEG or compression levels for PNG. Create a system that allows adjustable quality settings. Benchmark file sizes and visual quality to find the optimal balance for social media sharing.
+
+## 3. 이미지 미리보기 기능 [pending]
+### Dependencies: 8.1, 8.2
+### Description: Develop a preview system that shows users how their final image will look before downloading
+### Details:
+Build a modal or dedicated area in the UI that displays the processed image with all branding elements applied. Ensure the preview accurately represents what users will get when they download. Add options to adjust image settings from the preview if needed.
+
+## 4. 다운로드 기능 구현 [pending]
+### Dependencies: 8.1, 8.2, 8.3
+### Description: Create a system for users to download the generated image to their device
+### Details:
+Implement a download button that triggers the browser's download functionality. Ensure proper filename generation with appropriate extensions. Add options for different image formats if supported. Consider adding analytics to track download events.
+

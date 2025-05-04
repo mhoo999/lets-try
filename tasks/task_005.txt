@@ -1,51 +1,166 @@
 # Task ID: 5
-# Title: 반지 이미지 저장소 및 불러오기 설정
+# Title: 반지 선택 UI 및 팝업/컬러칩 구현
 # Status: pending
-# Dependencies: 1
-# Priority: medium
-# Description: 반지 이미지를 위한 외부 저장소(S3 또는 Supabase)를 구성하고 클라이언트 측에서 이미지를 불러오는 기능을 구현합니다.
+# Dependencies: 2, 4
+# Priority: high
+# Description: Implement the UI for selecting rings, including the selectring button, popup modal, and color chip selection according to the Figma design.
 # Details:
-1. 반지 이미지를 위한 S3 버킷 또는 Supabase 저장소 설정
-2. 타입과 색상별로 반지 이미지를 구성하는 폴더 구조 생성
-3. 투명 배경이 있는 샘플 반지 PNG 이미지 업로드
-4. 반지 이미지 URL을 가져오는 클라이언트 측 유틸리티 생성
-5. 성능 향상을 위한 캐싱 구현
-
-구현 예시:
+1. Create a SelectRing button component that activates after hand image upload
+2. Implement a modal/popup component for ring selection:
 ```tsx
-// utils/ringImages.ts
-interface RingImage {
-  id: string
-  type: string
-  color: string
-  imageUrl: string
-}
-
-// 이것은 일반적으로 저장소 서비스에서 가져옵니다
-const STORAGE_BASE_URL = 'https://your-storage-url.com/rings'
-
-export async function fetchRingImages(): Promise<RingImage[]> {
-  // 실제 구현에서는 JSON 매니페스트를 가져오거나
-  // API를 쿼리하여 사용 가능한 반지를 가져올 수 있습니다
-  // 지금은 정적 목록을 사용하겠습니다
+const RingSelectionModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectRing: (ringId: string, colorId: string) => void;
+}> = ({ isOpen, onClose, onSelectRing }) => {
+  const { rings, loading } = useContext(RingContext);
+  const [selectedRing, setSelectedRing] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   
-  return [
-    {
-      id: 'ring1',
-      type: 'simple',
-      color: 'gold',
-      imageUrl: `${STORAGE_BASE_URL}/simple/gold.png`
-    },
-    {
-      id: 'ring2',
-      type: 'simple',
-      color: 'silver',
-      imageUrl: `${STORAGE_BASE_URL}/simple/silver.png`
-    },
-    // 더 많은 반지...
-  ]
-}
+  const handleRingSelect = (ringId: string) => {
+    setSelectedRing(ringId);
+    // Default to first color
+    const ring = rings.find(r => r.id === ringId);
+    if (ring && ring.availableColors.length > 0) {
+      setSelectedColor(ring.availableColors[0].id);
+    }
+  };
+  
+  const handleColorSelect = (colorId: string) => {
+    setSelectedColor(colorId);
+  };
+  
+  const handleConfirm = () => {
+    if (selectedRing && selectedColor) {
+      onSelectRing(selectedRing, selectedColor);
+      onClose();
+    }
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Select a Ring</h2>
+        {loading ? (
+          <p>Loading rings...</p>
+        ) : (
+          <>
+            <div className="ring-grid">
+              {rings.map(ring => (
+                <div 
+                  key={ring.id} 
+                  className={`ring-item ${selectedRing === ring.id ? 'selected' : ''}`}
+                  onClick={() => handleRingSelect(ring.id)}
+                >
+                  <img src={ring.imageUrl} alt={ring.name} />
+                  <p>{ring.name}</p>
+                </div>
+              ))}
+            </div>
+            
+            {selectedRing && (
+              <div className="color-selection">
+                <h3>Select Color</h3>
+                <div className="color-chips">
+                  {rings
+                    .find(r => r.id === selectedRing)?
+                    .availableColors.map(color => (
+                      <div 
+                        key={color.id}
+                        className={`color-chip ${selectedColor === color.id ? 'selected' : ''}`}
+                        style={{ backgroundColor: color.colorCode }}
+                        onClick={() => handleColorSelect(color.id)}
+                      />
+                    ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="modal-actions">
+              <button onClick={onClose}>Cancel</button>
+              <button 
+                onClick={handleConfirm}
+                disabled={!selectedRing || !selectedColor}
+              >
+                Confirm
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 ```
+3. Implement the name tag component to display selected ring name
+4. Create finger pill components that can be toggled on/off
+5. Implement automatic selection of thumb after initial ring selection
+6. Ensure the modal automatically closes after selection
+7. Style all components according to Figma design
 
 # Test Strategy:
-저장소 서비스에서 반지 이미지가 올바르게 로드되는지 확인합니다. 다양한 이미지 크기와 형식으로 테스트하여 호환성을 보장합니다. 로딩 성능을 측정하고 필요한 경우 최적화를 구현합니다. 캐싱 메커니즘이 예상대로 작동하는지 테스트합니다.
+1. Test the modal opening and closing functionality
+2. Verify that ring and color selection works correctly
+3. Test the automatic thumb selection after initial ring choice
+4. Verify that the name tag updates correctly
+5. Test the UI on various screen sizes for responsive design
+6. Conduct usability testing to ensure the flow is intuitive
+
+# Subtasks:
+## 1. 클라우드 스토리지 연동 [pending]
+### Dependencies: None
+### Description: Configure either AWS S3 or Supabase storage for ring images
+### Details:
+Research and select the appropriate storage solution (S3 or Supabase). Create necessary buckets/containers with proper access permissions. Generate and securely store API keys or credentials. Document the storage structure and access patterns for the team.
+<info added on 2025-05-04T10:21:57.172Z>
+Research and select the appropriate storage solution (S3 or Supabase). Create necessary buckets/containers with proper access permissions. Generate and securely store API keys or credentials. Document the storage structure and access patterns for the team.
+
+## Supabase Storage 구현 계획
+
+### 스토리지 서비스 선택
+- Supabase Storage를 반지 이미지 저장소로 사용
+
+### 구현 단계
+1. Supabase 프로젝트 생성 및 Storage 서비스 활성화
+2. 'rings' 버킷 생성 (공개 읽기 권한 설정, 업로드 권한은 인증된 사용자로 제한)
+3. 반지 이미지 폴더 구조 설계 및 구현
+   - 경로 형식: /rings/{ringId}/{colorId}.png
+   - 모든 이미지는 탑뷰 PNG 형식으로 통일
+4. 보안 및 인증
+   - Supabase 서비스 키 및 익명 키 발급
+   - .env 파일에 안전하게 키 저장
+5. 클라이언트 연동
+   - Supabase JavaScript SDK 설치
+   - 환경 설정 및 초기화 코드 작성
+   - 이미지 가져오기 유틸리티 함수 구현
+
+### 작업 파일
+- scripts/supabase-init.md: Supabase 설정 가이드 문서
+- public/data/rings.json: 반지 메타데이터 (이미지 경로 포함)
+- .env: Supabase 키 저장
+- src/lib/supabase.ts: Supabase 클라이언트 유틸리티
+
+### 참고 자료
+- Supabase Storage 공식 문서: https://supabase.com/docs/guides/storage
+</info added on 2025-05-04T10:21:57.172Z>
+
+## 2. 이미지 메타데이터 스키마 정의 [pending]
+### Dependencies: 5.1
+### Description: Create a standardized metadata structure for ring images
+### Details:
+Define metadata fields (ring ID, category, material, style, dimensions, creation date, etc.). Create a JSON schema for validation. Implement naming conventions for files that reflect the metadata structure. Document the schema for team reference.
+
+## 3. 이미지 업로드 프로세스 구현 [pending]
+### Dependencies: 5.1, 5.2
+### Description: Develop scripts to organize and upload ring images with proper metadata
+### Details:
+Create scripts to batch process images (resize, optimize, rename). Implement metadata extraction or assignment. Develop upload functionality with error handling and retry logic. Test uploads with various image types and sizes. Document the upload process.
+
+## 4. 클라이언트 이미지 캐싱 [pending]
+### Dependencies: 5.3
+### Description: Develop efficient client-side image loading with proper caching
+### Details:
+Implement API endpoints for retrieving images based on metadata. Create client-side caching strategy (browser cache, IndexedDB, or memory cache). Implement lazy loading for image galleries. Add prefetching for anticipated user navigation. Test performance across different network conditions.
+

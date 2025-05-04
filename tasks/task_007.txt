@@ -1,105 +1,100 @@
 # Task ID: 7
-# Title: 손가락에 반지 오버레이 구현
+# Title: 결과 이미지 생성 및 공유 기능
 # Status: pending
-# Dependencies: 4, 5, 6
-# Priority: high
-# Description: Create functionality to overlay selected ring images on the detected finger positions in the uploaded hand image.
+# Dependencies: 6
+# Priority: medium
+# Description: Implement functionality to generate the final image with rings overlaid on fingers and provide options to download or share via Web Share API.
 # Details:
-1. Create a canvas-based rendering system to overlay ring images on the hand image
-2. Position and scale ring images based on detected finger positions
-3. Implement proper z-index ordering for realistic appearance
-4. Add rotation and perspective adjustments based on hand orientation
-5. Optimize rendering performance for mobile devices
-
-Example implementation:
-```tsx
-import { useRef, useEffect } from 'react'
-
-interface RingOverlayProps {
-  handImageSrc: string
-  fingerPositions: Array<{ finger: string, x: number, y: number }>
-  selectedRings: Array<{ finger: string, imageUrl: string }>
-}
-
-export default function RingOverlay({ handImageSrc, fingerPositions, selectedRings }: RingOverlayProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    
-    // Load the hand image
-    const handImage = new Image()
-    handImage.src = handImageSrc
-    handImage.onload = () => {
-      // Set canvas dimensions to match image
-      canvas.width = handImage.width
-      canvas.height = handImage.height
-      
-      // Draw the hand image
-      ctx.drawImage(handImage, 0, 0)
-      
-      // Draw each selected ring
-      selectedRings.forEach(ringInfo => {
-        const fingerPosition = fingerPositions.find(pos => pos.finger === ringInfo.finger)
-        if (!fingerPosition) return
-        
-        const ringImage = new Image()
-        ringImage.src = ringInfo.imageUrl
-        ringImage.onload = () => {
-          // Calculate position and scale for the ring
-          const ringWidth = ringImage.width * 0.5 // Scale as needed
-          const ringHeight = ringImage.height * 0.5
-          
-          // Position the ring centered on the finger position
-          const x = fingerPosition.x - (ringWidth / 2)
-          const y = fingerPosition.y - (ringHeight / 2)
-          
-          // Draw the ring
-          ctx.drawImage(ringImage, x, y, ringWidth, ringHeight)
-        }
-      })
-    }
-  }, [handImageSrc, fingerPositions, selectedRings])
-  
-  return <canvas ref={canvasRef} className="max-w-full h-auto" />
-}
+1. Create a function to generate the final image from the canvas:
+```typescript
+const generateFinalImage = (canvas: HTMLCanvasElement): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error('Failed to generate image'));
+      }
+    }, 'image/jpeg', 0.95);
+  });
+};
 ```
+2. Implement download functionality:
+```typescript
+const downloadImage = async (canvas: HTMLCanvasElement) => {
+  try {
+    const blob = await generateFinalImage(canvas);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'haime-lets-try.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Failed to download image:', error);
+  }
+};
+```
+3. Implement Web Share API integration:
+```typescript
+const shareImage = async (canvas: HTMLCanvasElement) => {
+  try {
+    if (!navigator.share) {
+      throw new Error('Web Share API not supported');
+    }
+    
+    const blob = await generateFinalImage(canvas);
+    const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });
+    
+    await navigator.share({
+      title: 'My Ring Try-On from haime',
+      text: 'Check out these rings I tried on with haime lets try!',
+      files: [file]
+    });
+  } catch (error) {
+    console.error('Failed to share image:', error);
+    // Fallback to download if sharing fails
+    downloadImage(canvas);
+  }
+};
+```
+4. Create UI components for download and share buttons
+5. Implement a share sheet for platforms without Web Share API support
+6. Add visual feedback during image generation and sharing
+7. Ensure the final image includes branding elements as specified in the design
 
 # Test Strategy:
-Test with various hand images and ring combinations. Verify that rings are positioned correctly on fingers. Test with different hand orientations and lighting conditions. Optimize and test performance on mobile devices.
+1. Test image generation with various ring combinations
+2. Verify download functionality works across browsers
+3. Test Web Share API on supported platforms
+4. Verify fallback mechanisms work on unsupported platforms
+5. Test image quality and size optimization
+6. Verify that no image data is sent to servers during sharing
 
 # Subtasks:
-## 1. Create Canvas-Based Rendering System [pending]
+## 1. 캔버스 렌더링 시스템 구현 [pending]
 ### Dependencies: None
-### Description: Develop a canvas-based rendering system for displaying ring overlays on detected fingers
+### Description: Implement a canvas-based rendering system for the ring overlay feature
 ### Details:
-Implement a canvas element that can be positioned over the camera feed. Create functions to load and render ring images onto the canvas. Set up the basic rendering pipeline that will be used to display rings at the correct positions. Include support for different ring designs and image formats.
+Set up an HTML5 canvas element that will be used for rendering the ring overlays. Implement the basic drawing context and initialization functions. Create a rendering loop that can efficiently update the canvas when needed. Include methods for loading and caching ring images to be used as overlays. Establish a basic architecture that separates rendering logic from application logic.
 
-## 2. Implement Finger Position Detection Algorithms [pending]
+## 2. 합성 위치 알고리즘 개발 [pending]
 ### Dependencies: 7.1
-### Description: Create algorithms to accurately position rings based on finger detection data
+### Description: Develop algorithms to position ring overlays based on finger detection data
 ### Details:
-Develop algorithms that use finger detection data to determine the exact position for ring placement. Calculate the correct position, orientation, and perspective for the ring based on knuckle and finger joint positions. Implement methods to handle different finger sizes and positions relative to the camera.
+Create algorithms that translate finger detection coordinates to canvas coordinates. Implement logic to determine the correct finger joint for ring placement. Add stabilization techniques to reduce jitter in positioning. Develop methods to handle different hand orientations and positions. Include fallback positioning when finger detection confidence is low.
 
-## 3. Add Scaling and Rotation Adjustments [pending]
+## 3. 스케일/회전 조정 기능 [pending]
 ### Dependencies: 7.1, 7.2
-### Description: Implement dynamic scaling and rotation of ring overlays to match finger movements
+### Description: Implement dynamic scaling and rotation of ring overlays based on finger orientation
 ### Details:
-Create functions to dynamically scale rings based on finger thickness and distance from camera. Implement rotation adjustments that follow the natural movement of fingers. Add perspective transformations to maintain realistic appearance as fingers move and rotate. Include smooth transitions when adjusting scale and rotation.
+Create algorithms to determine appropriate ring scaling based on detected finger width. Implement rotation adjustments that align rings with finger orientation. Add perspective transformations to match the viewing angle of the finger. Develop smooth transitions when scaling or rotating to prevent visual jumps. Include configuration options for different ring styles and their specific scaling requirements.
 
-## 4. Handle Z-Index and Layering [pending]
-### Dependencies: 7.1, 7.3
-### Description: Implement proper z-index and layering for realistic ring appearance
+## 4. 모바일 성능 최적화 [pending]
+### Dependencies: 7.1, 7.2, 7.3
+### Description: Enhance rendering performance and implement z-index layering for realistic appearance
 ### Details:
-Develop a system to handle proper z-indexing so rings appear correctly positioned on fingers. Implement partial occlusion for when fingers overlap or when rings should appear partially hidden by the finger. Add shadow effects and highlights to enhance the realistic appearance of rings on fingers.
-
-## 5. Optimize Performance for Mobile Devices [pending]
-### Dependencies: 7.1, 7.2, 7.3, 7.4
-### Description: Optimize the rendering system for smooth performance on mobile devices
-### Details:
-Profile and optimize the rendering pipeline for mobile performance. Implement frame rate controls and resolution adjustments based on device capabilities. Add caching mechanisms for ring images and transformation calculations. Test and optimize for various mobile devices and browsers to ensure consistent performance.
+Implement proper z-index handling to ensure rings appear correctly relative to fingers. Add occlusion handling so rings can appear partially hidden by other fingers when appropriate. Optimize canvas operations for mobile GPU performance. Implement resolution scaling based on device capabilities. Add frame rate throttling for lower-end devices. Create performance monitoring tools to identify and address bottlenecks.
 

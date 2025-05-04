@@ -1,128 +1,97 @@
 # Task ID: 4
-# Title: MediaPipe Hands 연동 및 손가락 인식
-# Status: pending
-# Dependencies: 3
-# Priority: high
-# Description: Implement client-side hand and finger detection using MediaPipe Hands to identify finger positions from the uploaded image.
+# Title: 반지 이미지 관리 및 스토리지 연동
+# Status: done
+# Dependencies: 1
+# Priority: medium
+# Description: Set up integration with external storage (S3 or Supabase) for ring images and implement the client-side access to these images.
 # Details:
-1. Install MediaPipe Hands library
-2. Create a utility function to process the uploaded image
-3. Detect hand landmarks and extract finger positions
-4. Map the detected landmarks to the data model format: `{ finger: 'index', x: number, y: number }[]`
-5. Visualize the detected finger positions as an overlay on the image
-6. Handle edge cases (multiple hands, poor image quality, etc.)
-
-Example implementation:
-```tsx
-import * as handpose from '@tensorflow-models/handpose'
-import '@tensorflow/tfjs-backend-webgl'
-
-export async function detectFingers(imageElement: HTMLImageElement) {
-  // Load the MediaPipe Handpose model
-  const model = await handpose.load()
-  
-  // Detect the hand landmarks
-  const predictions = await model.estimateHands(imageElement)
-  
-  if (predictions.length > 0) {
-    // Map the landmarks to our data model
-    const fingerNames = ['thumb', 'index', 'middle', 'ring', 'pinky']
-    const fingerPositions = fingerNames.map((finger, idx) => {
-      // Get the tip of each finger (the last landmark of each finger)
-      const tipIdx = idx * 4 + 4
-      const landmark = predictions[0].landmarks[tipIdx]
-      
-      return {
-        finger,
-        x: landmark[0],
-        y: landmark[1]
-      }
-    })
-    
-    return fingerPositions
-  }
-  
-  return []
+1. Set up external storage (S3 or Supabase) for ring images
+2. Create a data structure for ring information:
+```typescript
+interface RingInfo {
+  id: string;
+  name: string;
+  imageUrl: string;
+  availableColors: {
+    id: string;
+    name: string;
+    colorCode: string;
+    imageUrl: string;
+  }[];
 }
 ```
+3. Implement a client-side service to fetch ring data:
+```typescript
+const fetchRings = async (): Promise<RingInfo[]> => {
+  // In a real implementation, this would fetch from an API
+  // For MVP, we can use a static JSON file stored in the public directory
+  const response = await fetch('/data/rings.json');
+  return response.json();
+};
+```
+4. Create a context provider for ring data:
+```tsx
+const RingContext = createContext<{
+  rings: RingInfo[];
+  loading: boolean;
+  error: Error | null;
+}>({ rings: [], loading: false, error: null });
+
+const RingProvider: React.FC = ({ children }) => {
+  const [rings, setRings] = useState<RingInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
+  useEffect(() => {
+    fetchRings()
+      .then(data => {
+        setRings(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        setLoading(false);
+      });
+  }, []);
+  
+  return (
+    <RingContext.Provider value={{ rings, loading, error }}>
+      {children}
+    </RingContext.Provider>
+  );
+};
+```
+5. Implement image preloading for better performance
 
 # Test Strategy:
-Test with various hand images in different positions, lighting conditions, and backgrounds. Verify accuracy of finger detection. Measure and optimize performance on mobile devices. Create a test suite with sample images to ensure consistent detection across different scenarios.
+1. Verify that ring images load correctly from external storage
+2. Test with various image sizes and formats
+3. Measure loading performance and optimize if needed
+4. Test error handling when images fail to load
+5. Verify that the ring data structure is correctly implemented
 
 # Subtasks:
-## 1. Set up MediaPipe Hands library [done]
+## 1. MediaPipe Hands 라이브러리 세팅 [done]
 ### Dependencies: None
-### Description: Install and configure the MediaPipe Hands library in the project environment
+### Description: Initialize and configure the MediaPipe Hands library in the application
 ### Details:
-Install MediaPipe library via npm or yarn, set up necessary configurations, and ensure compatibility with the current project structure. Verify the library is properly imported and initialized in the application.
+Install MediaPipe dependencies, import the library, and configure initial parameters like maximum number of hands to detect, detection confidence threshold, and tracking confidence threshold. Ensure the library is properly integrated with the application's build system.
 
-## 2. Implement hand landmark detection system [done]
+## 2. 손 랜드마크 검출 시스템 구현 [done]
 ### Dependencies: 4.1
-### Description: Create a system to detect and track hand landmarks using MediaPipe
+### Description: Implement the core functionality to detect hand landmarks from camera input
 ### Details:
-Implement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.
-<info added on 2025-05-04T08:00:13.711Z>
-Implement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.
+Set up the camera input pipeline, connect it to MediaPipe's hand detection model, and implement the processing loop that extracts the 21 hand landmarks per detected hand. Create a system that processes frames at an appropriate rate for real-time interaction.
 
-Implementation Plan:
-1. Create a new component (HandLandmarkDetector.tsx) or implement within app/page.tsx
-2. Import required MediaPipe libraries (@mediapipe/hands, @mediapipe/drawing_utils, @mediapipe/camera_utils)
-3. Initialize MediaPipe Hands with appropriate configuration:
-   - Set maxNumHands: 1
-   - Set modelComplexity: 1
-   - Configure detection confidence threshold (0.7)
-   - Configure tracking confidence threshold (0.7)
-4. Implement frame processing from video/image input
-5. Create onResults callback to extract the 21 landmark coordinates
-6. Store landmark data in component state
-7. Add basic visualization of landmarks on screen (to be enhanced in later subtasks)
-8. Handle client-side only execution to prevent SSR issues with window/document
-9. Prepare test images in public/ or assets/ folder
-
-Code structure will follow the MediaPipe Hands API pattern with proper initialization, configuration, and results handling. Performance considerations include managing resource loading time for WASM/JS files and adjusting processing based on device capabilities.
-</info added on 2025-05-04T08:00:13.711Z>
-<info added on 2025-05-04T08:02:20.752Z>
-The HandLandmarkDetector component has been successfully implemented with the following features:
-
-1. Created new component app/components/HandLandmarkDetector.tsx that:
-   - Accepts imageUrl as a prop to process images
-   - Initializes MediaPipe Hands library
-   - Detects 21 hand landmarks from the provided image
-   - Visualizes landmarks as points on a canvas overlay
-
-2. Implementation details:
-   - Properly handles SSR environment by restricting window/document access to useEffect
-   - Includes loading state management with appropriate UI feedback
-   - Implements error handling for detection failures
-   - Manages landmarks state for potential use by other components
-
-3. Integration with main application:
-   - Modified app/page.tsx to conditionally render HandLandmarkDetector when imageUrl is available
-   - Maintained HandGuide component as fallback when no image is present
-   - Ensured automatic landmark detection triggers upon image upload or capture
-
-4. Testing and validation:
-   - Basic functionality verified with test images
-   - Component responds appropriately to different image inputs
-
-The implementation follows the planned structure and successfully establishes the core hand landmark detection functionality. The system is now ready for the next phase of development, which will involve mapping the detected landmarks to the application data model (subtask 4.3) and enhancing visualization with connecting lines between landmarks.
-</info added on 2025-05-04T08:02:20.752Z>
-
-## 3. Map detected landmarks to application data model [done]
+## 3. 랜드마크 데이터 모델 매핑 [done]
 ### Dependencies: 4.2
-### Description: Transform MediaPipe landmark coordinates to the application's internal data structure
+### Description: Transform MediaPipe's landmark output format to the application's internal data representation
 ### Details:
-Create mapping functions that convert the raw MediaPipe landmark data (x, y, z coordinates) into the format required by the application. Implement normalization if needed and ensure the data is properly structured for further processing.
+Create a mapping system between MediaPipe's 21-point hand model and the application's data model. Implement normalization of coordinates, handle different hand orientations (left/right), and ensure consistent data flow between detection and the rest of the application.
 
-## 4. Implement visualization of detected hand points [in-progress]
+## 4. 시각화 및 예외 처리 [done]
 ### Dependencies: 4.3
-### Description: Create visual representation of the detected hand landmarks
+### Description: Create visual feedback of detected hand points and implement robust error handling
 ### Details:
-Develop visualization components that render the detected hand landmarks on screen. Implement drawing utilities for points and connections between landmarks. Add visual feedback for detection quality and hand positioning.
-
-## 5. Handle edge cases and error conditions [pending]
-### Dependencies: 4.2, 4.3, 4.4
-### Description: Implement robust error handling and support for various edge cases
-### Details:
-Address scenarios such as multiple hands detection, hand occlusion, poor lighting conditions, and performance degradation. Implement graceful error handling for cases when hand detection fails or produces unreliable results. Add appropriate user feedback mechanisms.
+Develop a visualization layer to display detected hand landmarks for debugging and user feedback. Implement comprehensive error handling for scenarios like no hands detected, poor lighting conditions, partial hand visibility, and tracking failures. Add recovery mechanisms to maintain application stability during detection issues.
 

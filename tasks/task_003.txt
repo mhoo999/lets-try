@@ -1,92 +1,101 @@
 # Task ID: 3
-# Title: 이미지 업로드 및 미리보기 구현
+# Title: MediaPipe Hands 손가락 인식 연동
 # Status: done
 # Dependencies: 2
 # Priority: high
-# Description: Create functionality for users to upload hand images either by taking a photo or selecting from their device, with appropriate guidance for optimal hand positioning.
+# Description: Integrate MediaPipe Hands library to detect and track finger positions on the uploaded hand image.
 # Details:
-1. Create an image upload component with drag-and-drop and file selection capabilities
-2. Add camera access functionality for direct photo capture
-3. Implement client-side image validation (format, size, dimensions)
-4. Create a preview component to display the uploaded image
-5. Add guidance overlay/instructions for optimal hand positioning
-6. Ensure all processing happens client-side without server uploads
-
-Example implementation:
-```tsx
-import { useState, useRef } from 'react'
-
-export default function ImageUpload() {
-  const [image, setImage] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // Client-side validation
-      if (!file.type.includes('image/')) {
-        alert('Please upload an image file')
-        return
-      }
-      
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setImage(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-  
-  return (
-    <div className="p-4">
-      <div 
-        className="border-2 border-dashed p-8 text-center cursor-pointer"
-        onClick={() => fileInputRef.current?.click()}
-      >
-        {image ? (
-          <img src={image} alt="Hand preview" className="max-w-full h-auto" />
-        ) : (
-          <p>Click to upload or take a photo of your hand</p>
-        )}
-      </div>
-      <input 
-        type="file" 
-        accept="image/*" 
-        className="hidden" 
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        capture="environment"
-      />
-    </div>
-  )
-}
+1. Install MediaPipe Hands library:
+```bash
+npm install @mediapipe/hands @mediapipe/drawing_utils @mediapipe/camera_utils
 ```
+2. Create a custom hook for hand detection:
+```tsx
+const useHandDetection = (imageElement: HTMLImageElement | null) => {
+  const [fingerPositions, setFingerPositions] = useState<{finger: string, x: number, y: number}[]>([]);
+  
+  useEffect(() => {
+    if (!imageElement) return;
+    
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+    });
+    
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+    
+    hands.onResults((results) => {
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        // Map MediaPipe landmarks to finger positions
+        const positions = [
+          { finger: 'thumb', x: landmarks[4].x, y: landmarks[4].y },
+          { finger: 'index', x: landmarks[8].x, y: landmarks[8].y },
+          { finger: 'middle', x: landmarks[12].x, y: landmarks[12].y },
+          { finger: 'ring', x: landmarks[16].x, y: landmarks[16].y },
+          { finger: 'pinky', x: landmarks[20].x, y: landmarks[20].y }
+        ];
+        setFingerPositions(positions);
+      }
+    });
+    
+    // Process the image
+    const canvas = document.createElement('canvas');
+    canvas.width = imageElement.width;
+    canvas.height = imageElement.height;
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(imageElement, 0, 0);
+    const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+    
+    if (imageData) {
+      hands.send({image: imageData});
+    }
+    
+    return () => {
+      hands.close();
+    };
+  }, [imageElement]);
+  
+  return fingerPositions;
+};
+```
+3. Implement visual indicators (pills) for each detected finger
+4. Add error handling for cases where hand detection fails
+5. Optimize for performance on mobile devices
 
 # Test Strategy:
-Test image upload with various file types and sizes to ensure proper validation. Test camera functionality on mobile devices. Verify that images are processed client-side only and not sent to any server. Test the UI guidance for clarity and effectiveness.
+1. Test hand detection with various hand images and positions
+2. Verify accuracy of finger position detection
+3. Test with different lighting conditions and backgrounds
+4. Measure and optimize performance on mobile devices
+5. Create test cases for error scenarios (no hand detected, multiple hands, etc.)
 
 # Subtasks:
-## 1. Implement drag-and-drop and file selection [done]
+## 1. 드래그&드롭/파일 선택 구현 [done]
 ### Dependencies: None
 ### Description: Create a component that allows users to upload images via drag-and-drop or traditional file selection dialog
 ### Details:
-Implement a drop zone area that highlights when files are dragged over it. Add file input for traditional selection. Handle both methods to accept image files. Provide visual feedback during the drag operation. Support multiple file selection if needed. Ensure cross-browser compatibility.
+Build a reusable component that handles both drag-and-drop functionality and traditional file input selection. Include visual feedback for drag events (hover, drop), handle multiple file attempts appropriately, and ensure cross-browser compatibility. Implement error handling for failed uploads and provide user feedback.
 
-## 2. Add camera access for photo capture [done]
+## 2. 카메라 촬영 기능 추가 [done]
 ### Dependencies: 3.1
 ### Description: Implement functionality to access device camera for direct photo capture within the application
 ### Details:
-Use the MediaDevices API to access the device camera. Create a camera interface with capture button. Handle permissions requests properly. Implement fallbacks for unsupported browsers. Consider both mobile and desktop experiences. Ensure captured photos are properly formatted for upload.
+Use the MediaDevices API to request camera access, create an interface for capturing photos directly from the camera, handle permission requests and denials gracefully, ensure mobile device compatibility, and provide fallback options when camera access isn't available or permitted.
 
-## 3. Create client-side image validation and processing [done]
+## 3. 이미지 유효성 검사 및 처리 [done]
 ### Dependencies: 3.1, 3.2
-### Description: Implement validation for file types, sizes, and dimensions, along with basic image processing capabilities
+### Description: Implement validation for file types, sizes, and dimensions along with basic client-side image processing
 ### Details:
-Validate file types (jpg, png, etc.). Check file size limits. Verify image dimensions meet requirements. Implement client-side image compression if needed. Add error handling with user-friendly messages. Consider implementing basic editing features like cropping or rotation if required.
+Validate uploaded images for acceptable file types (JPEG, PNG, etc.), file size limits, and dimension requirements. Implement client-side image processing including basic resizing, compression, and orientation correction. Provide clear feedback to users when validation fails and suggest remedies.
 
-## 4. Build preview component with positioning guidance [done]
+## 4. 미리보기 및 위치 가이드 구현 [done]
 ### Dependencies: 3.3
-### Description: Create an image preview component with overlay guides to help users position their images correctly
+### Description: Create an image preview component that shows the uploaded image with positioning guidance for users
 ### Details:
-Develop a preview component that shows the uploaded/captured image. Add overlay guides (grid lines, face detection markers, etc.) to help with positioning. Implement zoom and pan functionality if needed. Ensure the preview is responsive across different screen sizes. Add confirmation step before final submission.
+Develop a preview component that displays the uploaded/captured image with visual guides for proper positioning. Include features like zoom, pan, and crop functionality. Implement responsive design to ensure the preview works well across different screen sizes. Add visual indicators or overlays to help users position their images correctly.
 

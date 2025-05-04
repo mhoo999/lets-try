@@ -1,102 +1,195 @@
 # Task ID: 10
-# Title: 개인정보 고지 및 데이터 처리 구현
+# Title: 최종 통합 및 E2E 테스트
 # Status: pending
-# Dependencies: 3
+# Dependencies: 1, 2, 3, 4, 5, 6, 7, 8, 9
 # Priority: high
-# Description: Create privacy notices and implement client-side-only data handling to ensure user images are never stored on servers.
+# Description: Integrate all components into a cohesive application, implement comprehensive error handling, and conduct end-to-end testing.
 # Details:
-1. Create clear privacy notices explaining that images are processed client-side only
-2. Implement technical safeguards to ensure images are never sent to servers
-3. Add visual indicators showing when image processing is happening locally
-4. Create a privacy policy page with detailed information
-
-Example implementation:
+1. Create the main application component integrating all features:
 ```tsx
-import { useState } from 'react'
-
-export default function PrivacyNotice() {
-  const [isExpanded, setIsExpanded] = useState(false)
+const LetsTriApp: React.FC = () => {
+  const [step, setStep] = useState<'upload' | 'detection' | 'selection'>('upload');
+  const [handImage, setHandImage] = useState<string | null>(null);
+  const [fingerPositions, setFingerPositions] = useState<{finger: string, x: number, y: number}[]>([]);
+  const [activeFingerIndex, setActiveFingerIndex] = useState<number | null>(null);
+  const [fingerSelections, setFingerSelections] = useState<FingerRingSelection[]>([
+    { finger: 'thumb', ringId: null, colorId: null },
+    { finger: 'index', ringId: null, colorId: null },
+    { finger: 'middle', ringId: null, colorId: null },
+    { finger: 'ring', ringId: null, colorId: null },
+    { finger: 'pinky', ringId: null, colorId: null },
+  ]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Handle image upload
+  const handleImageUpload = (imageUrl: string) => {
+    setHandImage(imageUrl);
+    setStep('detection');
+  };
+  
+  // Handle finger detection completion
+  const handleDetectionComplete = (positions: {finger: string, x: number, y: number}[]) => {
+    setFingerPositions(positions);
+    setStep('selection');
+  };
+  
+  // Handle ring selection
+  const handleRingSelection = (ringId: string, colorId: string) => {
+    if (activeFingerIndex === null) {
+      // Default to thumb (index 0) for first selection
+      setActiveFingerIndex(0);
+      setFingerSelections(prev => {
+        const updated = [...prev];
+        updated[0] = { ...updated[0], ringId, colorId };
+        return updated;
+      });
+    } else {
+      setFingerSelections(prev => {
+        const updated = [...prev];
+        updated[activeFingerIndex] = { ...updated[activeFingerIndex], ringId, colorId };
+        return updated;
+      });
+    }
+  };
+  
+  // Handle finger pill selection
+  const handleFingerSelect = (index: number) => {
+    setActiveFingerIndex(index);
+  };
+  
+  // Handle sharing
+  const handleShare = async () => {
+    if (canvasRef.current) {
+      await shareImage(canvasRef.current);
+    }
+  };
+  
+  // Handle download
+  const handleDownload = async () => {
+    if (canvasRef.current) {
+      await downloadImage(canvasRef.current);
+    }
+  };
   
   return (
-    <div className="bg-gray-100 p-4 rounded-lg my-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold">Your Privacy is Protected</h3>
-        <button 
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-blue-500"
-        >
-          {isExpanded ? 'Show Less' : 'Learn More'}
-        </button>
-      </div>
+    <div className="lets-try-app">
+      <header>
+        <h1>haime lets try</h1>
+      </header>
       
-      <p className="mt-2">Your hand images are processed entirely on your device and are never uploaded to our servers.</p>
+      <main>
+        {step === 'upload' && (
+          <>
+            <PrivacyNotice />
+            <ImageUpload onUpload={handleImageUpload} />
+          </>
+        )}
+        
+        {step === 'detection' && handImage && (
+          <HandDetection 
+            image={handImage} 
+            onDetectionComplete={handleDetectionComplete} 
+          />
+        )}
+        
+        {step === 'selection' && handImage && fingerPositions.length > 0 && (
+          <>
+            <div className="ring-simulation-container">
+              <RingOverlay 
+                handImage={handImage}
+                fingerPositions={fingerPositions}
+                fingerSelections={fingerSelections}
+                rings={rings}
+                canvasRef={canvasRef}
+              />
+              
+              <div className="finger-pills">
+                {fingerPositions.map((pos, index) => (
+                  <FingerPill 
+                    key={pos.finger}
+                    finger={pos.finger}
+                    active={activeFingerIndex === index}
+                    hasRing={!!fingerSelections[index].ringId}
+                    onClick={() => handleFingerSelect(index)}
+                  />
+                ))}
+              </div>
+              
+              <button 
+                className="select-ring-button"
+                onClick={() => setShowRingModal(true)}
+              >
+                Select Ring
+              </button>
+              
+              <div className="name-tag">
+                {activeFingerIndex !== null && fingerSelections[activeFingerIndex].ringId && (
+                  <p>{getRingName(fingerSelections[activeFingerIndex].ringId)}</p>
+                )}
+              </div>
+              
+              <div className="share-actions">
+                <button onClick={handleDownload}>Download</button>
+                <button onClick={handleShare}>Share</button>
+              </div>
+            </div>
+            
+            <RingSelectionModal 
+              isOpen={showRingModal}
+              onClose={() => setShowRingModal(false)}
+              onSelectRing={handleRingSelection}
+            />
+          </>
+        )}
+      </main>
       
-      {isExpanded && (
-        <div className="mt-4">
-          <h4 className="font-semibold">How it works:</h4>
-          <ul className="list-disc pl-5 mt-2">
-            <li>All image processing happens in your browser</li>
-            <li>Hand detection uses MediaPipe which runs locally</li>
-            <li>Your images are never stored or transmitted</li>
-            <li>Only ring images are loaded from our servers</li>
-          </ul>
-        </div>
-      )}
+      <footer>
+        <p>© haime. All rights reserved.</p>
+      </footer>
     </div>
-  )
-}
+  );
+};
 ```
-
-한국어 버전 예시 구현:
-```tsx
-import { useState } from 'react'
-
-export default function PrivacyNotice() {
-  const [isExpanded, setIsExpanded] = useState(false)
-  
-  return (
-    <div className="bg-gray-100 p-4 rounded-lg my-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold">개인정보 보호</h3>
-        <button 
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-blue-500"
-        >
-          {isExpanded ? '간략히 보기' : '더 알아보기'}
-        </button>
-      </div>
-      
-      <p className="mt-2">손 이미지는 전적으로 사용자의 기기에서만 처리되며 서버로 업로드되지 않습니다.</p>
-      
-      {isExpanded && (
-        <div className="mt-4">
-          <h4 className="font-semibold">작동 방식:</h4>
-          <ul className="list-disc pl-5 mt-2">
-            <li>모든 이미지 처리는 브라우저에서 이루어집니다</li>
-            <li>손 감지는 로컬에서 실행되는 MediaPipe를 사용합니다</li>
-            <li>이미지는 저장되거나 전송되지 않습니다</li>
-            <li>반지 이미지만 서버에서 로드됩니다</li>
-          </ul>
-        </div>
-      )}
-    </div>
-  )
-}
-```
+2. Implement comprehensive error handling throughout the application
+3. Add loading states and fallback UI for all async operations
+4. Implement analytics to track user interactions (without collecting personal data)
+5. Create a global error boundary component
+6. Optimize performance with React.memo, useMemo, and useCallback
+7. Implement proper SEO metadata
+8. Add final polish based on Figma design
 
 # Test Strategy:
-Verify that no image data is sent to servers by monitoring network requests during usage. Test privacy notices for clarity and visibility in both English and Korean. Conduct user testing to ensure users understand the privacy protections. Review the implementation for any potential data leakage points.
+1. Conduct end-to-end testing of the complete user flow
+2. Test error scenarios and recovery
+3. Verify that all components work together correctly
+4. Test performance under various conditions
+5. Conduct cross-browser testing
+6. Verify mobile functionality
+7. Test accessibility compliance
+8. Conduct user acceptance testing
 
 # Subtasks:
-## 10.1. 한국어 개인정보 고지 구현 [pending]
+## 1. 한/영 개인정보 안내 작성 [pending]
 ### Dependencies: None
-### Description: 한국어 사용자를 위한 개인정보 고지 및 데이터 처리 안내를 구현합니다.
+### Description: Develop clear and concise privacy notices in both Korean and English languages that explain data handling practices
 ### Details:
+Create privacy notices that clearly communicate what data is collected, how it's used, and emphasize client-side processing. Ensure language is accessible to users with varying technical knowledge. Have both versions reviewed for accuracy, cultural appropriateness, and legal compliance in both languages.
 
-
-## 10.2. 다국어 지원 설정 [pending]
-### Dependencies: None
-### Description: 사용자 언어 설정에 따라 적절한 언어(영어/한국어)로 개인정보 고지가 표시되도록 구현합니다.
+## 2. 기술적 보호조치 구현 [pending]
+### Dependencies: 10.1
+### Description: Develop and implement technical safeguards to ensure client-side-only processing of user data
 ### Details:
+Create technical architecture that processes user data exclusively on the client side. Implement encryption for any temporary storage, verify no data is transmitted to servers without explicit consent, and document the implementation for technical review. Include automated tests to verify data containment.
 
+## 3. 시각적 개인정보 표시 [pending]
+### Dependencies: 10.2
+### Description: Design and implement visual indicators that clearly show users when data is being processed locally
+### Details:
+Create intuitive visual cues (icons, badges, or status indicators) that appear when local processing is active. Include tooltips or brief explanations of what these indicators mean. Ensure indicators are accessible and visible across different devices and screen sizes. Test with users to verify understanding.
+
+## 4. 개인정보 처리방침 페이지 [pending]
+### Dependencies: 10.1, 10.2, 10.3
+### Description: Create a detailed privacy policy page that incorporates all privacy aspects of the application
+### Details:
+Develop a comprehensive privacy policy page that includes all legal requirements, explains the technical safeguards in place, references the visual indicators, and provides detailed information about data handling practices. Include sections for user rights, data retention policies, and contact information for privacy concerns. Ensure the page is available in both Korean and English.
 

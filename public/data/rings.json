@@ -1,0 +1,40 @@
+[
+  {
+    "id": "test_ring_00",
+    "name": "테스트 반지 00",
+    "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/test_ring_00/gold.png",
+    "availableColors": [
+      {
+        "id": "gold",
+        "name": "골드",
+        "colorCode": "#FFD700",
+        "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/test_ring_00/gold.png"
+      },
+      {
+        "id": "silver",
+        "name": "실버",
+        "colorCode": "#C0C0C0",
+        "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/test_ring_00/silver.png"
+      }
+    ]
+  },
+  {
+    "id": "test_ring_01",
+    "name": "테스트 반지 01",
+    "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/test_ring_01/blue.png",
+    "availableColors": [
+      {
+        "id": "blue",
+        "name": "블루",
+        "colorCode": "#1E90FF",
+        "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/test_ring_01/blue.png"
+      },
+      {
+        "id": "pink",
+        "name": "핑크",
+        "colorCode": "#FFC0CB",
+        "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/test_ring_01/pink.png"
+      }
+    ]
+  }
+] 

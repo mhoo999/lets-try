@@ -2,470 +2,495 @@
   "tasks": [
     {
       "id": 1,
-      "title": "프로젝트 세팅: Next.js 및 TypeScript",
-      "description": "Initialize the project repository with Next.js, TypeScript, and Tailwind CSS according to the technical architecture requirements.",
-      "status": "done",
+      "title": "Next.js 및 TypeScript 프로젝트 세팅",
+      "description": "Initialize the project repository with Next.js, TypeScript, and Tailwind CSS as specified in the PRD.",
+      "details": "1. Create a new Next.js project with TypeScript support:\n```bash\nnpx create-next-app@latest lets-try --typescript\n```\n2. Install and configure Tailwind CSS:\n```bash\nnpm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n```\n3. Configure Tailwind CSS in tailwind.config.js and globals.css\n4. Set up project structure with folders for components, hooks, utils, and pages\n5. Configure ESLint and Prettier for code quality\n6. Set up deployment configuration for Vercel\n7. Create basic layout components (Header, Footer, Layout)",
+      "testStrategy": "1. Verify that the project builds without errors\n2. Confirm that Tailwind CSS is properly configured by testing a sample component\n3. Ensure TypeScript is correctly set up by checking type checking\n4. Test the deployment pipeline to Vercel",
+      "priority": "high",
       "dependencies": [],
-      "priority": "high",
-      "details": "1. Create a new Next.js project using `npx create-next-app@latest`\n2. Configure TypeScript support\n3. Install and configure Tailwind CSS\n4. Set up project structure with appropriate folders for components, hooks, utils, and pages\n5. Configure linting and formatting tools\n6. Set up version control with Git\n7. Configure deployment settings for Vercel\n\nExample command:\n```bash\nnpx create-next-app@latest lets-try --typescript --tailwind --eslint\ncd lets-try\ngit init\ngit add .\ngit commit -m \"Initial commit\"\n```",
-      "testStrategy": "Verify that the project builds successfully with `npm run build`. Ensure that TypeScript compilation works without errors. Test that Tailwind CSS is properly configured by creating a simple styled component.",
-      "subtasks": []
-    },
-    {
-      "id": 2,
-      "title": "기본 UI 레이아웃 및 컴포넌트 구현",
-      "description": "Implement the basic UI layout and components based on the Figma design, focusing on mobile-first responsive design.",
       "status": "done",
-      "dependencies": [
-        1
-      ],
-      "priority": "high",
-      "details": "1. Review the Figma design files\n2. Create reusable UI components:\n   - Header with haime brand logo\n   - Main content area\n   - Footer with privacy information\n   - Button components\n   - Modal/popup components\n   - Image upload area\n   - Ring selection interface\n3. Implement responsive layouts using Tailwind CSS\n4. Create placeholder screens for each step in the user flow\n\nExample component structure:\n```tsx\n// components/Header.tsx\nimport Image from 'next/image'\n\nexport default function Header() {\n  return (\n    <header className=\"flex items-center justify-between p-4\">\n      <div className=\"text-xl font-bold\">haime</div>\n      <div className=\"text-lg\">lets try</div>\n    </header>\n  )\n}\n```\n\n한글 제목: 기본 UI 레이아웃 및 컴포넌트 구현",
-      "testStrategy": "Manually test the UI components across different screen sizes to ensure responsive behavior. Verify that the components match the Figma design. Use Storybook or a similar tool to document and test components in isolation if time permits.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Create Core Layout Components",
-          "description": "Implement the fundamental layout structure including header, footer, and main content area",
+          "title": "Next.js 설치 및 설정",
+          "description": "Set up a new Next.js project with the necessary configurations",
           "dependencies": [],
-          "details": "Build reusable layout components that will serve as the foundation for all pages. Create the header with navigation elements, footer with site information, and a flexible main content container. Ensure these components follow the Figma design specifications and use Tailwind CSS for styling.",
+          "details": "Use create-next-app to initialize a new Next.js project. Configure the basic settings including the app router, CSS modules, and other initial preferences. Verify the installation by running the development server.",
           "status": "done"
         },
         {
           "id": 2,
-          "title": "Implement Reusable UI Elements",
-          "description": "Develop common UI components such as buttons, form inputs, cards, and modal dialogs",
+          "title": "TypeScript와 린트 환경 구축",
+          "description": "Configure TypeScript and ESLint for code quality",
           "dependencies": [
             1
           ],
-          "details": "Create a library of reusable UI elements that maintain consistent styling throughout the application. Implement buttons with different states (primary, secondary, disabled), form inputs with validation states, card components, and modal dialogs. Ensure all components are accessible and follow the design system guidelines.",
+          "details": "Configure tsconfig.json with appropriate TypeScript settings. Install and set up ESLint with recommended rules for Next.js and TypeScript. Add Prettier for code formatting. Create necessary configuration files and scripts in package.json for linting and type checking.",
           "status": "done"
         },
         {
           "id": 3,
-          "title": "Build Responsive Design System",
-          "description": "Implement responsive behavior for all components to ensure proper display across different device sizes",
+          "title": "프로젝트 폴더 구조 설계",
+          "description": "Establish the folder structure and organization for the project",
           "dependencies": [
             1,
             2
           ],
-          "details": "Develop a comprehensive responsive design system using Tailwind CSS breakpoints. Create utility classes for responsive layouts, implement media queries where needed, and test all components across mobile, tablet, and desktop viewports. Document responsive behavior patterns for future component development.",
+          "details": "Create essential directories like components, pages/app (depending on router), utils, styles, public, etc. Set up the basic layout components. Create placeholder files for main sections of the application. Document the project structure in a README file.",
           "status": "done"
         },
         {
           "id": 4,
-          "title": "Create Placeholder Screens for User Flow",
-          "description": "Develop initial screen layouts for the main user journey through the application",
+          "title": "버전 관리(Git) 초기화",
+          "description": "Set up Git repository and initial commit",
+          "dependencies": [
+            3
+          ],
+          "details": "Initialize Git repository. Create .gitignore file with appropriate rules for Next.js projects. Make initial commit with the project structure. Set up remote repository on GitHub/GitLab/etc. Create development branch for ongoing work. Document branching strategy if applicable.",
+          "status": "done"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "손등 이미지 업로드 및 가이드 구현",
+      "description": "Implement the functionality for users to upload hand images and provide a visual guide for proper hand positioning.",
+      "details": "1. Create an image upload component with drag-and-drop and file selection capabilities\n2. Implement client-side image validation (file type, size, dimensions)\n3. Add a visual guide component showing the correct hand positioning\n4. Create a preview component to display the uploaded image\n5. Implement responsive design for mobile optimization\n6. Add privacy notice explaining that images are not stored on servers\n\nExample code for image upload:\n```tsx\nconst ImageUpload = () => {\n  const [image, setImage] = useState<File | null>(null);\n  const [preview, setPreview] = useState<string | null>(null);\n  \n  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {\n    const file = e.target.files?.[0];\n    if (file && file.type.startsWith('image/')) {\n      setImage(file);\n      setPreview(URL.createObjectURL(file));\n    }\n  };\n  \n  return (\n    <div className=\"upload-container\">\n      <div className=\"guide-container\">\n        <img src=\"/hand-guide.png\" alt=\"Hand positioning guide\" />\n        <p>Position your hand as shown in the guide</p>\n      </div>\n      <input type=\"file\" accept=\"image/*\" onChange={handleUpload} />\n      {preview && <img src={preview} alt=\"Preview\" className=\"preview-image\" />}\n    </div>\n  );\n};\n```",
+      "testStrategy": "1. Test image upload with various file types, ensuring only images are accepted\n2. Verify preview functionality works correctly\n3. Test responsive design on different mobile devices\n4. Verify that the guide is clearly visible and helpful\n5. Confirm that no image data is sent to any server (network monitoring)",
+      "priority": "high",
+      "dependencies": [
+        1
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "레이아웃 핵심 컴포넌트 구현",
+          "description": "Implement the header, footer, and main content area components according to the Figma design",
+          "dependencies": [],
+          "details": "Build the foundational layout structure including the header with navigation, footer with site information, and the main content container. Ensure these components are properly structured for content flow and follow the design specifications. Use Tailwind CSS for styling and ensure proper semantic HTML elements are used.",
+          "status": "done"
+        },
+        {
+          "id": 2,
+          "title": "재사용 UI 요소 개발",
+          "description": "Develop reusable UI components such as buttons, modals, form elements, and cards",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a component library of reusable UI elements that maintain consistent styling throughout the application. Include various button states (primary, secondary, disabled), modal windows with overlay effects, form inputs with validation states, and content cards. Document component props and usage examples for team reference.",
+          "status": "done"
+        },
+        {
+          "id": 3,
+          "title": "반응형 디자인 시스템 구축",
+          "description": "Implement a responsive design system that works across mobile, tablet, and desktop viewports",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Develop a comprehensive responsive design system using Tailwind's breakpoint utilities. Create responsive variants for all components, implement appropriate spacing scales, and ensure text remains readable at all viewport sizes. Test thoroughly on various device sizes and orientations to ensure proper layout adaptation.",
+          "status": "done"
+        },
+        {
+          "id": 4,
+          "title": "플로우용 플레이스홀더 화면 구현",
+          "description": "Implement placeholder screens for the main user journey through the application",
           "dependencies": [
             1,
             2,
             3
           ],
-          "details": "Using the established components and responsive system, build placeholder screens that represent the key steps in the user flow. Include login/registration screens, dashboard views, and any critical transaction or interaction screens. These screens should use the previously created components and follow the responsive design patterns.",
+          "details": "Build skeleton screens for each step in the user flow, including landing page, authentication screens, dashboard, and feature pages. Use the previously created components to assemble these screens. Include basic navigation between screens and ensure the flow matches the intended user journey while maintaining responsive behavior across all devices.",
           "status": "done"
         }
       ]
     },
     {
       "id": 3,
-      "title": "이미지 업로드 및 미리보기 구현",
-      "description": "Create functionality for users to upload hand images either by taking a photo or selecting from their device, with appropriate guidance for optimal hand positioning.",
-      "status": "done",
+      "title": "MediaPipe Hands 손가락 인식 연동",
+      "description": "Integrate MediaPipe Hands library to detect and track finger positions on the uploaded hand image.",
+      "details": "1. Install MediaPipe Hands library:\n```bash\nnpm install @mediapipe/hands @mediapipe/drawing_utils @mediapipe/camera_utils\n```\n2. Create a custom hook for hand detection:\n```tsx\nconst useHandDetection = (imageElement: HTMLImageElement | null) => {\n  const [fingerPositions, setFingerPositions] = useState<{finger: string, x: number, y: number}[]>([]);\n  \n  useEffect(() => {\n    if (!imageElement) return;\n    \n    const hands = new Hands({\n      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,\n    });\n    \n    hands.setOptions({\n      maxNumHands: 1,\n      modelComplexity: 1,\n      minDetectionConfidence: 0.5,\n      minTrackingConfidence: 0.5\n    });\n    \n    hands.onResults((results) => {\n      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {\n        const landmarks = results.multiHandLandmarks[0];\n        // Map MediaPipe landmarks to finger positions\n        const positions = [\n          { finger: 'thumb', x: landmarks[4].x, y: landmarks[4].y },\n          { finger: 'index', x: landmarks[8].x, y: landmarks[8].y },\n          { finger: 'middle', x: landmarks[12].x, y: landmarks[12].y },\n          { finger: 'ring', x: landmarks[16].x, y: landmarks[16].y },\n          { finger: 'pinky', x: landmarks[20].x, y: landmarks[20].y }\n        ];\n        setFingerPositions(positions);\n      }\n    });\n    \n    // Process the image\n    const canvas = document.createElement('canvas');\n    canvas.width = imageElement.width;\n    canvas.height = imageElement.height;\n    const ctx = canvas.getContext('2d');\n    ctx?.drawImage(imageElement, 0, 0);\n    const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);\n    \n    if (imageData) {\n      hands.send({image: imageData});\n    }\n    \n    return () => {\n      hands.close();\n    };\n  }, [imageElement]);\n  \n  return fingerPositions;\n};\n```\n3. Implement visual indicators (pills) for each detected finger\n4. Add error handling for cases where hand detection fails\n5. Optimize for performance on mobile devices",
+      "testStrategy": "1. Test hand detection with various hand images and positions\n2. Verify accuracy of finger position detection\n3. Test with different lighting conditions and backgrounds\n4. Measure and optimize performance on mobile devices\n5. Create test cases for error scenarios (no hand detected, multiple hands, etc.)",
+      "priority": "high",
       "dependencies": [
         2
       ],
-      "priority": "high",
-      "details": "1. Create an image upload component with drag-and-drop and file selection capabilities\n2. Add camera access functionality for direct photo capture\n3. Implement client-side image validation (format, size, dimensions)\n4. Create a preview component to display the uploaded image\n5. Add guidance overlay/instructions for optimal hand positioning\n6. Ensure all processing happens client-side without server uploads\n\nExample implementation:\n```tsx\nimport { useState, useRef } from 'react'\n\nexport default function ImageUpload() {\n  const [image, setImage] = useState<string | null>(null)\n  const fileInputRef = useRef<HTMLInputElement>(null)\n  \n  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n    const file = e.target.files?.[0]\n    if (file) {\n      // Client-side validation\n      if (!file.type.includes('image/')) {\n        alert('Please upload an image file')\n        return\n      }\n      \n      const reader = new FileReader()\n      reader.onload = (e) => {\n        setImage(e.target?.result as string)\n      }\n      reader.readAsDataURL(file)\n    }\n  }\n  \n  return (\n    <div className=\"p-4\">\n      <div \n        className=\"border-2 border-dashed p-8 text-center cursor-pointer\"\n        onClick={() => fileInputRef.current?.click()}\n      >\n        {image ? (\n          <img src={image} alt=\"Hand preview\" className=\"max-w-full h-auto\" />\n        ) : (\n          <p>Click to upload or take a photo of your hand</p>\n        )}\n      </div>\n      <input \n        type=\"file\" \n        accept=\"image/*\" \n        className=\"hidden\" \n        ref={fileInputRef}\n        onChange={handleFileChange}\n        capture=\"environment\"\n      />\n    </div>\n  )\n}\n```",
-      "testStrategy": "Test image upload with various file types and sizes to ensure proper validation. Test camera functionality on mobile devices. Verify that images are processed client-side only and not sent to any server. Test the UI guidance for clarity and effectiveness.",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
-          "title": "Implement drag-and-drop and file selection",
+          "title": "드래그&드롭/파일 선택 구현",
           "description": "Create a component that allows users to upload images via drag-and-drop or traditional file selection dialog",
           "dependencies": [],
-          "details": "Implement a drop zone area that highlights when files are dragged over it. Add file input for traditional selection. Handle both methods to accept image files. Provide visual feedback during the drag operation. Support multiple file selection if needed. Ensure cross-browser compatibility.",
+          "details": "Build a reusable component that handles both drag-and-drop functionality and traditional file input selection. Include visual feedback for drag events (hover, drop), handle multiple file attempts appropriately, and ensure cross-browser compatibility. Implement error handling for failed uploads and provide user feedback.",
           "status": "done"
         },
         {
           "id": 2,
-          "title": "Add camera access for photo capture",
+          "title": "카메라 촬영 기능 추가",
           "description": "Implement functionality to access device camera for direct photo capture within the application",
           "dependencies": [
             1
           ],
-          "details": "Use the MediaDevices API to access the device camera. Create a camera interface with capture button. Handle permissions requests properly. Implement fallbacks for unsupported browsers. Consider both mobile and desktop experiences. Ensure captured photos are properly formatted for upload.",
+          "details": "Use the MediaDevices API to request camera access, create an interface for capturing photos directly from the camera, handle permission requests and denials gracefully, ensure mobile device compatibility, and provide fallback options when camera access isn't available or permitted.",
           "status": "done"
         },
         {
           "id": 3,
-          "title": "Create client-side image validation and processing",
-          "description": "Implement validation for file types, sizes, and dimensions, along with basic image processing capabilities",
+          "title": "이미지 유효성 검사 및 처리",
+          "description": "Implement validation for file types, sizes, and dimensions along with basic client-side image processing",
           "dependencies": [
             1,
             2
           ],
-          "details": "Validate file types (jpg, png, etc.). Check file size limits. Verify image dimensions meet requirements. Implement client-side image compression if needed. Add error handling with user-friendly messages. Consider implementing basic editing features like cropping or rotation if required.",
+          "details": "Validate uploaded images for acceptable file types (JPEG, PNG, etc.), file size limits, and dimension requirements. Implement client-side image processing including basic resizing, compression, and orientation correction. Provide clear feedback to users when validation fails and suggest remedies.",
           "status": "done"
         },
         {
           "id": 4,
-          "title": "Build preview component with positioning guidance",
-          "description": "Create an image preview component with overlay guides to help users position their images correctly",
+          "title": "미리보기 및 위치 가이드 구현",
+          "description": "Create an image preview component that shows the uploaded image with positioning guidance for users",
           "dependencies": [
             3
           ],
-          "details": "Develop a preview component that shows the uploaded/captured image. Add overlay guides (grid lines, face detection markers, etc.) to help with positioning. Implement zoom and pan functionality if needed. Ensure the preview is responsive across different screen sizes. Add confirmation step before final submission.",
+          "details": "Develop a preview component that displays the uploaded/captured image with visual guides for proper positioning. Include features like zoom, pan, and crop functionality. Implement responsive design to ensure the preview works well across different screen sizes. Add visual indicators or overlays to help users position their images correctly.",
           "status": "done"
         }
       ]
     },
     {
       "id": 4,
-      "title": "MediaPipe Hands 연동 및 손가락 인식",
-      "description": "Implement client-side hand and finger detection using MediaPipe Hands to identify finger positions from the uploaded image.",
-      "status": "pending",
+      "title": "반지 이미지 관리 및 스토리지 연동",
+      "description": "Set up integration with external storage (S3 or Supabase) for ring images and implement the client-side access to these images.",
+      "details": "1. Set up external storage (S3 or Supabase) for ring images\n2. Create a data structure for ring information:\n```typescript\ninterface RingInfo {\n  id: string;\n  name: string;\n  imageUrl: string;\n  availableColors: {\n    id: string;\n    name: string;\n    colorCode: string;\n    imageUrl: string;\n  }[];\n}\n```\n3. Implement a client-side service to fetch ring data:\n```typescript\nconst fetchRings = async (): Promise<RingInfo[]> => {\n  // In a real implementation, this would fetch from an API\n  // For MVP, we can use a static JSON file stored in the public directory\n  const response = await fetch('/data/rings.json');\n  return response.json();\n};\n```\n4. Create a context provider for ring data:\n```tsx\nconst RingContext = createContext<{\n  rings: RingInfo[];\n  loading: boolean;\n  error: Error | null;\n}>({ rings: [], loading: false, error: null });\n\nconst RingProvider: React.FC = ({ children }) => {\n  const [rings, setRings] = useState<RingInfo[]>([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<Error | null>(null);\n  \n  useEffect(() => {\n    fetchRings()\n      .then(data => {\n        setRings(data);\n        setLoading(false);\n      })\n      .catch(err => {\n        setError(err);\n        setLoading(false);\n      });\n  }, []);\n  \n  return (\n    <RingContext.Provider value={{ rings, loading, error }}>\n      {children}\n    </RingContext.Provider>\n  );\n};\n```\n5. Implement image preloading for better performance",
+      "testStrategy": "1. Verify that ring images load correctly from external storage\n2. Test with various image sizes and formats\n3. Measure loading performance and optimize if needed\n4. Test error handling when images fail to load\n5. Verify that the ring data structure is correctly implemented",
+      "priority": "medium",
       "dependencies": [
-        3
+        1
       ],
-      "priority": "high",
-      "details": "1. Install MediaPipe Hands library\n2. Create a utility function to process the uploaded image\n3. Detect hand landmarks and extract finger positions\n4. Map the detected landmarks to the data model format: `{ finger: 'index', x: number, y: number }[]`\n5. Visualize the detected finger positions as an overlay on the image\n6. Handle edge cases (multiple hands, poor image quality, etc.)\n\nExample implementation:\n```tsx\nimport * as handpose from '@tensorflow-models/handpose'\nimport '@tensorflow/tfjs-backend-webgl'\n\nexport async function detectFingers(imageElement: HTMLImageElement) {\n  // Load the MediaPipe Handpose model\n  const model = await handpose.load()\n  \n  // Detect the hand landmarks\n  const predictions = await model.estimateHands(imageElement)\n  \n  if (predictions.length > 0) {\n    // Map the landmarks to our data model\n    const fingerNames = ['thumb', 'index', 'middle', 'ring', 'pinky']\n    const fingerPositions = fingerNames.map((finger, idx) => {\n      // Get the tip of each finger (the last landmark of each finger)\n      const tipIdx = idx * 4 + 4\n      const landmark = predictions[0].landmarks[tipIdx]\n      \n      return {\n        finger,\n        x: landmark[0],\n        y: landmark[1]\n      }\n    })\n    \n    return fingerPositions\n  }\n  \n  return []\n}\n```",
-      "testStrategy": "Test with various hand images in different positions, lighting conditions, and backgrounds. Verify accuracy of finger detection. Measure and optimize performance on mobile devices. Create a test suite with sample images to ensure consistent detection across different scenarios.",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up MediaPipe Hands library",
-          "description": "Install and configure the MediaPipe Hands library in the project environment",
+          "title": "MediaPipe Hands 라이브러리 세팅",
+          "description": "Initialize and configure the MediaPipe Hands library in the application",
           "dependencies": [],
-          "details": "Install MediaPipe library via npm or yarn, set up necessary configurations, and ensure compatibility with the current project structure. Verify the library is properly imported and initialized in the application.",
+          "details": "Install MediaPipe dependencies, import the library, and configure initial parameters like maximum number of hands to detect, detection confidence threshold, and tracking confidence threshold. Ensure the library is properly integrated with the application's build system.",
           "status": "done"
         },
         {
           "id": 2,
-          "title": "Implement hand landmark detection system",
-          "description": "Create a system to detect and track hand landmarks using MediaPipe",
+          "title": "손 랜드마크 검출 시스템 구현",
+          "description": "Implement the core functionality to detect hand landmarks from camera input",
           "dependencies": [
             1
           ],
-          "details": "Implement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.\n<info added on 2025-05-04T08:00:13.711Z>\nImplement the core functionality to capture video input, process it through MediaPipe Hands, and extract the 21 hand landmarks. Set up appropriate detection confidence thresholds and optimize for performance.\n\nImplementation Plan:\n1. Create a new component (HandLandmarkDetector.tsx) or implement within app/page.tsx\n2. Import required MediaPipe libraries (@mediapipe/hands, @mediapipe/drawing_utils, @mediapipe/camera_utils)\n3. Initialize MediaPipe Hands with appropriate configuration:\n   - Set maxNumHands: 1\n   - Set modelComplexity: 1\n   - Configure detection confidence threshold (0.7)\n   - Configure tracking confidence threshold (0.7)\n4. Implement frame processing from video/image input\n5. Create onResults callback to extract the 21 landmark coordinates\n6. Store landmark data in component state\n7. Add basic visualization of landmarks on screen (to be enhanced in later subtasks)\n8. Handle client-side only execution to prevent SSR issues with window/document\n9. Prepare test images in public/ or assets/ folder\n\nCode structure will follow the MediaPipe Hands API pattern with proper initialization, configuration, and results handling. Performance considerations include managing resource loading time for WASM/JS files and adjusting processing based on device capabilities.\n</info added on 2025-05-04T08:00:13.711Z>\n<info added on 2025-05-04T08:02:20.752Z>\nThe HandLandmarkDetector component has been successfully implemented with the following features:\n\n1. Created new component app/components/HandLandmarkDetector.tsx that:\n   - Accepts imageUrl as a prop to process images\n   - Initializes MediaPipe Hands library\n   - Detects 21 hand landmarks from the provided image\n   - Visualizes landmarks as points on a canvas overlay\n\n2. Implementation details:\n   - Properly handles SSR environment by restricting window/document access to useEffect\n   - Includes loading state management with appropriate UI feedback\n   - Implements error handling for detection failures\n   - Manages landmarks state for potential use by other components\n\n3. Integration with main application:\n   - Modified app/page.tsx to conditionally render HandLandmarkDetector when imageUrl is available\n   - Maintained HandGuide component as fallback when no image is present\n   - Ensured automatic landmark detection triggers upon image upload or capture\n\n4. Testing and validation:\n   - Basic functionality verified with test images\n   - Component responds appropriately to different image inputs\n\nThe implementation follows the planned structure and successfully establishes the core hand landmark detection functionality. The system is now ready for the next phase of development, which will involve mapping the detected landmarks to the application data model (subtask 4.3) and enhancing visualization with connecting lines between landmarks.\n</info added on 2025-05-04T08:02:20.752Z>",
+          "details": "Set up the camera input pipeline, connect it to MediaPipe's hand detection model, and implement the processing loop that extracts the 21 hand landmarks per detected hand. Create a system that processes frames at an appropriate rate for real-time interaction.",
           "status": "done"
         },
         {
           "id": 3,
-          "title": "Map detected landmarks to application data model",
-          "description": "Transform MediaPipe landmark coordinates to the application's internal data structure",
+          "title": "랜드마크 데이터 모델 매핑",
+          "description": "Transform MediaPipe's landmark output format to the application's internal data representation",
           "dependencies": [
             2
           ],
-          "details": "Create mapping functions that convert the raw MediaPipe landmark data (x, y, z coordinates) into the format required by the application. Implement normalization if needed and ensure the data is properly structured for further processing.",
+          "details": "Create a mapping system between MediaPipe's 21-point hand model and the application's data model. Implement normalization of coordinates, handle different hand orientations (left/right), and ensure consistent data flow between detection and the rest of the application.",
           "status": "done"
         },
         {
           "id": 4,
-          "title": "Implement visualization of detected hand points",
-          "description": "Create visual representation of the detected hand landmarks",
+          "title": "시각화 및 예외 처리",
+          "description": "Create visual feedback of detected hand points and implement robust error handling",
           "dependencies": [
             3
           ],
-          "details": "Develop visualization components that render the detected hand landmarks on screen. Implement drawing utilities for points and connections between landmarks. Add visual feedback for detection quality and hand positioning.",
-          "status": "in-progress"
-        },
-        {
-          "id": 5,
-          "title": "Handle edge cases and error conditions",
-          "description": "Implement robust error handling and support for various edge cases",
-          "dependencies": [
-            2,
-            3,
-            4
-          ],
-          "details": "Address scenarios such as multiple hands detection, hand occlusion, poor lighting conditions, and performance degradation. Implement graceful error handling for cases when hand detection fails or produces unreliable results. Add appropriate user feedback mechanisms.",
-          "status": "pending"
+          "details": "Develop a visualization layer to display detected hand landmarks for debugging and user feedback. Implement comprehensive error handling for scenarios like no hands detected, poor lighting conditions, partial hand visibility, and tracking failures. Add recovery mechanisms to maintain application stability during detection issues.",
+          "status": "done"
         }
       ]
     },
     {
       "id": 5,
-      "title": "반지 이미지 저장소 및 불러오기 설정",
-      "description": "반지 이미지를 위한 외부 저장소(S3 또는 Supabase)를 구성하고 클라이언트 측에서 이미지를 불러오는 기능을 구현합니다.",
-      "status": "pending",
+      "title": "반지 선택 UI 및 팝업/컬러칩 구현",
+      "description": "Implement the UI for selecting rings, including the selectring button, popup modal, and color chip selection according to the Figma design.",
+      "details": "1. Create a SelectRing button component that activates after hand image upload\n2. Implement a modal/popup component for ring selection:\n```tsx\nconst RingSelectionModal: React.FC<{\n  isOpen: boolean;\n  onClose: () => void;\n  onSelectRing: (ringId: string, colorId: string) => void;\n}> = ({ isOpen, onClose, onSelectRing }) => {\n  const { rings, loading } = useContext(RingContext);\n  const [selectedRing, setSelectedRing] = useState<string | null>(null);\n  const [selectedColor, setSelectedColor] = useState<string | null>(null);\n  \n  const handleRingSelect = (ringId: string) => {\n    setSelectedRing(ringId);\n    // Default to first color\n    const ring = rings.find(r => r.id === ringId);\n    if (ring && ring.availableColors.length > 0) {\n      setSelectedColor(ring.availableColors[0].id);\n    }\n  };\n  \n  const handleColorSelect = (colorId: string) => {\n    setSelectedColor(colorId);\n  };\n  \n  const handleConfirm = () => {\n    if (selectedRing && selectedColor) {\n      onSelectRing(selectedRing, selectedColor);\n      onClose();\n    }\n  };\n  \n  if (!isOpen) return null;\n  \n  return (\n    <div className=\"modal-overlay\">\n      <div className=\"modal-content\">\n        <h2>Select a Ring</h2>\n        {loading ? (\n          <p>Loading rings...</p>\n        ) : (\n          <>\n            <div className=\"ring-grid\">\n              {rings.map(ring => (\n                <div \n                  key={ring.id} \n                  className={`ring-item ${selectedRing === ring.id ? 'selected' : ''}`}\n                  onClick={() => handleRingSelect(ring.id)}\n                >\n                  <img src={ring.imageUrl} alt={ring.name} />\n                  <p>{ring.name}</p>\n                </div>\n              ))}\n            </div>\n            \n            {selectedRing && (\n              <div className=\"color-selection\">\n                <h3>Select Color</h3>\n                <div className=\"color-chips\">\n                  {rings\n                    .find(r => r.id === selectedRing)?\n                    .availableColors.map(color => (\n                      <div \n                        key={color.id}\n                        className={`color-chip ${selectedColor === color.id ? 'selected' : ''}`}\n                        style={{ backgroundColor: color.colorCode }}\n                        onClick={() => handleColorSelect(color.id)}\n                      />\n                    ))}\n                </div>\n              </div>\n            )}\n            \n            <div className=\"modal-actions\">\n              <button onClick={onClose}>Cancel</button>\n              <button \n                onClick={handleConfirm}\n                disabled={!selectedRing || !selectedColor}\n              >\n                Confirm\n              </button>\n            </div>\n          </>\n        )}\n      </div>\n    </div>\n  );\n};\n```\n3. Implement the name tag component to display selected ring name\n4. Create finger pill components that can be toggled on/off\n5. Implement automatic selection of thumb after initial ring selection\n6. Ensure the modal automatically closes after selection\n7. Style all components according to Figma design",
+      "testStrategy": "1. Test the modal opening and closing functionality\n2. Verify that ring and color selection works correctly\n3. Test the automatic thumb selection after initial ring choice\n4. Verify that the name tag updates correctly\n5. Test the UI on various screen sizes for responsive design\n6. Conduct usability testing to ensure the flow is intuitive",
+      "priority": "high",
       "dependencies": [
-        1
+        2,
+        4
       ],
-      "priority": "medium",
-      "details": "1. 반지 이미지를 위한 S3 버킷 또는 Supabase 저장소 설정\n2. 타입과 색상별로 반지 이미지를 구성하는 폴더 구조 생성\n3. 투명 배경이 있는 샘플 반지 PNG 이미지 업로드\n4. 반지 이미지 URL을 가져오는 클라이언트 측 유틸리티 생성\n5. 성능 향상을 위한 캐싱 구현\n\n구현 예시:\n```tsx\n// utils/ringImages.ts\ninterface RingImage {\n  id: string\n  type: string\n  color: string\n  imageUrl: string\n}\n\n// 이것은 일반적으로 저장소 서비스에서 가져옵니다\nconst STORAGE_BASE_URL = 'https://your-storage-url.com/rings'\n\nexport async function fetchRingImages(): Promise<RingImage[]> {\n  // 실제 구현에서는 JSON 매니페스트를 가져오거나\n  // API를 쿼리하여 사용 가능한 반지를 가져올 수 있습니다\n  // 지금은 정적 목록을 사용하겠습니다\n  \n  return [\n    {\n      id: 'ring1',\n      type: 'simple',\n      color: 'gold',\n      imageUrl: `${STORAGE_BASE_URL}/simple/gold.png`\n    },\n    {\n      id: 'ring2',\n      type: 'simple',\n      color: 'silver',\n      imageUrl: `${STORAGE_BASE_URL}/simple/silver.png`\n    },\n    // 더 많은 반지...\n  ]\n}\n```",
-      "testStrategy": "저장소 서비스에서 반지 이미지가 올바르게 로드되는지 확인합니다. 다양한 이미지 크기와 형식으로 테스트하여 호환성을 보장합니다. 로딩 성능을 측정하고 필요한 경우 최적화를 구현합니다. 캐싱 메커니즘이 예상대로 작동하는지 테스트합니다.",
-      "subtasks": []
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "클라우드 스토리지 연동",
+          "description": "Configure either AWS S3 or Supabase storage for ring images",
+          "dependencies": [],
+          "details": "Research and select the appropriate storage solution (S3 or Supabase). Create necessary buckets/containers with proper access permissions. Generate and securely store API keys or credentials. Document the storage structure and access patterns for the team.\n<info added on 2025-05-04T10:21:57.172Z>\nResearch and select the appropriate storage solution (S3 or Supabase). Create necessary buckets/containers with proper access permissions. Generate and securely store API keys or credentials. Document the storage structure and access patterns for the team.\n\n## Supabase Storage 구현 계획\n\n### 스토리지 서비스 선택\n- Supabase Storage를 반지 이미지 저장소로 사용\n\n### 구현 단계\n1. Supabase 프로젝트 생성 및 Storage 서비스 활성화\n2. 'rings' 버킷 생성 (공개 읽기 권한 설정, 업로드 권한은 인증된 사용자로 제한)\n3. 반지 이미지 폴더 구조 설계 및 구현\n   - 경로 형식: /rings/{ringId}/{colorId}.png\n   - 모든 이미지는 탑뷰 PNG 형식으로 통일\n4. 보안 및 인증\n   - Supabase 서비스 키 및 익명 키 발급\n   - .env 파일에 안전하게 키 저장\n5. 클라이언트 연동\n   - Supabase JavaScript SDK 설치\n   - 환경 설정 및 초기화 코드 작성\n   - 이미지 가져오기 유틸리티 함수 구현\n\n### 작업 파일\n- scripts/supabase-init.md: Supabase 설정 가이드 문서\n- public/data/rings.json: 반지 메타데이터 (이미지 경로 포함)\n- .env: Supabase 키 저장\n- src/lib/supabase.ts: Supabase 클라이언트 유틸리티\n\n### 참고 자료\n- Supabase Storage 공식 문서: https://supabase.com/docs/guides/storage\n</info added on 2025-05-04T10:21:57.172Z>",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "이미지 메타데이터 스키마 정의",
+          "description": "Create a standardized metadata structure for ring images",
+          "dependencies": [
+            1
+          ],
+          "details": "Define metadata fields (ring ID, category, material, style, dimensions, creation date, etc.). Create a JSON schema for validation. Implement naming conventions for files that reflect the metadata structure. Document the schema for team reference.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "이미지 업로드 프로세스 구현",
+          "description": "Develop scripts to organize and upload ring images with proper metadata",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Create scripts to batch process images (resize, optimize, rename). Implement metadata extraction or assignment. Develop upload functionality with error handling and retry logic. Test uploads with various image types and sizes. Document the upload process.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "클라이언트 이미지 캐싱",
+          "description": "Develop efficient client-side image loading with proper caching",
+          "dependencies": [
+            3
+          ],
+          "details": "Implement API endpoints for retrieving images based on metadata. Create client-side caching strategy (browser cache, IndexedDB, or memory cache). Implement lazy loading for image galleries. Add prefetching for anticipated user navigation. Test performance across different network conditions.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 6,
-      "title": "반지 선택 UI 구현",
-      "description": "Develop the UI for selecting ring types and colors for each finger, following the Figma design.",
-      "status": "pending",
+      "title": "손가락별 반지 합성 및 시뮬레이션",
+      "description": "Implement the functionality to overlay selected rings on specific fingers based on user selection, with support for different rings and colors on each finger.",
+      "details": "1. Create a data structure to track ring selections for each finger:\n```typescript\ninterface FingerRingSelection {\n  finger: string;\n  ringId: string | null;\n  colorId: string | null;\n}\n\nconst [fingerSelections, setFingerSelections] = useState<FingerRingSelection[]>([\n  { finger: 'thumb', ringId: null, colorId: null },\n  { finger: 'index', ringId: null, colorId: null },\n  { finger: 'middle', ringId: null, colorId: null },\n  { finger: 'ring', ringId: null, colorId: null },\n  { finger: 'pinky', ringId: null, colorId: null },\n]);\n```\n2. Implement a canvas-based overlay system to place rings on fingers:\n```tsx\nconst RingOverlay: React.FC<{\n  handImage: string;\n  fingerPositions: {finger: string, x: number, y: number}[];\n  fingerSelections: FingerRingSelection[];\n  rings: RingInfo[];\n}> = ({ handImage, fingerPositions, fingerSelections, rings }) => {\n  const canvasRef = useRef<HTMLCanvasElement>(null);\n  \n  useEffect(() => {\n    const canvas = canvasRef.current;\n    if (!canvas) return;\n    \n    const ctx = canvas.getContext('2d');\n    if (!ctx) return;\n    \n    // Load the hand image\n    const img = new Image();\n    img.src = handImage;\n    img.onload = () => {\n      // Set canvas dimensions to match image\n      canvas.width = img.width;\n      canvas.height = img.height;\n      \n      // Draw the hand image\n      ctx.drawImage(img, 0, 0);\n      \n      // Draw rings on fingers\n      fingerSelections.forEach(selection => {\n        if (!selection.ringId || !selection.colorId) return;\n        \n        const fingerPos = fingerPositions.find(fp => fp.finger === selection.finger);\n        if (!fingerPos) return;\n        \n        const ring = rings.find(r => r.id === selection.ringId);\n        if (!ring) return;\n        \n        const color = ring.availableColors.find(c => c.id === selection.colorId);\n        if (!color) return;\n        \n        // Load and draw the ring image at finger position\n        const ringImg = new Image();\n        ringImg.src = color.imageUrl;\n        ringImg.onload = () => {\n          // Calculate position and scale for the ring\n          const ringWidth = ringImg.width * 0.5; // Scale as needed\n          const ringHeight = ringImg.height * 0.5;\n          const x = fingerPos.x * canvas.width - ringWidth / 2;\n          const y = fingerPos.y * canvas.height - ringHeight / 2;\n          \n          ctx.drawImage(ringImg, x, y, ringWidth, ringHeight);\n        };\n      });\n    };\n  }, [handImage, fingerPositions, fingerSelections, rings]);\n  \n  return <canvas ref={canvasRef} className=\"ring-overlay-canvas\" />;\n};\n```\n3. Implement finger pill selection to update active finger\n4. Create a mechanism to update ring selection for specific fingers\n5. Implement automatic thumb selection after initial ring choice\n6. Add visual feedback when a finger is selected\n7. Optimize ring positioning and scaling based on finger size",
+      "testStrategy": "1. Test ring overlay with various hand images and finger positions\n2. Verify that different rings can be applied to different fingers\n3. Test changing ring selections for specific fingers\n4. Verify that the visual representation matches the expected outcome\n5. Test with different ring images and colors\n6. Verify that the automatic thumb selection works correctly",
+      "priority": "high",
       "dependencies": [
-        2,
+        3,
         5
       ],
-      "priority": "medium",
-      "details": "1. Create a finger selection component that allows users to select which finger to add a ring to\n2. Implement a ring type selection UI with visual thumbnails\n3. Add color selection options for each ring type\n4. Create a state management system to track selected rings for each finger\n5. Implement UI for removing or changing ring selections\n\nExample implementation:\n```tsx\nimport { useState } from 'react'\nimport { RingImage } from '../utils/ringImages'\n\ninterface RingSelectionProps {\n  availableRings: RingImage[]\n  onSelectRing: (finger: string, ringId: string) => void\n}\n\nexport default function RingSelection({ availableRings, onSelectRing }: RingSelectionProps) {\n  const [selectedFinger, setSelectedFinger] = useState<string | null>(null)\n  const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky']\n  \n  const ringTypes = [...new Set(availableRings.map(ring => ring.type))]\n  const ringColors = [...new Set(availableRings.map(ring => ring.color))]\n  \n  const [selectedType, setSelectedType] = useState(ringTypes[0])\n  const [selectedColor, setSelectedColor] = useState(ringColors[0])\n  \n  const handleRingSelect = () => {\n    if (!selectedFinger) return\n    \n    const selectedRing = availableRings.find(\n      ring => ring.type === selectedType && ring.color === selectedColor\n    )\n    \n    if (selectedRing) {\n      onSelectRing(selectedFinger, selectedRing.id)\n    }\n  }\n  \n  return (\n    <div className=\"p-4\">\n      <h3 className=\"text-lg font-bold\">Select a finger</h3>\n      <div className=\"flex space-x-2 my-4\">\n        {fingers.map(finger => (\n          <button\n            key={finger}\n            className={`px-3 py-2 rounded ${selectedFinger === finger ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}\n            onClick={() => setSelectedFinger(finger)}\n          >\n            {finger}\n          </button>\n        ))}\n      </div>\n      \n      {selectedFinger && (\n        <>\n          <h3 className=\"text-lg font-bold mt-4\">Select ring type</h3>\n          <div className=\"flex space-x-2 my-4\">\n            {ringTypes.map(type => (\n              <button\n                key={type}\n                className={`px-3 py-2 rounded ${selectedType === type ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}\n                onClick={() => setSelectedType(type)}\n              >\n                {type}\n              </button>\n            ))}\n          </div>\n          \n          <h3 className=\"text-lg font-bold mt-4\">Select color</h3>\n          <div className=\"flex space-x-2 my-4\">\n            {ringColors.map(color => (\n              <button\n                key={color}\n                className={`px-3 py-2 rounded ${selectedColor === color ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}\n                onClick={() => setSelectedColor(color)}\n              >\n                {color}\n              </button>\n            ))}\n          </div>\n          \n          <button\n            className=\"px-4 py-2 bg-green-500 text-white rounded mt-4\"\n            onClick={handleRingSelect}\n          >\n            Apply Ring\n          </button>\n        </>\n      )}\n    </div>\n  )\n}\n```",
-      "testStrategy": "Test the UI for usability and responsiveness. Verify that all ring types and colors are displayed correctly. Test the selection flow to ensure it's intuitive. Conduct user testing to gather feedback on the selection experience.",
+      "status": "pending",
       "subtasks": [
         {
-          "id": "6.1",
-          "title": "반지 선택 UI 구현",
-          "description": "한글화된 UI 타이틀로 작업을 진행합니다. 기존 영문 타이틀 'Create Ring Selection UI'를 한글 '반지 선택 UI 구현'으로 UI 내에서 표시합니다.",
+          "id": 1,
+          "title": "손가락 선택 컴포넌트 개발",
+          "description": "Develop the UI component that allows users to select which finger they want to place a ring on",
+          "dependencies": [],
+          "details": "Build an interactive finger selection interface that clearly shows all available finger options. Include visual indicators for selected fingers, implement touch/click interactions, and ensure the component is accessible. The component should communicate with the state management system when a finger is selected.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "반지 종류 선택 UI 구현",
+          "description": "Create the UI for selecting different types of rings available for each finger",
+          "dependencies": [
+            1
+          ],
+          "details": "Design and implement a component that displays all available ring types for the selected finger. Include thumbnail images, names, and possibly brief descriptions of each ring type. The interface should update dynamically based on the currently selected finger and communicate selections to the state management system.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "컬러/재질 선택 옵션 구현",
+          "description": "Create the UI component for selecting ring colors and materials",
+          "dependencies": [
+            2
+          ],
+          "details": "Create a color/material picker that shows available options for the selected ring type. Include visual swatches, material names, and possibly pricing differences. Implement hover/focus states to preview how colors look on the selected ring. Ensure the component integrates with the state management system to track color selections.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "상태 관리 시스템 개발",
+          "description": "Implement the state management logic to track all user selections across the ring customization process",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Create a comprehensive state management solution that tracks which fingers have rings, what type of ring is on each finger, and what color/material is selected for each ring. Implement functions to update state when selections change, validate selections, and prepare the final selection data for submission. Include methods for resetting selections and loading previous configurations.",
           "status": "pending"
         }
       ]
     },
     {
       "id": 7,
-      "title": "손가락에 반지 오버레이 구현",
-      "description": "Create functionality to overlay selected ring images on the detected finger positions in the uploaded hand image.",
-      "status": "pending",
+      "title": "결과 이미지 생성 및 공유 기능",
+      "description": "Implement functionality to generate the final image with rings overlaid on fingers and provide options to download or share via Web Share API.",
+      "details": "1. Create a function to generate the final image from the canvas:\n```typescript\nconst generateFinalImage = (canvas: HTMLCanvasElement): Promise<Blob> => {\n  return new Promise((resolve, reject) => {\n    canvas.toBlob(blob => {\n      if (blob) {\n        resolve(blob);\n      } else {\n        reject(new Error('Failed to generate image'));\n      }\n    }, 'image/jpeg', 0.95);\n  });\n};\n```\n2. Implement download functionality:\n```typescript\nconst downloadImage = async (canvas: HTMLCanvasElement) => {\n  try {\n    const blob = await generateFinalImage(canvas);\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = 'haime-lets-try.jpg';\n    document.body.appendChild(a);\n    a.click();\n    document.body.removeChild(a);\n    URL.revokeObjectURL(url);\n  } catch (error) {\n    console.error('Failed to download image:', error);\n  }\n};\n```\n3. Implement Web Share API integration:\n```typescript\nconst shareImage = async (canvas: HTMLCanvasElement) => {\n  try {\n    if (!navigator.share) {\n      throw new Error('Web Share API not supported');\n    }\n    \n    const blob = await generateFinalImage(canvas);\n    const file = new File([blob], 'haime-lets-try.jpg', { type: 'image/jpeg' });\n    \n    await navigator.share({\n      title: 'My Ring Try-On from haime',\n      text: 'Check out these rings I tried on with haime lets try!',\n      files: [file]\n    });\n  } catch (error) {\n    console.error('Failed to share image:', error);\n    // Fallback to download if sharing fails\n    downloadImage(canvas);\n  }\n};\n```\n4. Create UI components for download and share buttons\n5. Implement a share sheet for platforms without Web Share API support\n6. Add visual feedback during image generation and sharing\n7. Ensure the final image includes branding elements as specified in the design",
+      "testStrategy": "1. Test image generation with various ring combinations\n2. Verify download functionality works across browsers\n3. Test Web Share API on supported platforms\n4. Verify fallback mechanisms work on unsupported platforms\n5. Test image quality and size optimization\n6. Verify that no image data is sent to servers during sharing",
+      "priority": "medium",
       "dependencies": [
-        4,
-        5,
         6
       ],
-      "priority": "high",
-      "details": "1. Create a canvas-based rendering system to overlay ring images on the hand image\n2. Position and scale ring images based on detected finger positions\n3. Implement proper z-index ordering for realistic appearance\n4. Add rotation and perspective adjustments based on hand orientation\n5. Optimize rendering performance for mobile devices\n\nExample implementation:\n```tsx\nimport { useRef, useEffect } from 'react'\n\ninterface RingOverlayProps {\n  handImageSrc: string\n  fingerPositions: Array<{ finger: string, x: number, y: number }>\n  selectedRings: Array<{ finger: string, imageUrl: string }>\n}\n\nexport default function RingOverlay({ handImageSrc, fingerPositions, selectedRings }: RingOverlayProps) {\n  const canvasRef = useRef<HTMLCanvasElement>(null)\n  \n  useEffect(() => {\n    const canvas = canvasRef.current\n    if (!canvas) return\n    \n    const ctx = canvas.getContext('2d')\n    if (!ctx) return\n    \n    // Load the hand image\n    const handImage = new Image()\n    handImage.src = handImageSrc\n    handImage.onload = () => {\n      // Set canvas dimensions to match image\n      canvas.width = handImage.width\n      canvas.height = handImage.height\n      \n      // Draw the hand image\n      ctx.drawImage(handImage, 0, 0)\n      \n      // Draw each selected ring\n      selectedRings.forEach(ringInfo => {\n        const fingerPosition = fingerPositions.find(pos => pos.finger === ringInfo.finger)\n        if (!fingerPosition) return\n        \n        const ringImage = new Image()\n        ringImage.src = ringInfo.imageUrl\n        ringImage.onload = () => {\n          // Calculate position and scale for the ring\n          const ringWidth = ringImage.width * 0.5 // Scale as needed\n          const ringHeight = ringImage.height * 0.5\n          \n          // Position the ring centered on the finger position\n          const x = fingerPosition.x - (ringWidth / 2)\n          const y = fingerPosition.y - (ringHeight / 2)\n          \n          // Draw the ring\n          ctx.drawImage(ringImage, x, y, ringWidth, ringHeight)\n        }\n      })\n    }\n  }, [handImageSrc, fingerPositions, selectedRings])\n  \n  return <canvas ref={canvasRef} className=\"max-w-full h-auto\" />\n}\n```",
-      "testStrategy": "Test with various hand images and ring combinations. Verify that rings are positioned correctly on fingers. Test with different hand orientations and lighting conditions. Optimize and test performance on mobile devices.",
+      "status": "pending",
       "subtasks": [
         {
           "id": 1,
-          "title": "Create Canvas-Based Rendering System",
-          "description": "Develop a canvas-based rendering system for displaying ring overlays on detected fingers",
+          "title": "캔버스 렌더링 시스템 구현",
+          "description": "Implement a canvas-based rendering system for the ring overlay feature",
           "dependencies": [],
-          "details": "Implement a canvas element that can be positioned over the camera feed. Create functions to load and render ring images onto the canvas. Set up the basic rendering pipeline that will be used to display rings at the correct positions. Include support for different ring designs and image formats.",
+          "details": "Set up an HTML5 canvas element that will be used for rendering the ring overlays. Implement the basic drawing context and initialization functions. Create a rendering loop that can efficiently update the canvas when needed. Include methods for loading and caching ring images to be used as overlays. Establish a basic architecture that separates rendering logic from application logic.",
           "status": "pending"
         },
         {
           "id": 2,
-          "title": "Implement Finger Position Detection Algorithms",
-          "description": "Create algorithms to accurately position rings based on finger detection data",
+          "title": "합성 위치 알고리즘 개발",
+          "description": "Develop algorithms to position ring overlays based on finger detection data",
           "dependencies": [
             1
           ],
-          "details": "Develop algorithms that use finger detection data to determine the exact position for ring placement. Calculate the correct position, orientation, and perspective for the ring based on knuckle and finger joint positions. Implement methods to handle different finger sizes and positions relative to the camera.",
+          "details": "Create algorithms that translate finger detection coordinates to canvas coordinates. Implement logic to determine the correct finger joint for ring placement. Add stabilization techniques to reduce jitter in positioning. Develop methods to handle different hand orientations and positions. Include fallback positioning when finger detection confidence is low.",
           "status": "pending"
         },
         {
           "id": 3,
-          "title": "Add Scaling and Rotation Adjustments",
-          "description": "Implement dynamic scaling and rotation of ring overlays to match finger movements",
+          "title": "스케일/회전 조정 기능",
+          "description": "Implement dynamic scaling and rotation of ring overlays based on finger orientation",
           "dependencies": [
             1,
             2
           ],
-          "details": "Create functions to dynamically scale rings based on finger thickness and distance from camera. Implement rotation adjustments that follow the natural movement of fingers. Add perspective transformations to maintain realistic appearance as fingers move and rotate. Include smooth transitions when adjusting scale and rotation.",
+          "details": "Create algorithms to determine appropriate ring scaling based on detected finger width. Implement rotation adjustments that align rings with finger orientation. Add perspective transformations to match the viewing angle of the finger. Develop smooth transitions when scaling or rotating to prevent visual jumps. Include configuration options for different ring styles and their specific scaling requirements.",
           "status": "pending"
         },
         {
           "id": 4,
-          "title": "Handle Z-Index and Layering",
-          "description": "Implement proper z-index and layering for realistic ring appearance",
-          "dependencies": [
-            1,
-            3
-          ],
-          "details": "Develop a system to handle proper z-indexing so rings appear correctly positioned on fingers. Implement partial occlusion for when fingers overlap or when rings should appear partially hidden by the finger. Add shadow effects and highlights to enhance the realistic appearance of rings on fingers.",
-          "status": "pending"
-        },
-        {
-          "id": 5,
-          "title": "Optimize Performance for Mobile Devices",
-          "description": "Optimize the rendering system for smooth performance on mobile devices",
+          "title": "모바일 성능 최적화",
+          "description": "Enhance rendering performance and implement z-index layering for realistic appearance",
           "dependencies": [
             1,
             2,
-            3,
-            4
+            3
           ],
-          "details": "Profile and optimize the rendering pipeline for mobile performance. Implement frame rate controls and resolution adjustments based on device capabilities. Add caching mechanisms for ring images and transformation calculations. Test and optimize for various mobile devices and browsers to ensure consistent performance.",
+          "details": "Implement proper z-index handling to ensure rings appear correctly relative to fingers. Add occlusion handling so rings can appear partially hidden by other fingers when appropriate. Optimize canvas operations for mobile GPU performance. Implement resolution scaling based on device capabilities. Add frame rate throttling for lower-end devices. Create performance monitoring tools to identify and address bottlenecks.",
           "status": "pending"
         }
       ]
     },
     {
       "id": 8,
-      "title": "결과 이미지 생성 기능 구현",
-      "description": "Create functionality to generate a final image with rings overlaid on the hand that can be saved or shared.",
-      "status": "pending",
-      "dependencies": [
-        7
-      ],
+      "title": "개인정보 안내 및 사용자 가이드",
+      "description": "Implement privacy notices and user guidance throughout the application to ensure users understand that their hand images are not stored on servers.",
+      "details": "1. Create a privacy notice component to be displayed during image upload:\n```tsx\nconst PrivacyNotice: React.FC = () => {\n  return (\n    <div className=\"privacy-notice\">\n      <h3>Privacy Assurance</h3>\n      <p>\n        Your hand image is processed entirely in your browser and is never uploaded or stored on our servers.\n        All image processing happens locally on your device.\n      </p>\n    </div>\n  );\n};\n```\n2. Implement tooltips and guidance text throughout the application\n3. Create a comprehensive help section explaining the process\n4. Add visual indicators showing that processing is happening client-side\n5. Implement a cookie consent banner if necessary\n6. Create a detailed privacy policy page\n7. Add visual cues to reinforce privacy messaging during key user actions",
+      "testStrategy": "1. Verify that privacy notices are clearly visible at appropriate points\n2. Test that guidance text is helpful and not intrusive\n3. Conduct user testing to ensure privacy messaging is understood\n4. Verify that no network requests containing image data are made\n5. Test accessibility of privacy notices for screen readers",
       "priority": "medium",
-      "details": "1. Create a utility to convert the canvas with overlaid rings to a downloadable image\n2. Add branding elements to the final image (haime logo, lets try watermark)\n3. Optimize image quality and file size for sharing\n4. Implement a preview of the final image before sharing\n\nExample implementation:\n```tsx\nexport function generateResultImage(canvas: HTMLCanvasElement): Promise<string> {\n  return new Promise((resolve) => {\n    // Create a new canvas for the final image with branding\n    const resultCanvas = document.createElement('canvas')\n    const ctx = resultCanvas.getContext('2d')\n    if (!ctx) {\n      resolve('')\n      return\n    }\n    \n    // Set dimensions\n    resultCanvas.width = canvas.width\n    resultCanvas.height = canvas.height + 60 // Extra space for branding\n    \n    // Draw the original canvas content\n    ctx.drawImage(canvas, 0, 0)\n    \n    // Add branding\n    ctx.fillStyle = '#ffffff'\n    ctx.fillRect(0, canvas.height, canvas.width, 60)\n    \n    ctx.font = 'bold 24px Arial'\n    ctx.fillStyle = '#000000'\n    ctx.textAlign = 'center'\n    ctx.fillText('haime - lets try', canvas.width / 2, canvas.height + 35)\n    \n    // Convert to image URL\n    const imageUrl = resultCanvas.toDataURL('image/jpeg', 0.9)\n    resolve(imageUrl)\n  })\n}\n```",
-      "testStrategy": "Test image generation with various canvas inputs. Verify that branding elements are added correctly. Test image quality and file size optimization. Ensure the generated image can be downloaded and shared across different platforms and devices.",
-      "subtasks": []
-    },
-    {
-      "id": 9,
-      "title": "Web Share API 연동",
-      "description": "Add functionality to share the generated image using the Web Share API and provide fallback options for unsupported browsers.",
-      "status": "pending",
       "dependencies": [
-        8
+        2
       ],
-      "priority": "medium",
-      "details": "1. Implement Web Share API integration for supported browsers\n2. Create fallback sharing options (download, copy link, etc.)\n3. Design a sharing UI with various options\n4. Handle platform-specific sharing behaviors\n\nExample implementation:\n```tsx\nexport async function shareImage(imageUrl: string, title: string = 'My Ring Try-On') {\n  // Check if Web Share API is supported\n  if (navigator.share) {\n    try {\n      // Convert data URL to Blob for sharing\n      const response = await fetch(imageUrl)\n      const blob = await response.blob()\n      const file = new File([blob], 'ring-try-on.jpg', { type: 'image/jpeg' })\n      \n      await navigator.share({\n        title: title,\n        text: 'Check out these rings I tried on with haime lets try!',\n        files: [file]\n      })\n      \n      return { success: true }\n    } catch (error) {\n      console.error('Error sharing:', error)\n      return { success: false, error }\n    }\n  } else {\n    // Fallback for browsers that don't support Web Share API\n    // Trigger download\n    const link = document.createElement('a')\n    link.href = imageUrl\n    link.download = 'ring-try-on.jpg'\n    document.body.appendChild(link)\n    link.click()\n    document.body.removeChild(link)\n    \n    return { success: true, method: 'download' }\n  }\n}\n```",
-      "testStrategy": "Test sharing functionality across different browsers and devices. Verify that the Web Share API works correctly on supported platforms. Test fallback options on unsupported browsers. Ensure that shared images maintain quality and include proper branding.",
-      "subtasks": []
-    },
-    {
-      "id": 10,
-      "title": "개인정보 고지 및 데이터 처리 구현",
-      "description": "Create privacy notices and implement client-side-only data handling to ensure user images are never stored on servers.",
       "status": "pending",
-      "dependencies": [
-        3
-      ],
-      "priority": "high",
-      "details": "1. Create clear privacy notices explaining that images are processed client-side only\n2. Implement technical safeguards to ensure images are never sent to servers\n3. Add visual indicators showing when image processing is happening locally\n4. Create a privacy policy page with detailed information\n\nExample implementation:\n```tsx\nimport { useState } from 'react'\n\nexport default function PrivacyNotice() {\n  const [isExpanded, setIsExpanded] = useState(false)\n  \n  return (\n    <div className=\"bg-gray-100 p-4 rounded-lg my-4\">\n      <div className=\"flex items-center justify-between\">\n        <h3 className=\"font-bold\">Your Privacy is Protected</h3>\n        <button \n          onClick={() => setIsExpanded(!isExpanded)}\n          className=\"text-blue-500\"\n        >\n          {isExpanded ? 'Show Less' : 'Learn More'}\n        </button>\n      </div>\n      \n      <p className=\"mt-2\">Your hand images are processed entirely on your device and are never uploaded to our servers.</p>\n      \n      {isExpanded && (\n        <div className=\"mt-4\">\n          <h4 className=\"font-semibold\">How it works:</h4>\n          <ul className=\"list-disc pl-5 mt-2\">\n            <li>All image processing happens in your browser</li>\n            <li>Hand detection uses MediaPipe which runs locally</li>\n            <li>Your images are never stored or transmitted</li>\n            <li>Only ring images are loaded from our servers</li>\n          </ul>\n        </div>\n      )}\n    </div>\n  )\n}\n```\n\n한국어 버전 예시 구현:\n```tsx\nimport { useState } from 'react'\n\nexport default function PrivacyNotice() {\n  const [isExpanded, setIsExpanded] = useState(false)\n  \n  return (\n    <div className=\"bg-gray-100 p-4 rounded-lg my-4\">\n      <div className=\"flex items-center justify-between\">\n        <h3 className=\"font-bold\">개인정보 보호</h3>\n        <button \n          onClick={() => setIsExpanded(!isExpanded)}\n          className=\"text-blue-500\"\n        >\n          {isExpanded ? '간략히 보기' : '더 알아보기'}\n        </button>\n      </div>\n      \n      <p className=\"mt-2\">손 이미지는 전적으로 사용자의 기기에서만 처리되며 서버로 업로드되지 않습니다.</p>\n      \n      {isExpanded && (\n        <div className=\"mt-4\">\n          <h4 className=\"font-semibold\">작동 방식:</h4>\n          <ul className=\"list-disc pl-5 mt-2\">\n            <li>모든 이미지 처리는 브라우저에서 이루어집니다</li>\n            <li>손 감지는 로컬에서 실행되는 MediaPipe를 사용합니다</li>\n            <li>이미지는 저장되거나 전송되지 않습니다</li>\n            <li>반지 이미지만 서버에서 로드됩니다</li>\n          </ul>\n        </div>\n      )}\n    </div>\n  )\n}\n```",
-      "testStrategy": "Verify that no image data is sent to servers by monitoring network requests during usage. Test privacy notices for clarity and visibility in both English and Korean. Conduct user testing to ensure users understand the privacy protections. Review the implementation for any potential data leakage points.",
-      "subtasks": [
-        {
-          "id": 10.1,
-          "title": "한국어 개인정보 고지 구현",
-          "description": "한국어 사용자를 위한 개인정보 고지 및 데이터 처리 안내를 구현합니다.",
-          "status": "pending"
-        },
-        {
-          "id": 10.2,
-          "title": "다국어 지원 설정",
-          "description": "사용자 언어 설정에 따라 적절한 언어(영어/한국어)로 개인정보 고지가 표시되도록 구현합니다.",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "id": 11,
-      "title": "사용자 플로우 및 네비게이션 구현",
-      "description": "Implement the complete user flow from service access to image sharing, with intuitive navigation between steps.",
-      "status": "pending",
-      "dependencies": [
-        2,
-        3,
-        6,
-        7,
-        9
-      ],
-      "priority": "medium",
-      "details": "1. Create a step-by-step flow with clear navigation\n2. Implement progress indicators\n3. Add back/forward navigation\n4. Create smooth transitions between steps\n5. Ensure the flow works well on mobile devices\n\nExample implementation:\n```tsx\nimport { useState } from 'react'\n\nenum Step {\n  UPLOAD = 'upload',\n  SELECT_RINGS = 'select_rings',\n  PREVIEW = 'preview',\n  SHARE = 'share'\n}\n\nexport default function UserFlow() {\n  const [currentStep, setCurrentStep] = useState<Step>(Step.UPLOAD)\n  const [handImage, setHandImage] = useState<string | null>(null)\n  const [fingerPositions, setFingerPositions] = useState<any[]>([])\n  const [selectedRings, setSelectedRings] = useState<any[]>([])\n  const [resultImage, setResultImage] = useState<string | null>(null)\n  \n  const goToNextStep = () => {\n    switch (currentStep) {\n      case Step.UPLOAD:\n        setCurrentStep(Step.SELECT_RINGS)\n        break\n      case Step.SELECT_RINGS:\n        setCurrentStep(Step.PREVIEW)\n        break\n      case Step.PREVIEW:\n        setCurrentStep(Step.SHARE)\n        break\n    }\n  }\n  \n  const goToPreviousStep = () => {\n    switch (currentStep) {\n      case Step.SELECT_RINGS:\n        setCurrentStep(Step.UPLOAD)\n        break\n      case Step.PREVIEW:\n        setCurrentStep(Step.SELECT_RINGS)\n        break\n      case Step.SHARE:\n        setCurrentStep(Step.PREVIEW)\n        break\n    }\n  }\n  \n  return (\n    <div className=\"max-w-md mx-auto p-4\">\n      {/* Progress indicator */}\n      <div className=\"flex justify-between mb-8\">\n        {Object.values(Step).map((step) => (\n          <div \n            key={step}\n            className={`w-full h-2 mx-1 rounded ${currentStep === step ? 'bg-blue-500' : 'bg-gray-200'}`}\n          />\n        ))}\n      </div>\n      \n      {/* Step content */}\n      <div className=\"min-h-[400px]\">\n        {currentStep === Step.UPLOAD && (\n          <ImageUploadStep \n            onImageCaptured={(image, positions) => {\n              setHandImage(image)\n              setFingerPositions(positions)\n            }} \n          />\n        )}\n        \n        {currentStep === Step.SELECT_RINGS && (\n          <RingSelectionStep \n            handImage={handImage!}\n            fingerPositions={fingerPositions}\n            onRingsSelected={setSelectedRings} \n          />\n        )}\n        \n        {currentStep === Step.PREVIEW && (\n          <PreviewStep \n            handImage={handImage!}\n            fingerPositions={fingerPositions}\n            selectedRings={selectedRings}\n            onResultImageGenerated={setResultImage}\n          />\n        )}\n        \n        {currentStep === Step.SHARE && (\n          <ShareStep resultImage={resultImage!} />\n        )}\n      </div>\n      \n      {/* Navigation buttons */}\n      <div className=\"flex justify-between mt-8\">\n        {currentStep !== Step.UPLOAD && (\n          <button \n            onClick={goToPreviousStep}\n            className=\"px-4 py-2 bg-gray-200 rounded\"\n          >\n            Back\n          </button>\n        )}\n        \n        {currentStep !== Step.SHARE && (\n          <button \n            onClick={goToNextStep}\n            className=\"px-4 py-2 bg-blue-500 text-white rounded ml-auto\"\n            disabled={!handImage && currentStep === Step.UPLOAD}\n          >\n            Next\n          </button>\n        )}\n      </div>\n    </div>\n  )\n}\n```",
-      "testStrategy": "Test the complete user flow from start to finish. Verify that navigation between steps works correctly. Test back/forward navigation. Ensure the flow is intuitive and user-friendly. Test on various devices and screen sizes to ensure responsive behavior.",
-      "subtasks": [
-        {
-          "id": 11.1,
-          "title": "사용자 플로우 및 네비게이션 구현",
-          "description": "한글 버전의 사용자 플로우 및 네비게이션 구현",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "title": "에러 처리 및 예외 상황 대응",
-      "description": "Add comprehensive error handling for various scenarios such as unsupported browsers, failed image processing, and network issues.",
-      "status": "pending",
-      "dependencies": [
-        4,
-        7,
-        9
-      ],
-      "priority": "medium",
-      "details": "1. Implement error boundaries for React components\n2. Create user-friendly error messages\n3. Add fallbacks for unsupported features\n4. Implement retry mechanisms for failed operations\n5. Add logging for error tracking (client-side only)\n\nExample implementation:\n```tsx\nimport { Component, ErrorInfo, ReactNode } from 'react'\n\ninterface ErrorBoundaryProps {\n  children: ReactNode\n  fallback?: ReactNode\n}\n\ninterface ErrorBoundaryState {\n  hasError: boolean\n  error?: Error\n}\n\nexport class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {\n  constructor(props: ErrorBoundaryProps) {\n    super(props)\n    this.state = { hasError: false }\n  }\n\n  static getDerivedStateFromError(error: Error): ErrorBoundaryState {\n    return { hasError: true, error }\n  }\n\n  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {\n    // Log error to client-side console only\n    console.error('Component error:', error, errorInfo)\n  }\n\n  render(): ReactNode {\n    if (this.state.hasError) {\n      if (this.props.fallback) {\n        return this.props.fallback\n      }\n      \n      return (\n        <div className=\"p-4 bg-red-100 border border-red-400 text-red-700 rounded\">\n          <h3 className=\"font-bold mb-2\">Something went wrong</h3>\n          <p>We're sorry, but we encountered an error. Please try again.</p>\n          <button\n            className=\"mt-4 px-4 py-2 bg-red-500 text-white rounded\"\n            onClick={() => this.setState({ hasError: false })}\n          >\n            Try again\n          </button>\n        </div>\n      )\n    }\n\n    return this.props.children\n  }\n}\n\n// Usage example:\n// <ErrorBoundary>\n//   <MediaPipeHandDetection />\n// </ErrorBoundary>\n```",
-      "testStrategy": "Test error handling by simulating various error conditions. Verify that error messages are user-friendly and helpful. Test fallback mechanisms to ensure they work correctly. Ensure that error boundaries catch and handle errors appropriately. Test retry mechanisms for effectiveness.",
-      "subtasks": [
-        {
-          "id": 12.1,
-          "title": "에러 처리 및 예외 상황 대응",
-          "description": "한글화된 에러 메시지 및 사용자 인터페이스 구현",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "id": 13,
-      "title": "성능 최적화 및 로딩 개선",
-      "description": "Optimize the application for performance, especially on mobile devices, with appropriate loading states and optimizations.",
-      "status": "pending",
-      "dependencies": [
-        4,
-        7,
-        11
-      ],
-      "priority": "medium",
-      "details": "1. Implement code splitting and lazy loading\n2. Optimize image loading and processing\n3. Add loading indicators for async operations\n4. Implement performance monitoring\n5. Optimize MediaPipe initialization and processing\n\nExample implementation:\n```tsx\nimport { Suspense, lazy } from 'react'\nimport { useEffect, useState } from 'react'\n\n// Lazy load heavy components\nconst MediaPipeHandDetection = lazy(() => import('./MediaPipeHandDetection'))\n\nexport default function OptimizedImageProcessor({ imageSrc }: { imageSrc: string }) {\n  const [isLoading, setIsLoading] = useState(true)\n  const [progress, setProgress] = useState(0)\n  \n  useEffect(() => {\n    // Simulate loading progress\n    const interval = setInterval(() => {\n      setProgress(prev => {\n        if (prev >= 100) {\n          clearInterval(interval)\n          setIsLoading(false)\n          return 100\n        }\n        return prev + 10\n      })\n    }, 200)\n    \n    return () => clearInterval(interval)\n  }, [])\n  \n  return (\n    <div>\n      {isLoading ? (\n        <div className=\"p-4 text-center\">\n          <div className=\"w-full bg-gray-200 rounded-full h-2.5\">\n            <div \n              className=\"bg-blue-600 h-2.5 rounded-full\" \n              style={{ width: `${progress}%` }}\n            ></div>\n          </div>\n          <p className=\"mt-2\">Loading hand detection ({progress}%)...</p>\n        </div>\n      ) : (\n        <Suspense fallback={<div>Loading component...</div>}>\n          <MediaPipeHandDetection imageSrc={imageSrc} />\n        </Suspense>\n      )}\n    </div>\n  )\n}\n```",
-      "testStrategy": "Measure and benchmark performance metrics like load time, time to interactive, and frame rate. Test on various devices, especially lower-end mobile devices. Verify that loading indicators provide good user feedback. Test with slow network connections to ensure graceful degradation.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Implement Code Splitting and Lazy Loading",
-          "description": "Optimize application load time by implementing code splitting and lazy loading of components",
+          "title": "캔버스→이미지 변환 기능",
+          "description": "Create functionality to convert the canvas with rings to an image format while adding branding elements",
           "dependencies": [],
-          "details": "Use React.lazy() and Suspense to split the application code into smaller chunks that load on demand. Identify large components that aren't needed for initial render and configure them for lazy loading. Implement dynamic imports for heavy libraries and modules. Set up route-based code splitting for different application views.",
+          "details": "Use HTML5 Canvas API to export the current canvas state to an image format (PNG/JPEG). Add logo, watermark or other branding elements to the exported image. Ensure the conversion maintains the visual quality of the rings and other elements from the canvas.",
           "status": "pending"
         },
         {
           "id": 2,
-          "title": "Optimize Image Processing and Rendering",
-          "description": "Improve performance of image processing operations and rendering efficiency",
-          "dependencies": [],
-          "details": "Implement image compression and resizing before processing. Use WebWorkers for heavy image processing tasks to prevent UI blocking. Optimize canvas operations by minimizing redraws and using appropriate rendering contexts. Implement image caching mechanisms to prevent redundant processing of the same images. Consider using WebGL for hardware-accelerated image processing where appropriate.",
+          "title": "이미지 품질/용량 최적화",
+          "description": "Implement techniques to balance image quality with file size for optimal sharing",
+          "dependencies": [
+            1
+          ],
+          "details": "Research and implement compression techniques for the exported images. Test different quality settings for JPEG or compression levels for PNG. Create a system that allows adjustable quality settings. Benchmark file sizes and visual quality to find the optimal balance for social media sharing.",
           "status": "pending"
         },
         {
           "id": 3,
-          "title": "Add Loading Indicators for Asynchronous Operations",
-          "description": "Implement visual feedback for users during loading and processing operations",
-          "dependencies": [
-            1
-          ],
-          "details": "Create reusable loading components with appropriate animations. Implement skeleton screens for content that's loading. Add progress indicators for long-running operations like image processing or model initialization. Ensure loading states are properly managed in the application state. Implement timeouts and fallbacks for operations that take too long.",
-          "status": "pending"
-        },
-        {
-          "id": 4,
-          "title": "Implement Performance Monitoring",
-          "description": "Set up tools and metrics to monitor application performance",
+          "title": "이미지 미리보기 기능",
+          "description": "Develop a preview system that shows users how their final image will look before downloading",
           "dependencies": [
             1,
             2
           ],
-          "details": "Integrate performance monitoring tools like Lighthouse or Web Vitals. Set up custom performance metrics for critical user journeys. Implement logging for performance bottlenecks and errors. Create a dashboard to visualize performance metrics over time. Set up alerts for performance regressions.",
+          "details": "Build a modal or dedicated area in the UI that displays the processed image with all branding elements applied. Ensure the preview accurately represents what users will get when they download. Add options to adjust image settings from the preview if needed.",
           "status": "pending"
         },
         {
-          "id": 5,
-          "title": "Optimize MediaPipe Initialization and Processing",
-          "description": "Improve the performance of MediaPipe operations and initialization",
+          "id": 4,
+          "title": "다운로드 기능 구현",
+          "description": "Create a system for users to download the generated image to their device",
           "dependencies": [
+            1,
             2,
-            4
+            3
           ],
-          "details": "Optimize MediaPipe model loading by implementing progressive loading strategies. Cache MediaPipe results when appropriate to prevent redundant processing. Configure MediaPipe for different device capabilities (high/low-end devices). Implement throttling for continuous processing operations. Optimize memory usage by properly disposing of resources when not needed.",
+          "details": "Implement a download button that triggers the browser's download functionality. Ensure proper filename generation with appropriate extensions. Add options for different image formats if supported. Consider adding analytics to track download events.",
           "status": "pending"
         }
       ]
     },
     {
-      "id": 14,
-      "title": "익명 사용 분석 및 트래킹",
-      "description": "Add anonymous usage analytics to track feature usage and user flow without collecting personal data.",
-      "status": "pending",
+      "id": 9,
+      "title": "모바일 최적화 및 반응형 UI",
+      "description": "Optimize the application for mobile devices, ensuring responsive design and touch-friendly interactions based on the Figma design.",
+      "details": "1. Implement responsive layouts using Tailwind CSS breakpoints:\n```tsx\n<div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">\n  {/* Content */}\n</div>\n```\n2. Optimize touch targets for mobile:\n```css\n.touch-target {\n  min-width: 44px;\n  min-height: 44px;\n}\n```\n3. Implement mobile-specific UI components where needed\n4. Add touch gesture support for ring manipulation\n5. Optimize image processing for mobile performance\n6. Implement progressive loading for better mobile experience\n7. Test and optimize for various mobile screen sizes\n8. Ensure proper viewport settings:\n```html\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n```\n9. Implement mobile-friendly error states and loading indicators",
+      "testStrategy": "1. Test on various mobile devices and screen sizes\n2. Verify touch interactions work correctly\n3. Measure and optimize performance on mobile devices\n4. Test with throttled network connections\n5. Verify that the UI is usable on small screens\n6. Test with various mobile browsers (Chrome, Safari, Firefox)",
+      "priority": "medium",
       "dependencies": [
-        11
+        5,
+        6
       ],
-      "priority": "low",
-      "details": "1. Implement privacy-focused analytics (e.g., Plausible, Simple Analytics)\n2. Track key user interactions and flow completion\n3. Ensure no personal data or images are included in analytics\n4. Add opt-out option for users\n\nExample implementation:\n```tsx\n// utils/analytics.ts\n\n// Define events we want to track\nexport enum AnalyticsEvent {\n  PAGE_VIEW = 'page_view',\n  IMAGE_UPLOAD = 'image_upload',\n  FINGER_DETECTION = 'finger_detection',\n  RING_SELECTION = 'ring_selection',\n  IMAGE_GENERATION = 'image_generation',\n  IMAGE_SHARE = 'image_share'\n}\n\n// Track an event without personal data\nexport function trackEvent(event: AnalyticsEvent, properties: Record<string, any> = {}) {\n  // Remove any potentially sensitive data\n  const safeProperties = { ...properties }\n  delete safeProperties.image\n  delete safeProperties.imageUrl\n  delete safeProperties.fingerPositions\n  \n  // In a real implementation, you would send this to your analytics service\n  console.log('Analytics event:', event, safeProperties)\n  \n  // Example implementation with a hypothetical analytics service\n  if (typeof window !== 'undefined' && window.plausible) {\n    window.plausible(event, { props: safeProperties })\n  }\n}\n\n// Hook to track page views\nexport function usePageViewTracking(pageName: string) {\n  useEffect(() => {\n    trackEvent(AnalyticsEvent.PAGE_VIEW, { page: pageName })\n  }, [pageName])\n}\n```\n\n한국어 표시: 익명 사용 분석 및 트래킹",
-      "testStrategy": "Verify that analytics events are triggered correctly for key user actions. Ensure no personal data or images are included in analytics events. Test the opt-out functionality to ensure it works correctly. Verify that analytics data is useful for understanding user behavior and identifying potential improvements.",
-      "subtasks": []
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Web Share API 연동",
+          "description": "Implement the core sharing functionality using the Web Share API to allow users to share content via their device's native sharing options.",
+          "dependencies": [],
+          "details": "Research Web Share API specifications and browser compatibility. Create a function that accepts share data (title, text, URL) and triggers the navigator.share() method. Handle promises and errors appropriately. Test on supported browsers and devices.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "브라우저 지원 체크",
+          "description": "Implement logic to detect if the Web Share API is supported in the user's browser and prepare for fallback options.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a utility function to check if navigator.share is available. Document browser compatibility information. Set up conditional logic that will determine whether to use the Web Share API or fallback options based on detection results.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "공유 대체 옵션 개발",
+          "description": "Create alternative sharing methods for browsers that don't support the Web Share API.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement direct links for common platforms (Twitter, Facebook, LinkedIn, etc.). Create a copy-to-clipboard functionality for the URL. Consider implementing a custom share modal for unsupported browsers. Ensure fallbacks maintain a consistent user experience with the native sharing.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "공유 UI 컴포넌트 구현",
+          "description": "Create user interface elements for sharing functionality that work across both Web Share API supported browsers and fallback options.",
+          "dependencies": [
+            1,
+            3
+          ],
+          "details": "Design share buttons/icons that are intuitive and accessible. Implement tooltips or helper text to guide users. Create responsive UI that works well on mobile and desktop. Ensure the UI adapts based on whether native sharing or fallbacks are being used. Add appropriate visual feedback for share actions.",
+          "status": "pending"
+        }
+      ]
     },
     {
-      "id": 15,
-      "title": "배포 준비 및 런칭",
-      "description": "Finalize the application for production deployment, including configuration, testing, and documentation.",
-      "status": "pending",
+      "id": 10,
+      "title": "최종 통합 및 E2E 테스트",
+      "description": "Integrate all components into a cohesive application, implement comprehensive error handling, and conduct end-to-end testing.",
+      "details": "1. Create the main application component integrating all features:\n```tsx\nconst LetsTriApp: React.FC = () => {\n  const [step, setStep] = useState<'upload' | 'detection' | 'selection'>('upload');\n  const [handImage, setHandImage] = useState<string | null>(null);\n  const [fingerPositions, setFingerPositions] = useState<{finger: string, x: number, y: number}[]>([]);\n  const [activeFingerIndex, setActiveFingerIndex] = useState<number | null>(null);\n  const [fingerSelections, setFingerSelections] = useState<FingerRingSelection[]>([\n    { finger: 'thumb', ringId: null, colorId: null },\n    { finger: 'index', ringId: null, colorId: null },\n    { finger: 'middle', ringId: null, colorId: null },\n    { finger: 'ring', ringId: null, colorId: null },\n    { finger: 'pinky', ringId: null, colorId: null },\n  ]);\n  const canvasRef = useRef<HTMLCanvasElement>(null);\n  \n  // Handle image upload\n  const handleImageUpload = (imageUrl: string) => {\n    setHandImage(imageUrl);\n    setStep('detection');\n  };\n  \n  // Handle finger detection completion\n  const handleDetectionComplete = (positions: {finger: string, x: number, y: number}[]) => {\n    setFingerPositions(positions);\n    setStep('selection');\n  };\n  \n  // Handle ring selection\n  const handleRingSelection = (ringId: string, colorId: string) => {\n    if (activeFingerIndex === null) {\n      // Default to thumb (index 0) for first selection\n      setActiveFingerIndex(0);\n      setFingerSelections(prev => {\n        const updated = [...prev];\n        updated[0] = { ...updated[0], ringId, colorId };\n        return updated;\n      });\n    } else {\n      setFingerSelections(prev => {\n        const updated = [...prev];\n        updated[activeFingerIndex] = { ...updated[activeFingerIndex], ringId, colorId };\n        return updated;\n      });\n    }\n  };\n  \n  // Handle finger pill selection\n  const handleFingerSelect = (index: number) => {\n    setActiveFingerIndex(index);\n  };\n  \n  // Handle sharing\n  const handleShare = async () => {\n    if (canvasRef.current) {\n      await shareImage(canvasRef.current);\n    }\n  };\n  \n  // Handle download\n  const handleDownload = async () => {\n    if (canvasRef.current) {\n      await downloadImage(canvasRef.current);\n    }\n  };\n  \n  return (\n    <div className=\"lets-try-app\">\n      <header>\n        <h1>haime lets try</h1>\n      </header>\n      \n      <main>\n        {step === 'upload' && (\n          <>\n            <PrivacyNotice />\n            <ImageUpload onUpload={handleImageUpload} />\n          </>\n        )}\n        \n        {step === 'detection' && handImage && (\n          <HandDetection \n            image={handImage} \n            onDetectionComplete={handleDetectionComplete} \n          />\n        )}\n        \n        {step === 'selection' && handImage && fingerPositions.length > 0 && (\n          <>\n            <div className=\"ring-simulation-container\">\n              <RingOverlay \n                handImage={handImage}\n                fingerPositions={fingerPositions}\n                fingerSelections={fingerSelections}\n                rings={rings}\n                canvasRef={canvasRef}\n              />\n              \n              <div className=\"finger-pills\">\n                {fingerPositions.map((pos, index) => (\n                  <FingerPill \n                    key={pos.finger}\n                    finger={pos.finger}\n                    active={activeFingerIndex === index}\n                    hasRing={!!fingerSelections[index].ringId}\n                    onClick={() => handleFingerSelect(index)}\n                  />\n                ))}\n              </div>\n              \n              <button \n                className=\"select-ring-button\"\n                onClick={() => setShowRingModal(true)}\n              >\n                Select Ring\n              </button>\n              \n              <div className=\"name-tag\">\n                {activeFingerIndex !== null && fingerSelections[activeFingerIndex].ringId && (\n                  <p>{getRingName(fingerSelections[activeFingerIndex].ringId)}</p>\n                )}\n              </div>\n              \n              <div className=\"share-actions\">\n                <button onClick={handleDownload}>Download</button>\n                <button onClick={handleShare}>Share</button>\n              </div>\n            </div>\n            \n            <RingSelectionModal \n              isOpen={showRingModal}\n              onClose={() => setShowRingModal(false)}\n              onSelectRing={handleRingSelection}\n            />\n          </>\n        )}\n      </main>\n      \n      <footer>\n        <p>© haime. All rights reserved.</p>\n      </footer>\n    </div>\n  );\n};\n```\n2. Implement comprehensive error handling throughout the application\n3. Add loading states and fallback UI for all async operations\n4. Implement analytics to track user interactions (without collecting personal data)\n5. Create a global error boundary component\n6. Optimize performance with React.memo, useMemo, and useCallback\n7. Implement proper SEO metadata\n8. Add final polish based on Figma design",
+      "testStrategy": "1. Conduct end-to-end testing of the complete user flow\n2. Test error scenarios and recovery\n3. Verify that all components work together correctly\n4. Test performance under various conditions\n5. Conduct cross-browser testing\n6. Verify mobile functionality\n7. Test accessibility compliance\n8. Conduct user acceptance testing",
+      "priority": "high",
       "dependencies": [
         1,
         2,
@@ -475,17 +500,51 @@
         6,
         7,
         8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
+        9
       ],
-      "priority": "high",
-      "details": "1. Configure production build settings\n2. Set up Vercel deployment\n3. Implement environment-specific configurations\n4. Create documentation for future maintenance\n5. Perform final cross-browser and device testing\n6. Optimize SEO and social sharing metadata\n\nExample implementation:\n```tsx\n// next.config.js\nmodule.exports = {\n  reactStrictMode: true,\n  images: {\n    domains: ['your-storage-domain.com'],\n  },\n  env: {\n    NEXT_PUBLIC_RING_STORAGE_URL: process.env.NEXT_PUBLIC_RING_STORAGE_URL,\n  },\n  // Enable SWC minification\n  swcMinify: true,\n  // Configure headers for security\n  async headers() {\n    return [\n      {\n        source: '/(.*)',\n        headers: [\n          {\n            key: 'X-Content-Type-Options',\n            value: 'nosniff',\n          },\n          {\n            key: 'X-Frame-Options',\n            value: 'DENY',\n          },\n          {\n            key: 'X-XSS-Protection',\n            value: '1; mode=block',\n          },\n        ],\n      },\n    ]\n  },\n}\n\n// pages/_document.tsx\nimport Document, { Html, Head, Main, NextScript } from 'next/document'\n\nclass MyDocument extends Document {\n  render() {\n    return (\n      <Html lang=\"en\">\n        <Head>\n          <meta charSet=\"utf-8\" />\n          <meta name=\"description\" content=\"Try on rings virtually with haime lets try\" />\n          <meta property=\"og:title\" content=\"haime lets try - Virtual Ring Try-On\" />\n          <meta property=\"og:description\" content=\"Try on rings virtually with our hand detection technology\" />\n          <meta property=\"og:image\" content=\"/og-image.jpg\" />\n          <meta property=\"og:type\" content=\"website\" />\n          <meta name=\"twitter:card\" content=\"summary_large_image\" />\n          <link rel=\"icon\" href=\"/favicon.ico\" />\n        </Head>\n        <body>\n          <Main />\n          <NextScript />\n        </body>\n      </Html>\n    )\n  }\n}\n\nexport default MyDocument\n```",
-      "testStrategy": "Perform comprehensive testing across different browsers, devices, and network conditions. Verify that the application works correctly in production mode. Test deployment to Vercel to ensure it works as expected. Verify that environment-specific configurations work correctly. Test SEO and social sharing metadata.",
-      "subtasks": []
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "한/영 개인정보 안내 작성",
+          "description": "Develop clear and concise privacy notices in both Korean and English languages that explain data handling practices",
+          "dependencies": [],
+          "details": "Create privacy notices that clearly communicate what data is collected, how it's used, and emphasize client-side processing. Ensure language is accessible to users with varying technical knowledge. Have both versions reviewed for accuracy, cultural appropriateness, and legal compliance in both languages.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "기술적 보호조치 구현",
+          "description": "Develop and implement technical safeguards to ensure client-side-only processing of user data",
+          "dependencies": [
+            1
+          ],
+          "details": "Create technical architecture that processes user data exclusively on the client side. Implement encryption for any temporary storage, verify no data is transmitted to servers without explicit consent, and document the implementation for technical review. Include automated tests to verify data containment.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "시각적 개인정보 표시",
+          "description": "Design and implement visual indicators that clearly show users when data is being processed locally",
+          "dependencies": [
+            2
+          ],
+          "details": "Create intuitive visual cues (icons, badges, or status indicators) that appear when local processing is active. Include tooltips or brief explanations of what these indicators mean. Ensure indicators are accessible and visible across different devices and screen sizes. Test with users to verify understanding.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "개인정보 처리방침 페이지",
+          "description": "Create a detailed privacy policy page that incorporates all privacy aspects of the application",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Develop a comprehensive privacy policy page that includes all legal requirements, explains the technical safeguards in place, references the visual indicators, and provides detailed information about data handling practices. Include sections for user rights, data retention policies, and contact information for privacy concerns. Ensure the page is available in both Korean and English.",
+          "status": "pending"
+        }
+      ]
     }
   ]
 }

@@ -1,64 +1,73 @@
 # Task ID: 2
-# Title: 기본 UI 레이아웃 및 컴포넌트 구현
+# Title: 손등 이미지 업로드 및 가이드 구현
 # Status: done
 # Dependencies: 1
 # Priority: high
-# Description: Implement the basic UI layout and components based on the Figma design, focusing on mobile-first responsive design.
+# Description: Implement the functionality for users to upload hand images and provide a visual guide for proper hand positioning.
 # Details:
-1. Review the Figma design files
-2. Create reusable UI components:
-   - Header with haime brand logo
-   - Main content area
-   - Footer with privacy information
-   - Button components
-   - Modal/popup components
-   - Image upload area
-   - Ring selection interface
-3. Implement responsive layouts using Tailwind CSS
-4. Create placeholder screens for each step in the user flow
+1. Create an image upload component with drag-and-drop and file selection capabilities
+2. Implement client-side image validation (file type, size, dimensions)
+3. Add a visual guide component showing the correct hand positioning
+4. Create a preview component to display the uploaded image
+5. Implement responsive design for mobile optimization
+6. Add privacy notice explaining that images are not stored on servers
 
-Example component structure:
+Example code for image upload:
 ```tsx
-// components/Header.tsx
-import Image from 'next/image'
-
-export default function Header() {
+const ImageUpload = () => {
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+  
   return (
-    <header className="flex items-center justify-between p-4">
-      <div className="text-xl font-bold">haime</div>
-      <div className="text-lg">lets try</div>
-    </header>
-  )
-}
+    <div className="upload-container">
+      <div className="guide-container">
+        <img src="/hand-guide.png" alt="Hand positioning guide" />
+        <p>Position your hand as shown in the guide</p>
+      </div>
+      <input type="file" accept="image/*" onChange={handleUpload} />
+      {preview && <img src={preview} alt="Preview" className="preview-image" />}
+    </div>
+  );
+};
 ```
 
-한글 제목: 기본 UI 레이아웃 및 컴포넌트 구현
-
 # Test Strategy:
-Manually test the UI components across different screen sizes to ensure responsive behavior. Verify that the components match the Figma design. Use Storybook or a similar tool to document and test components in isolation if time permits.
+1. Test image upload with various file types, ensuring only images are accepted
+2. Verify preview functionality works correctly
+3. Test responsive design on different mobile devices
+4. Verify that the guide is clearly visible and helpful
+5. Confirm that no image data is sent to any server (network monitoring)
 
 # Subtasks:
-## 1. Create Core Layout Components [done]
+## 1. 레이아웃 핵심 컴포넌트 구현 [done]
 ### Dependencies: None
-### Description: Implement the fundamental layout structure including header, footer, and main content area
+### Description: Implement the header, footer, and main content area components according to the Figma design
 ### Details:
-Build reusable layout components that will serve as the foundation for all pages. Create the header with navigation elements, footer with site information, and a flexible main content container. Ensure these components follow the Figma design specifications and use Tailwind CSS for styling.
+Build the foundational layout structure including the header with navigation, footer with site information, and the main content container. Ensure these components are properly structured for content flow and follow the design specifications. Use Tailwind CSS for styling and ensure proper semantic HTML elements are used.
 
-## 2. Implement Reusable UI Elements [done]
+## 2. 재사용 UI 요소 개발 [done]
 ### Dependencies: 2.1
-### Description: Develop common UI components such as buttons, form inputs, cards, and modal dialogs
+### Description: Develop reusable UI components such as buttons, modals, form elements, and cards
 ### Details:
-Create a library of reusable UI elements that maintain consistent styling throughout the application. Implement buttons with different states (primary, secondary, disabled), form inputs with validation states, card components, and modal dialogs. Ensure all components are accessible and follow the design system guidelines.
+Create a component library of reusable UI elements that maintain consistent styling throughout the application. Include various button states (primary, secondary, disabled), modal windows with overlay effects, form inputs with validation states, and content cards. Document component props and usage examples for team reference.
 
-## 3. Build Responsive Design System [done]
+## 3. 반응형 디자인 시스템 구축 [done]
 ### Dependencies: 2.1, 2.2
-### Description: Implement responsive behavior for all components to ensure proper display across different device sizes
+### Description: Implement a responsive design system that works across mobile, tablet, and desktop viewports
 ### Details:
-Develop a comprehensive responsive design system using Tailwind CSS breakpoints. Create utility classes for responsive layouts, implement media queries where needed, and test all components across mobile, tablet, and desktop viewports. Document responsive behavior patterns for future component development.
+Develop a comprehensive responsive design system using Tailwind's breakpoint utilities. Create responsive variants for all components, implement appropriate spacing scales, and ensure text remains readable at all viewport sizes. Test thoroughly on various device sizes and orientations to ensure proper layout adaptation.
 
-## 4. Create Placeholder Screens for User Flow [done]
+## 4. 플로우용 플레이스홀더 화면 구현 [done]
 ### Dependencies: 2.1, 2.2, 2.3
-### Description: Develop initial screen layouts for the main user journey through the application
+### Description: Implement placeholder screens for the main user journey through the application
 ### Details:
-Using the established components and responsive system, build placeholder screens that represent the key steps in the user flow. Include login/registration screens, dashboard views, and any critical transaction or interaction screens. These screens should use the previously created components and follow the responsive design patterns.
+Build skeleton screens for each step in the user flow, including landing page, authentication screens, dashboard, and feature pages. Use the previously created components to assemble these screens. Include basic navigation between screens and ensure the flow matches the intended user journey while maintaining responsive behavior across all devices.
 

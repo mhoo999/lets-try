@@ -1,26 +1,53 @@
 # Task ID: 1
-# Title: 프로젝트 세팅: Next.js 및 TypeScript
+# Title: Next.js 및 TypeScript 프로젝트 세팅
 # Status: done
 # Dependencies: None
 # Priority: high
-# Description: Initialize the project repository with Next.js, TypeScript, and Tailwind CSS according to the technical architecture requirements.
+# Description: Initialize the project repository with Next.js, TypeScript, and Tailwind CSS as specified in the PRD.
 # Details:
-1. Create a new Next.js project using `npx create-next-app@latest`
-2. Configure TypeScript support
-3. Install and configure Tailwind CSS
-4. Set up project structure with appropriate folders for components, hooks, utils, and pages
-5. Configure linting and formatting tools
-6. Set up version control with Git
-7. Configure deployment settings for Vercel
-
-Example command:
+1. Create a new Next.js project with TypeScript support:
 ```bash
-npx create-next-app@latest lets-try --typescript --tailwind --eslint
-cd lets-try
-git init
-git add .
-git commit -m "Initial commit"
+npx create-next-app@latest lets-try --typescript
 ```
+2. Install and configure Tailwind CSS:
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+3. Configure Tailwind CSS in tailwind.config.js and globals.css
+4. Set up project structure with folders for components, hooks, utils, and pages
+5. Configure ESLint and Prettier for code quality
+6. Set up deployment configuration for Vercel
+7. Create basic layout components (Header, Footer, Layout)
 
 # Test Strategy:
-Verify that the project builds successfully with `npm run build`. Ensure that TypeScript compilation works without errors. Test that Tailwind CSS is properly configured by creating a simple styled component.
+1. Verify that the project builds without errors
+2. Confirm that Tailwind CSS is properly configured by testing a sample component
+3. Ensure TypeScript is correctly set up by checking type checking
+4. Test the deployment pipeline to Vercel
+
+# Subtasks:
+## 1. Next.js 설치 및 설정 [done]
+### Dependencies: None
+### Description: Set up a new Next.js project with the necessary configurations
+### Details:
+Use create-next-app to initialize a new Next.js project. Configure the basic settings including the app router, CSS modules, and other initial preferences. Verify the installation by running the development server.
+
+## 2. TypeScript와 린트 환경 구축 [done]
+### Dependencies: 1.1
+### Description: Configure TypeScript and ESLint for code quality
+### Details:
+Configure tsconfig.json with appropriate TypeScript settings. Install and set up ESLint with recommended rules for Next.js and TypeScript. Add Prettier for code formatting. Create necessary configuration files and scripts in package.json for linting and type checking.
+
+## 3. 프로젝트 폴더 구조 설계 [done]
+### Dependencies: 1.1, 1.2
+### Description: Establish the folder structure and organization for the project
+### Details:
+Create essential directories like components, pages/app (depending on router), utils, styles, public, etc. Set up the basic layout components. Create placeholder files for main sections of the application. Document the project structure in a README file.
+
+## 4. 버전 관리(Git) 초기화 [done]
+### Dependencies: 1.3
+### Description: Set up Git repository and initial commit
+### Details:
+Initialize Git repository. Create .gitignore file with appropriate rules for Next.js projects. Make initial commit with the project structure. Set up remote repository on GitHub/GitLab/etc. Create development branch for ongoing work. Document branching strategy if applicable.
+
