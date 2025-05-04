@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import * as handsModule from '@mediapipe/hands';
 import { drawLandmarks } from '@mediapipe/drawing_utils';
 // <img> 사용: MediaPipe canvas와 겹치기 위해 SSR/최적화 목적이 아니라면 유지
-
-const Hands = handsModule.Hands;
 
 interface HandLandmarkDetectorProps {
   imageUrl?: string;
@@ -20,6 +17,10 @@ const RING_PAIRS = [
   { finger: 'pinky', idxA: 17, idxB: 18 },
 ];
 
+type MediaPipeResults = {
+  multiHandLandmarks?: { x: number; y: number }[][];
+};
+
 export default function HandLandmarkDetector({ imageUrl, testMode = false, onRingPositions }: HandLandmarkDetectorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -29,10 +30,9 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
   const [hiddenPoints, setHiddenPoints] = useState<Set<number>>(new Set());
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!imageUrl) return;
-    let hands: any = null;
+    let hands: unknown = null;
     let isMounted = true;
     setLoading(true);
     setError(null);
@@ -62,16 +62,14 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
       }
       // 2. MediaPipe Hands 동적 import 및 생성자 체크
       try {
-        const handsModule = await import('@mediapipe/hands');
-        console.log('handsModule:', handsModule);
-        // 다양한 export 케이스 지원 (default 내부도 검사)
+        const handsModule: unknown = await import('@mediapipe/hands');
         const modAny = handsModule as any;
         let exportObj: any = modAny;
         if (modAny.default && typeof modAny.default === 'object') {
           exportObj = modAny.default;
         }
         console.log('exportObj:', exportObj);
-        let handsInstance: any = null;
+        let handsInstance: unknown = null;
         if (typeof exportObj.createHands === 'function') {
           handsInstance = exportObj.createHands({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -94,96 +92,99 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
           return;
         }
         hands = handsInstance;
-        hands.setOptions?.({
-          maxNumHands: 1,
-          modelComplexity: 1,
-          minDetectionConfidence: 0.7,
-          minTrackingConfidence: 0.7
-        });
-        hands.onResults((results: any) => {
-          if (!isMounted) return;
-          const points = (results.multiHandLandmarks?.[0] || []) as { x: number; y: number }[];
-          setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
-          // 반지 위치/각도 계산
-          const canvas = canvasRef.current;
-          const ringPos = RING_PAIRS.map(({ finger, idxA, idxB }) => {
-            if (!points[idxA] || !points[idxB] || !canvas) return null;
-            const a = points[idxA];
-            const b = points[idxB];
-            const centerX = ((a.x + b.x) / 2) * canvas.width;
-            const centerY = ((a.y + b.y) / 2) * canvas.height;
-            const angle = Math.atan2(b.y - a.y, b.x - a.x); // 라디안
-            return { finger, centerX, centerY, angle };
-          }).filter(Boolean) as { finger: string; centerX: number; centerY: number; angle: number }[];
-          setRingPositions(ringPos);
-          if (onRingPositions) onRingPositions(ringPos);
-          // 캔버스에 시각화
-          const ctx = canvas?.getContext('2d');
-          if (canvas && ctx && imageRef.current) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // 이미지 비율 유지하며 캔버스에 최대한 크게 그리기 (object-fit: cover)
-            const img = imageRef.current;
-            const imgW = img.naturalWidth;
-            const imgH = img.naturalHeight;
-            const canvasW = canvas.width;
-            const canvasH = canvas.height;
-            const imgRatio = imgW / imgH;
-            const canvasRatio = canvasW / canvasH;
-            let drawW = canvasW, drawH = canvasH, offsetX = 0, offsetY = 0;
-            if (imgRatio > canvasRatio) {
-              drawH = canvasH;
-              drawW = imgW * (canvasH / imgH);
-              offsetX = (canvasW - drawW) / 2;
-            } else {
-              drawW = canvasW;
-              drawH = imgH * (canvasW / imgW);
-              offsetY = (canvasH - drawH) / 2;
-            }
-            ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-            if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
-              if (testMode) {
-                // landmark 점/선
-                drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
-                // 반지 위치 가이드 표시
-                ringPos.forEach((pos) => {
-                  if (!pos) return;
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.arc(pos.centerX, pos.centerY, 18, 0, 2 * Math.PI);
-                  ctx.strokeStyle = '#3b82f6';
-                  ctx.lineWidth = 3;
-                  ctx.setLineDash([6, 6]);
-                  ctx.stroke();
-                  ctx.setLineDash([]);
-                  ctx.restore();
-                });
-                // 숫자 표시
-                (results.multiHandLandmarks[0] as { x: number; y: number }[]).forEach((pt: { x: number; y: number }, idx: number) => {
-                  if (hiddenPoints.has(idx)) return;
-                  const px = pt.x * canvas.width;
-                  const py = pt.y * canvas.height;
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.arc(px, py, 14, 0, 2 * Math.PI);
-                  ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                  ctx.fill();
-                  ctx.font = 'bold 14px sans-serif';
-                  ctx.fillStyle = '#fff';
-                  ctx.textAlign = 'center';
-                  ctx.textBaseline = 'middle';
-                  ctx.fillText(idx.toString(), px, py);
-                  ctx.restore();
-                });
+        if (hands && typeof (hands as any).setOptions === 'function') {
+          (hands as any).setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7
+          });
+        }
+        if (hands && typeof (hands as any).onResults === 'function') {
+          (hands as any).onResults((results: MediaPipeResults) => {
+            if (!isMounted) return;
+            const points = (results.multiHandLandmarks?.[0] || []) as { x: number; y: number }[];
+            setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
+            // 반지 위치/각도 계산
+            const canvas = canvasRef.current;
+            const ringPos = RING_PAIRS.map(({ finger, idxA, idxB }) => {
+              if (!points[idxA] || !points[idxB] || !canvas) return null;
+              const a = points[idxA];
+              const b = points[idxB];
+              const centerX = ((a.x + b.x) / 2) * canvas.width;
+              const centerY = ((a.y + b.y) / 2) * canvas.height;
+              const angle = Math.atan2(b.y - a.y, b.x - a.x); // 라디안
+              return { finger, centerX, centerY, angle };
+            }).filter(Boolean) as { finger: string; centerX: number; centerY: number; angle: number }[];
+            setRingPositions(ringPos);
+            if (onRingPositions) onRingPositions(ringPos);
+            // 캔버스에 시각화
+            const ctx = canvas?.getContext('2d');
+            if (canvas && ctx && imageRef.current) {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              // 이미지 비율 유지하며 캔버스에 최대한 크게 그리기 (object-fit: cover)
+              const img = imageRef.current;
+              const imgW = img.naturalWidth;
+              const imgH = img.naturalHeight;
+              const canvasW = canvas.width;
+              const canvasH = canvas.height;
+              const imgRatio = imgW / imgH;
+              const canvasRatio = canvasW / canvasH;
+              let drawW = canvasW, drawH = canvasH, offsetX = 0, offsetY = 0;
+              if (imgRatio > canvasRatio) {
+                drawH = canvasH;
+                drawW = imgW * (canvasH / imgH);
+                offsetX = (canvasW - drawW) / 2;
+              } else {
+                drawW = canvasW;
+                drawH = imgH * (canvasW / imgW);
+                offsetY = (canvasH - drawH) / 2;
+              }
+              ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+              if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
+                if (testMode) {
+                  // landmark 점/선
+                  drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
+                  // 반지 위치 가이드 표시
+                  ringPos.forEach((pos) => {
+                    if (!pos) return;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(pos.centerX, pos.centerY, 18, 0, 2 * Math.PI);
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([6, 6]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                  });
+                  // 숫자 표시
+                  (results.multiHandLandmarks[0] as { x: number; y: number }[]).forEach((pt, idx) => {
+                    if (hiddenPoints.has(idx)) return;
+                    const px = pt.x * canvas.width;
+                    const py = pt.y * canvas.height;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(px, py, 14, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fill();
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(idx.toString(), px, py);
+                    ctx.restore();
+                  });
+                }
               }
             }
-          }
-        });
-        console.log('hands 인스턴스 생성 및 옵션 설정 완료');
-        await hands.send({ image: imageRef.current! });
-        console.log('hands.send 호출 성공');
+          });
+        }
+        if (hands && typeof (hands as any).send === 'function') {
+          await (hands as any).send({ image: imageRef.current! });
+        }
         setLoading(false);
       } catch (e) {
-        console.error('MediaPipe Hands 처리 중 실제 에러:', e);
         setError(typeof e === 'string' ? e : 'MediaPipe Hands 처리 중 오류 발생');
         setLoading(false);
         return;
@@ -192,7 +193,9 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
     runDetection();
     return () => {
       isMounted = false;
-      hands?.close();
+      if (hands && typeof (hands as any).close === 'function') {
+        (hands as any).close();
+      }
     };
   }, [imageUrl, testMode, onRingPositions]);
 
