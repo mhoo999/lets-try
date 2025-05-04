@@ -156,6 +156,8 @@ export default function Home() {
                     height: base,
                     transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
                     pointerEvents: 'none',
+                    border: '2px solid red', // 디버깅용 테두리
+                    zIndex: 9999,
                   } as React.CSSProperties;
                   console.log('[오버레이 디버그]', {
                     finger: pos.finger,
@@ -168,6 +170,7 @@ export default function Home() {
                       src={selection.color.imageUrl}
                       alt={`${pos.finger} ring`}
                       style={style}
+                      onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
                     />
                   );
                 })}
