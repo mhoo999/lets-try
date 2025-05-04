@@ -39,12 +39,26 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
     setRingPositions([]);
 
     const runDetection = async () => {
-      if (!imageRef.current) return;
-      await new Promise<void>((resolve, reject) => {
-        if (imageRef.current?.complete) resolve();
-        else imageRef.current!.onload = () => resolve();
-        imageRef.current!.onerror = () => reject('이미지 로드 실패');
-      });
+      if (!imageRef.current) {
+        setError('이미지 엘리먼트를 찾을 수 없습니다.');
+        setLoading(false);
+        return;
+      }
+      // 1. 이미지 로드 try/catch
+      try {
+        await new Promise<void>((resolve, reject) => {
+          if (imageRef.current?.complete) resolve();
+          else {
+            imageRef.current!.onload = () => resolve();
+            imageRef.current!.onerror = () => reject('이미지 로드 실패');
+          }
+        });
+      } catch (e) {
+        setError(typeof e === 'string' ? e : '이미지 로드 실패');
+        setLoading(false);
+        return;
+      }
+      // 2. MediaPipe Hands try/catch
       try {
         hands = new Hands({
           locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -138,6 +152,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
       } catch (e) {
         setError(typeof e === 'string' ? e : 'MediaPipe Hands 처리 중 오류 발생');
         setLoading(false);
+        return;
       }
     };
     runDetection();
