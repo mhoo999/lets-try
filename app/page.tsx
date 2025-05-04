@@ -17,6 +17,7 @@ export default function Home() {
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
+  const [isRingApplied, setIsRingApplied] = useState(false);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -72,14 +73,14 @@ export default function Home() {
   // FingerPills에서 손가락 선택 시
   const handleFingerSelect = (finger: string) => {
     setSelectedFinger(finger);
-    setModalOpen(true); // 손가락 pill 클릭 시 팝업 오픈
+    // 손가락 pill 클릭 시 팝업 오픈 제거 (요구 플로우상)
   };
 
-  // 반지/컬러 선택 시
-  const handleRingSelect = (ring: Ring, color: RingColor) => {
-    if (selectedFinger) {
-      setRingSelections((prev) => ({ ...prev, [selectedFinger]: { ring, color } }));
-    }
+  // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
+  const handleRingApply = (ring: Ring, color: RingColor) => {
+    setIsRingApplied(true);
+    setSelectedFinger('엄지');
+    setRingSelections({ '엄지': { ring, color } }); // 엄지에만 우선 적용
   };
 
   return (
@@ -141,15 +142,15 @@ export default function Home() {
       </div>
       {/* 하단 영역: FingerPills + 버튼 그룹 */}
       <div className="flex flex-col items-center w-full mb-[2vh]">
-        {/* 사진이 없으면 FingerPills 비활성화 */}
-        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={!imageUrl} />
+        {/* 반지 적용 전까지 FingerPills 비활성화 */}
+        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={!isRingApplied} />
         <div className="flex flex-col gap-[1vh] items-center w-full mt-[2.5vh]">
-          {/* 반지 선택 버튼: 사진+손가락 선택 시에만 활성화 */}
+          {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
           <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             onClick={() => setModalOpen(true)}
-            disabled={!imageUrl || !selectedFinger}
+            disabled={!imageUrl}
           >
             반지 선택하기
           </button>
@@ -167,7 +168,7 @@ export default function Home() {
       <RingSelectionModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSelect={handleRingSelect}
+        onSelect={handleRingApply}
       />
       {/* 카메라 모달 */}
       {cameraOpen && (
