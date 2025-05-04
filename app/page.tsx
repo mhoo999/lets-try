@@ -153,7 +153,7 @@ export default function Home() {
         text: '내 손에 반지를 합성해봤어요!',
         files: [file]
       });
-    } catch (e) {
+    } catch (_) {
       // fallback: 다운로드
       if (canvas) downloadImage(canvas);
     }
@@ -172,7 +172,7 @@ export default function Home() {
             type="button"
             onClick={handleCameraOrFile}
           >
-            사진 찍기
+            Take a PIC
           </button>
           <input
             ref={fileInputRef}
@@ -242,7 +242,7 @@ export default function Home() {
             onClick={handleOpenRingModal}
             disabled={!imageUrl}
           >
-            반지 선택하기
+            Select a ring
           </button>
 
           {/* 네임택(Pill) */}
@@ -262,14 +262,6 @@ export default function Home() {
               onClick={() => canvasRef.current && shareImage(canvasRef.current)}
             >
               공유
-            </button>
-            <button
-              className={`w-[24vw] h-[4vh] rounded-full font-semibold text-base flex items-center justify-center mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
-              type="button"
-              disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
-              onClick={() => canvasRef.current && downloadImage(canvasRef.current)}
-            >
-              저장
             </button>
           </div>
         </div>
