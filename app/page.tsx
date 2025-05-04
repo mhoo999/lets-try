@@ -6,6 +6,7 @@ import HandGuide from './components/HandGuide';
 import FingerPills from './components/FingerPills';
 import CameraCapture from './components/CameraCapture';
 import HandLandmarkDetector from './components/HandLandmarkDetector';
+import RingSelectionModal from './components/RingSelectionModal';
 
 export default function Home() {
   const [selectedFinger, setSelectedFinger] = useState<string | undefined>(undefined);
@@ -14,6 +15,8 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
+  const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: any; color: any } }>({});
+  const [modalOpen, setModalOpen] = useState(false);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -64,6 +67,19 @@ export default function Home() {
   const handleCameraCapture = (url: string) => {
     setImageUrl(url);
     setCameraOpen(false);
+  };
+
+  // FingerPills에서 손가락 선택 시
+  const handleFingerSelect = (finger: string) => {
+    setSelectedFinger(finger);
+    setModalOpen(true); // 손가락 pill 클릭 시 팝업 오픈
+  };
+
+  // 반지/컬러 선택 시
+  const handleRingSelect = (ring: any, color: any) => {
+    if (selectedFinger) {
+      setRingSelections((prev) => ({ ...prev, [selectedFinger]: { ring, color } }));
+    }
   };
 
   return (
@@ -125,13 +141,15 @@ export default function Home() {
       </div>
       {/* 하단 영역: FingerPills + 버튼 그룹 */}
       <div className="flex flex-col items-center w-full mb-[2vh]">
-        <FingerPills selected={selectedFinger} onSelect={setSelectedFinger} />
+        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} />
         <div className="flex flex-col gap-[1vh] items-center w-full mt-[2.5vh]">
           <button
             className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base mb-0"
             type="button"
+            onClick={() => setModalOpen(true)}
+            disabled={!selectedFinger}
           >
-            Select a rings
+            반지 선택하기
           </button>
           <button
             className="w-[50vw] h-[4vh] rounded-full bg-[#dadada] text-white font-semibold text-base flex items-center justify-center mb-0"
@@ -148,6 +166,12 @@ export default function Home() {
           </button>
         </div>
       </div>
+      {/* 반지 선택 모달 */}
+      <RingSelectionModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSelect={handleRingSelect}
+      />
       {/* 카메라 모달 */}
       {cameraOpen && (
         <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
