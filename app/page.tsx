@@ -78,12 +78,19 @@ export default function Home() {
 
   // 반지/컬러 선택 후 적용(팝업에서 선택하기 클릭 시)
   const handleRingApply = (ring: Ring, color: RingColor) => {
-    setRingSelections(prev => ({
-      ...prev,
-      ['thumb']: { ring, color } // 엄지에 우선 적용
-    }));
+    if (!selectedFinger) {
+      setSelectedFinger('thumb');
+      setRingSelections(prev => ({
+        ...prev,
+        ['thumb']: { ring, color }
+      }));
+    } else {
+      setRingSelections(prev => ({
+        ...prev,
+        [selectedFinger]: { ring, color }
+      }));
+    }
     setIsRingApplied(true);
-    setSelectedFinger('thumb'); // 엄지 디폴트 선택
     setModalOpen(false);
   };
 
