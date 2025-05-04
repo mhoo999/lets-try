@@ -13,6 +13,7 @@ export default function Home() {
   const [cameraOpen, setCameraOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
+  const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number }[]>([]);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -94,9 +95,28 @@ export default function Home() {
         </div>
         {/* HandGuide가 남는 공간을 모두 차지 */}
         <div className="flex-1 w-full max-w-[300px] flex items-center justify-center">
-          <div className="w-[80vw] aspect-square">
+          <div className="w-[80vw] aspect-square relative">
             {imageUrl ? (
-              <HandLandmarkDetector imageUrl={imageUrl} />
+              <>
+                <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
+                {/* 반지 합성 오버레이 */}
+                {ringPositions.map((pos) => (
+                  <img
+                    key={pos.finger}
+                    src="/ring.png"
+                    alt={`${pos.finger} ring`}
+                    style={{
+                      position: 'absolute',
+                      left: pos.centerX,
+                      top: pos.centerY,
+                      width: 55,
+                      height: 55,
+                      transform: `translate(-50%,-50%) rotate(${pos.angle}rad)` ,
+                      pointerEvents: 'none',
+                    }}
+                  />
+                ))}
+              </>
             ) : (
               <HandGuide imageUrl={imageUrl} />
             )}
