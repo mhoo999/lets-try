@@ -25,6 +25,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
   const [landmarks, setLandmarks] = useState<{x: number, y: number}[]>([]);
   const [hiddenPoints, setHiddenPoints] = useState<Set<number>>(new Set());
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!imageUrl) return;
     let hands: Hands | null = null;
@@ -84,7 +85,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
             if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
               drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
               // 반지 위치 가이드 표시
-              RING_PAIRS.forEach(([a, b], idx) => {
+              RING_PAIRS.forEach(([a, b]) => {
                 if (points[a] && points[b]) {
                   const px = (points[a].x + points[b].x) / 2 * canvas.width;
                   const py = (points[a].y + points[b].y) / 2 * canvas.height;
