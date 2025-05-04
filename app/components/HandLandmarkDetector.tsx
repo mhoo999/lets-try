@@ -83,9 +83,9 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
             }
             ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
             if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
-              drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
-              // testMode일 때만 반지 위치 가이드와 숫자 포인트 표시
               if (testMode) {
+                // landmark 점/선
+                drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
                 // 반지 위치 가이드 표시
                 RING_PAIRS.forEach(([a, b]) => {
                   if (points[a] && points[b]) {
