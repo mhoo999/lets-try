@@ -73,12 +73,7 @@ export default function Home() {
   // FingerPills에서 손가락 선택 시
   const handleFingerSelect = (finger: string) => {
     setSelectedFinger(finger);
-    // 이전 반지 선택 해제, 새 손가락만 남김
-    setRingSelections((prev) => {
-      const newSelections: typeof prev = {};
-      if (prev[finger]) newSelections[finger] = prev[finger];
-      return newSelections;
-    });
+    // ringSelections를 변경하지 않음(각 손가락별 반지 선택 유지)
   };
 
   // 반지 선택 버튼 클릭 시
@@ -163,7 +158,6 @@ export default function Home() {
                     height: base,
                     transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`, // 90도 추가 회전
                     pointerEvents: 'none',
-                    border: '2px solid red', // 디버깅용 테두리
                     zIndex: 9999,
                   } as React.CSSProperties;
                   console.log('[오버레이 디버그]', {
