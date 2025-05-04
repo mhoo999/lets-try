@@ -73,7 +73,8 @@ export default function Home() {
   // FingerPills에서 손가락 선택 시
   const handleFingerSelect = (finger: string) => {
     setSelectedFinger(finger);
-    // ringSelections를 변경하지 않음(각 손가락별 반지 선택 유지)
+    // ringSelections를 강제로 리렌더링(불변성 보장)
+    setRingSelections(selected => ({ ...selected }));
   };
 
   // 반지 선택 버튼 클릭 시
@@ -158,7 +159,7 @@ export default function Home() {
                     height: base,
                     transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`, // 90도 추가 회전
                     pointerEvents: 'none',
-                    zIndex: 9999,
+                    zIndex: 10, // 모달보다 낮게
                   } as React.CSSProperties;
                   console.log('[오버레이 디버그]', {
                     finger: pos.finger,
