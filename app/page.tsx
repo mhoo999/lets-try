@@ -153,7 +153,7 @@ export default function Home() {
         text: '내 손에 반지를 합성해봤어요!',
         files: [file]
       });
-    } catch (_) {
+    } catch {
       // fallback: 다운로드
       if (canvas) downloadImage(canvas);
     }
@@ -261,7 +261,7 @@ export default function Home() {
               disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
               onClick={() => canvasRef.current && shareImage(canvasRef.current)}
             >
-              공유
+              Share
             </button>
           </div>
         </div>
