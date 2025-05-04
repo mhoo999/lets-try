@@ -84,24 +84,25 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false }: Han
             ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
             if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
               drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
-              // 반지 위치 가이드 표시
-              RING_PAIRS.forEach(([a, b]) => {
-                if (points[a] && points[b]) {
-                  const px = (points[a].x + points[b].x) / 2 * canvas.width;
-                  const py = (points[a].y + points[b].y) / 2 * canvas.height;
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.arc(px, py, 18, 0, 2 * Math.PI);
-                  ctx.strokeStyle = '#3b82f6';
-                  ctx.lineWidth = 3;
-                  ctx.setLineDash([6, 6]);
-                  ctx.stroke();
-                  ctx.setLineDash([]);
-                  ctx.restore();
-                }
-              });
-              // 숫자 표시 (테스트 모드)
+              // testMode일 때만 반지 위치 가이드와 숫자 포인트 표시
               if (testMode) {
+                // 반지 위치 가이드 표시
+                RING_PAIRS.forEach(([a, b]) => {
+                  if (points[a] && points[b]) {
+                    const px = (points[a].x + points[b].x) / 2 * canvas.width;
+                    const py = (points[a].y + points[b].y) / 2 * canvas.height;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(px, py, 18, 0, 2 * Math.PI);
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([6, 6]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                  }
+                });
+                // 숫자 표시
                 results.multiHandLandmarks[0].forEach((pt, idx) => {
                   if (hiddenPoints.has(idx)) return;
                   const px = pt.x * canvas.width;
