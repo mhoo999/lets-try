@@ -4,7 +4,7 @@
       "id": 1,
       "title": "프로젝트 세팅: Next.js 및 TypeScript",
       "description": "Initialize the project repository with Next.js, TypeScript, and Tailwind CSS according to the technical architecture requirements.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [],
       "priority": "high",
       "details": "1. Create a new Next.js project using `npx create-next-app@latest`\n2. Configure TypeScript support\n3. Install and configure Tailwind CSS\n4. Set up project structure with appropriate folders for components, hooks, utils, and pages\n5. Configure linting and formatting tools\n6. Set up version control with Git\n7. Configure deployment settings for Vercel\n\nExample command:\n```bash\nnpx create-next-app@latest lets-try --typescript --tailwind --eslint\ncd lets-try\ngit init\ngit add .\ngit commit -m \"Initial commit\"\n```",
@@ -15,7 +15,7 @@
       "id": 2,
       "title": "기본 UI 레이아웃 및 컴포넌트 구현",
       "description": "Implement the basic UI layout and components based on the Figma design, focusing on mobile-first responsive design.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         1
       ],
@@ -29,7 +29,7 @@
           "description": "Implement the fundamental layout structure including header, footer, and main content area",
           "dependencies": [],
           "details": "Build reusable layout components that will serve as the foundation for all pages. Create the header with navigation elements, footer with site information, and a flexible main content container. Ensure these components follow the Figma design specifications and use Tailwind CSS for styling.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 2,
@@ -39,7 +39,7 @@
             1
           ],
           "details": "Create a library of reusable UI elements that maintain consistent styling throughout the application. Implement buttons with different states (primary, secondary, disabled), form inputs with validation states, card components, and modal dialogs. Ensure all components are accessible and follow the design system guidelines.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 3,
@@ -50,7 +50,7 @@
             2
           ],
           "details": "Develop a comprehensive responsive design system using Tailwind CSS breakpoints. Create utility classes for responsive layouts, implement media queries where needed, and test all components across mobile, tablet, and desktop viewports. Document responsive behavior patterns for future component development.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 4,
@@ -62,7 +62,7 @@
             3
           ],
           "details": "Using the established components and responsive system, build placeholder screens that represent the key steps in the user flow. Include login/registration screens, dashboard views, and any critical transaction or interaction screens. These screens should use the previously created components and follow the responsive design patterns.",
-          "status": "pending"
+          "status": "done"
         }
       ]
     },

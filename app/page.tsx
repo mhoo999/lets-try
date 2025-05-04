@@ -57,7 +57,7 @@ export default function Home() {
           />
         </div>
         {/* HandGuide가 남는 공간을 모두 차지 */}
-        <div className="flex-1 w-full flex items-center justify-center">
+        <div className="flex-1 w-full max-w-[300px] flex items-center justify-center">
           <div className="w-[80vw] aspect-square">
             <HandGuide imageUrl={imageUrl} />
           </div>

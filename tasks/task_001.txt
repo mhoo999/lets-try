@@ -1,6 +1,6 @@
 # Task ID: 1
 # Title: 프로젝트 세팅: Next.js 및 TypeScript
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Initialize the project repository with Next.js, TypeScript, and Tailwind CSS according to the technical architecture requirements.

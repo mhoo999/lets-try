@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: 기본 UI 레이아웃 및 컴포넌트 구현
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Implement the basic UI layout and components based on the Figma design, focusing on mobile-first responsive design.
@@ -38,25 +38,25 @@ export default function Header() {
 Manually test the UI components across different screen sizes to ensure responsive behavior. Verify that the components match the Figma design. Use Storybook or a similar tool to document and test components in isolation if time permits.
 
 # Subtasks:
-## 1. Create Core Layout Components [pending]
+## 1. Create Core Layout Components [done]
 ### Dependencies: None
 ### Description: Implement the fundamental layout structure including header, footer, and main content area
 ### Details:
 Build reusable layout components that will serve as the foundation for all pages. Create the header with navigation elements, footer with site information, and a flexible main content container. Ensure these components follow the Figma design specifications and use Tailwind CSS for styling.
 
-## 2. Implement Reusable UI Elements [pending]
+## 2. Implement Reusable UI Elements [done]
 ### Dependencies: 2.1
 ### Description: Develop common UI components such as buttons, form inputs, cards, and modal dialogs
 ### Details:
 Create a library of reusable UI elements that maintain consistent styling throughout the application. Implement buttons with different states (primary, secondary, disabled), form inputs with validation states, card components, and modal dialogs. Ensure all components are accessible and follow the design system guidelines.
 
-## 3. Build Responsive Design System [pending]
+## 3. Build Responsive Design System [done]
 ### Dependencies: 2.1, 2.2
 ### Description: Implement responsive behavior for all components to ensure proper display across different device sizes
 ### Details:
 Develop a comprehensive responsive design system using Tailwind CSS breakpoints. Create utility classes for responsive layouts, implement media queries where needed, and test all components across mobile, tablet, and desktop viewports. Document responsive behavior patterns for future component development.
 
-## 4. Create Placeholder Screens for User Flow [pending]
+## 4. Create Placeholder Screens for User Flow [done]
 ### Dependencies: 2.1, 2.2, 2.3
 ### Description: Develop initial screen layouts for the main user journey through the application
 ### Details:
