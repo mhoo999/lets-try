@@ -60,30 +60,39 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
       // 2. MediaPipe Hands 동적 import 및 생성자 체크
       try {
         const handsModule = await import('@mediapipe/hands');
-        let exportObj: any = handsModule;
-        if (handsModule.default && typeof handsModule.default === 'object') {
-          exportObj = handsModule.default;
+        let exportObj: unknown = handsModule;
+        if (
+          typeof handsModule === 'object' &&
+          handsModule !== null &&
+          'default' in handsModule &&
+          typeof (handsModule as { [key: string]: unknown }).default === 'object'
+        ) {
+          exportObj = (handsModule as { [key: string]: unknown }).default;
         }
         console.log('exportObj:', exportObj);
         let handsInstance: Hands | null = null;
-        if (typeof exportObj.createHands === 'function') {
-          handsInstance = exportObj.createHands({
+        const obj = exportObj as { [key: string]: unknown };
+        if (typeof obj.createHands === 'function') {
+          handsInstance = (obj.createHands as Function)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
           }) as Hands;
-        } else if (typeof exportObj.Hands === 'function') {
-          handsInstance = new exportObj.Hands({
+        } else if (typeof obj.Hands === 'function') {
+          handsInstance = new (obj.Hands as new (config: any) => Hands)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-          }) as Hands;
-        } else if (typeof exportObj.default === 'function') {
-          handsInstance = new exportObj.default({
+          });
+        } else if (typeof obj.default === 'function') {
+          handsInstance = new (obj.default as new (config: any) => Hands)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-          }) as Hands;
-        } else if (exportObj.Hands && typeof exportObj.Hands.create === 'function') {
-          handsInstance = exportObj.Hands.create({
+          });
+        } else if (
+          obj.Hands &&
+          typeof (obj.Hands as { create?: Function }).create === 'function'
+        ) {
+          handsInstance = ((obj.Hands as { create: Function }).create)({
             locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
           }) as Hands;
         } else {
-          setError('MediaPipe Hands 생성자를 찾을 수 없습니다. (export 구조: ' + Object.keys(exportObj).join(', ') + ')');
+          setError('MediaPipe Hands 생성자를 찾을 수 없습니다. (export 구조: ' + Object.keys(obj).join(', ') + ')');
           setLoading(false);
           return;
         }
