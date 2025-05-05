@@ -245,7 +245,14 @@ export default function Home() {
                       key={pos.finger}
                       src={selection.color.imageUrl}
                       alt={`${pos.finger} ring`}
-                      style={style}
+                      style={{
+                        ...style,
+                        width: base, // base는 이미 width로 사용됨
+                        height: 'auto',
+                        objectFit: 'contain',
+                        borderRadius: '9999px',
+                        background: 'white',
+                      }}
                       onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
                     />
                   );
