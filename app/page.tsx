@@ -124,7 +124,6 @@ export default function Home() {
 
   // html2canvas를 이용한 화면 캡처 및 공유 이미지 생성
   const handleShare = async () => {
-    setTimeout(async () => {
       if (handAreaRef.current) {
         const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
         const dataUrl = canvas.toDataURL('image/png');
@@ -145,8 +144,7 @@ export default function Home() {
         img.style.maxHeight = '40vw';
         document.body.appendChild(img);
         // 이후 dataUrl을 공유 로직에 활용 가능
-      }
-    }, 50);
+      };
   };
 
   return (
