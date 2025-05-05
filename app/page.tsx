@@ -124,27 +124,46 @@ export default function Home() {
 
   // html2canvas를 이용한 화면 캡처 및 공유 이미지 생성
   const handleShare = async () => {
-      if (handAreaRef.current) {
-        const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
-        const dataUrl = canvas.toDataURL('image/png');
-        // dataUrl을 공유 이미지로 활용 (다운로드, 공유, 미리보기 등)
-        // 예시: 미리보기로 body에 추가
-        const preview = document.getElementById('share-preview-canvas');
-        if (preview) preview.remove();
-        const img = document.createElement('img');
-        img.src = dataUrl;
-        img.id = 'share-preview-canvas';
-        img.style.position = 'fixed';
-        img.style.bottom = '10px';
-        img.style.left = '10px';
-        img.style.zIndex = '9999';
-        img.style.border = '2px solid red';
-        img.style.background = '#fff';
-        img.style.maxWidth = '40vw';
-        img.style.maxHeight = '40vw';
-        document.body.appendChild(img);
-        // 이후 dataUrl을 공유 로직에 활용 가능
-      };
+    if (handAreaRef.current) {
+      const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
+      const dataUrl = canvas.toDataURL('image/png');
+      // 제품명, 보석명, 사이트 URL
+      const siteUrl = 'https://www.haime.shop/';
+      const ringName = lastSelectedRing ? lastSelectedRing.name : '';
+      const colorName = lastSelectedColor ? lastSelectedColor.name : '';
+      const shareText = `haime에서 만든 나만의 반지 착용샷!\n제품: ${ringName}\n보석: ${colorName}\n${siteUrl}`;
+
+      // 1. 다운로드
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `haime_${ringName}_${colorName}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // 2. 클립보드 복사 (지원 브라우저에서만)
+      if (navigator.clipboard && window.ClipboardItem) {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        await navigator.clipboard.write([
+          new window.ClipboardItem({ [blob.type]: blob })
+        ]);
+        await navigator.clipboard.writeText(shareText);
+        alert('이미지와 정보가 클립보드에 복사되었습니다!');
+      }
+
+      // 3. Web Share API (모바일 등 지원 브라우저에서만)
+      if (navigator.canShare && navigator.canShare({ files: [new File([], 'haime_ring_share.png', { type: 'image/png' })] })) {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const file = new File([blob], `haime_${ringName}_${colorName}.png`, { type: 'image/png' });
+        try {
+          await navigator.share({ files: [file], title: 'haime', text: shareText });
+        } catch (e) {
+          // 사용자가 취소할 수 있음
+        }
+      }
+    }
   };
 
   return (
