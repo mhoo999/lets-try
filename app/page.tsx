@@ -133,19 +133,6 @@ export default function Home() {
     setShowShareModal(true);
   };
 
-  // 다운로드 버튼 핸들러
-  const handleDownload = () => {
-    if (!shareImageUrl) return;
-    const ringName = lastSelectedRing ? lastSelectedRing.name : '';
-    const colorName = lastSelectedColor ? lastSelectedColor.name : '';
-    const link = document.createElement('a');
-    link.href = shareImageUrl;
-    link.download = `haime_${ringName}_${colorName}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <main className="w-full h-screen overflow-hidden bg-white flex flex-col">
       {/* 상단 영역: 헤더 + 업로드/카메라 버튼 + HandGuide */}
@@ -266,17 +253,11 @@ export default function Home() {
           <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center relative w-[90vw] max-w-[400px]">
             <button className="absolute top-2 right-4 text-2xl text-gray-400 hover:text-gray-600" onClick={() => setShowShareModal(false)}>×</button>
             <div className="mb-2 font-bold text-lg">완성된 이미지</div>
-            <img src={shareImageUrl} alt="공유 이미지 미리보기" className="w-full rounded-xl border mb-4" style={{ maxHeight: 320, objectFit: 'contain' }} />
+            <img src={shareImageUrl} alt="공유 이미지 미리보기" className="w-full rounded-xl mb-4" style={{ maxHeight: 320, objectFit: 'contain' }} />
             <div className="text-xs text-gray-500 mt-2 text-center">
               모바일에서는 이미지를 <b>길게 눌러 사진에 저장</b>하거나,<br />
               <b>공유 버튼</b>을 이용해 사진첩에 저장할 수 있습니다.
             </div>
-            <button
-              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-bold text-base mt-2"
-              onClick={handleDownload}
-            >
-              이미지 다운로드
-            </button>
           </div>
         </div>
       )}
