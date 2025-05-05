@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 export interface RingColor {
   id: string;
   name: string;
-  colorCode: string;
+  jewelry: string;
   imageUrl: string;
 }
 
@@ -53,7 +53,7 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
         >
           ×
         </button>
-        <div className="mb-4 text-lg font-bold">Select a ring</div>
+        <div className="mb-4 text-lg font-medium text-black">Select a ring</div>
         {/* 반지 리스트 (아코디언) */}
         <div className="w-full flex flex-col gap-2 max-h-[320px] overflow-y-auto mb-2">
           {rings.map((ring) => {
@@ -66,11 +66,16 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
                   className="flex items-center px-4 py-3 cursor-pointer"
                   onClick={() => setExpandedRingId(isExpanded ? null : ring.id)}
                 >
-                  <img src={ring.imageUrl} alt={ring.name} className="w-12 h-12 rounded-full border" />
+                  <img
+                    src={isSelected && selectedColor ? selectedColor.imageUrl : ring.imageUrl}
+                    alt={ring.name}
+                    className="w-12 object-contain rounded-full"
+                    style={{ height: 'auto' }}
+                  />
                   <span className="ml-4 flex-1 font-medium text-gray-800">{ring.name}</span>
                   {/* 닫힘 상태: 선택된 컬러칩만 */}
                   {isSelected && selectedColor && !isExpanded && (
-                    <span className="w-6 h-6 rounded-full border ml-2" style={{ backgroundColor: selectedColor.colorCode }} />
+                    <span className="w-6 h-6 rounded-full border ml-2" style={{ backgroundColor: selectedColor.jewelry }} />
                   )}
                   <span className="ml-2">
                     <ChevronIcon up={isExpanded} />
@@ -82,17 +87,20 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
                     {ring.availableColors.map((color) => (
                       <button
                         key={color.id}
-                        className={`w-10 h-10 rounded-full border-2 p-0 flex items-center justify-center overflow-hidden ${isSelected && selectedColor?.id === color.id ? 'border-[#d97a7c]' : 'border-gray-200'}`}
+                        className="p-0 flex items-center justify-center bg-transparent relative"
                         onClick={() => { setSelectedRing(ring); setSelectedColor(color); }}
                       >
-                        <img
-                          src={color.imageUrl}
-                          alt={color.name}
-                          className="w-8 h-8 object-cover rounded-full"
-                        />
-                        {isSelected && selectedColor?.id === color.id && (
-                          <span className="absolute text-white text-xs font-bold bg-[#d97a7c] rounded-full w-5 h-5 flex items-center justify-center" style={{ top: 0, right: 0 }}>✓</span>
-                        )}
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${isSelected && selectedColor?.id === color.id ? 'border-[#d97a7c]' : 'border-transparent'}`}
+                          style={{ width: '2rem', height: '2rem' }}
+                        >
+                          <img
+                            src={color.jewelry}
+                            alt={color.name}
+                            className="w-full h-full object-contain rounded-full"
+                            style={{ background: 'white' }}
+                          />
+                        </div>
                       </button>
                     ))}
                   </div>

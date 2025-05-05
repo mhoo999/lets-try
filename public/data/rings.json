@@ -7,43 +7,43 @@
       {
         "id": "blue81",
         "name": "blue81",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/blue81.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/blue81.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_blue81.png"
       },
       {
         "id": "green",
         "name": "green",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/green.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/green.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_green.png"
       },
       {
         "id": "onix",
         "name": "onix",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/onix.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/onix.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_onix.png"
       },
       {
         "id": "pink",
         "name": "pink",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/pink.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/pink.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_pink.png"
       },
       {
         "id": "white",
         "name": "white",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/white.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/white.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_white.png"
       },
       {
         "id": "yellow26",
         "name": "yellow26",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/yellow26.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/yellow26.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_yellow26.png"
       },
       {
         "id": "yellow92",
         "name": "yellow92",
-        "colorCode": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/yellow92.png",
+        "jewelry": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/color_chip/yellow92.png",
         "imageUrl": "https://wbvzpvaepmhpryxqygpj.supabase.co/storage/v1/object/public/rings/mini_mushroom_ring/mini_mushroom_ring_yellow92.png"
       }
     ]

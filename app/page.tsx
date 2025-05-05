@@ -194,7 +194,7 @@ export default function Home() {
         </div>
         <div className="mt-[1vh]">
           <button
-            className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base"
+            className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-medium text-base"
             type="button"
             onClick={handleCameraOrFile}
           >
@@ -264,7 +264,7 @@ export default function Home() {
         <div className="flex flex-col gap-[1.5vh] items-center w-full mt-[2.5vh]">
           {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
           <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            className={`w-[50vw] h-[4vh] rounded-full font-medium text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             onClick={handleOpenRingModal}
             disabled={!imageUrl}
@@ -274,7 +274,7 @@ export default function Home() {
 
           {/* 네임택(Pill) */}
           <div
-            className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
+            className="w-[50vw] h-[4vh] rounded-full font-medium text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
             style={{ margin: '0 auto' }}
           >
             {lastSelectedRing ? lastSelectedRing.name : '-'}
@@ -282,7 +282,7 @@ export default function Home() {
 
           {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
           <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            className={`w-[50vw] h-[4vh] rounded-full font-medium text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
             onClick={shareImage}
