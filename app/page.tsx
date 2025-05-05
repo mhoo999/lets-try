@@ -136,7 +136,6 @@ export default function Home() {
   // 다운로드 버튼 핸들러
   const handleDownload = () => {
     if (!shareImageUrl) return;
-    const siteUrl = 'https://www.haime.shop/';
     const ringName = lastSelectedRing ? lastSelectedRing.name : '';
     const colorName = lastSelectedColor ? lastSelectedColor.name : '';
     const link = document.createElement('a');
