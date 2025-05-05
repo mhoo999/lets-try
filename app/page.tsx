@@ -267,6 +267,10 @@ export default function Home() {
             <button className="absolute top-2 right-4 text-2xl text-gray-400 hover:text-gray-600" onClick={() => setShowShareModal(false)}>×</button>
             <div className="mb-2 font-bold text-lg">완성된 이미지</div>
             <img src={shareImageUrl} alt="공유 이미지 미리보기" className="w-full rounded-xl border mb-4" style={{ maxHeight: 320, objectFit: 'contain' }} />
+            <div className="text-xs text-gray-500 mt-2 text-center">
+              모바일에서는 이미지를 <b>길게 눌러 사진에 저장</b>하거나,<br />
+              <b>공유 버튼</b>을 이용해 사진첩에 저장할 수 있습니다.
+            </div>
             <button
               className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-bold text-base mt-2"
               onClick={handleDownload}
