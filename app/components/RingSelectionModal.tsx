@@ -82,12 +82,16 @@ const RingSelectionModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
                     {ring.availableColors.map((color) => (
                       <button
                         key={color.id}
-                        className={`w-8 h-8 rounded-full border-2 ${isSelected && selectedColor?.id === color.id ? 'border-[#d97a7c]' : 'border-gray-200'} flex items-center justify-center`}
-                        style={{ backgroundColor: color.colorCode }}
+                        className={`w-10 h-10 rounded-full border-2 p-0 flex items-center justify-center overflow-hidden ${isSelected && selectedColor?.id === color.id ? 'border-[#d97a7c]' : 'border-gray-200'}`}
                         onClick={() => { setSelectedRing(ring); setSelectedColor(color); }}
                       >
+                        <img
+                          src={color.imageUrl}
+                          alt={color.name}
+                          className="w-8 h-8 object-cover rounded-full"
+                        />
                         {isSelected && selectedColor?.id === color.id && (
-                          <span className="text-white text-xs font-bold">✓</span>
+                          <span className="absolute text-white text-xs font-bold bg-[#d97a7c] rounded-full w-5 h-5 flex items-center justify-center" style={{ top: 0, right: 0 }}>✓</span>
                         )}
                       </button>
                     ))}
