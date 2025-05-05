@@ -124,27 +124,29 @@ export default function Home() {
 
   // html2canvas를 이용한 화면 캡처 및 공유 이미지 생성
   const handleShare = async () => {
-    if (handAreaRef.current) {
-      const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null });
-      const dataUrl = canvas.toDataURL('image/png');
-      // dataUrl을 공유 이미지로 활용 (다운로드, 공유, 미리보기 등)
-      // 예시: 미리보기로 body에 추가
-      const preview = document.getElementById('share-preview-canvas');
-      if (preview) preview.remove();
-      const img = document.createElement('img');
-      img.src = dataUrl;
-      img.id = 'share-preview-canvas';
-      img.style.position = 'fixed';
-      img.style.bottom = '10px';
-      img.style.left = '10px';
-      img.style.zIndex = '9999';
-      img.style.border = '2px solid red';
-      img.style.background = '#fff';
-      img.style.maxWidth = '40vw';
-      img.style.maxHeight = '40vw';
-      document.body.appendChild(img);
-      // 이후 dataUrl을 공유 로직에 활용 가능
-    }
+    setTimeout(async () => {
+      if (handAreaRef.current) {
+        const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
+        const dataUrl = canvas.toDataURL('image/png');
+        // dataUrl을 공유 이미지로 활용 (다운로드, 공유, 미리보기 등)
+        // 예시: 미리보기로 body에 추가
+        const preview = document.getElementById('share-preview-canvas');
+        if (preview) preview.remove();
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.id = 'share-preview-canvas';
+        img.style.position = 'fixed';
+        img.style.bottom = '10px';
+        img.style.left = '10px';
+        img.style.zIndex = '9999';
+        img.style.border = '2px solid red';
+        img.style.background = '#fff';
+        img.style.maxWidth = '40vw';
+        img.style.maxHeight = '40vw';
+        document.body.appendChild(img);
+        // 이후 dataUrl을 공유 로직에 활용 가능
+      }
+    }, 50);
   };
 
   return (
@@ -180,6 +182,7 @@ export default function Home() {
             {imageUrl ? (
               <>
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
+                <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
                 {/* 반지 합성 오버레이 */}
                 {ringPositions.map((pos) => {
                   if (pos.finger !== selectedFinger) return null;
