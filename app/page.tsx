@@ -142,15 +142,15 @@ export default function Home() {
       // document.body.removeChild(link);
 
       // 2. 클립보드 복사 (지원 브라우저에서만)
-      // if (navigator.clipboard && window.ClipboardItem) {
-      //   const res = await fetch(dataUrl);
-      //   const blob = await res.blob();
-      //   await navigator.clipboard.write([
-      //     new window.ClipboardItem({ [blob.type]: blob })
-      //   ]);
-      //   await navigator.clipboard.writeText(shareText);
-      //   alert('이미지와 정보가 클립보드에 복사되었습니다!');
-      // }
+      if (navigator.clipboard && window.ClipboardItem) {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        await navigator.clipboard.write([
+          new window.ClipboardItem({ [blob.type]: blob })
+        ]);
+        await navigator.clipboard.writeText(shareText);
+        alert('이미지와 정보가 클립보드에 복사되었습니다!');
+      }
 
       // 3. Web Share API (모바일 등 지원 브라우저에서만)
       if (navigator.canShare && navigator.canShare({ files: [new File([], 'haime_ring_share.png', { type: 'image/png' })] })) {
