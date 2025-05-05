@@ -134,23 +134,23 @@ export default function Home() {
       const shareText = `haime에서 만든 나만의 반지 착용샷!\n제품: ${ringName}\n보석: ${colorName}\n${siteUrl}`;
 
       // 1. 다운로드
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `haime_${ringName}_${colorName}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // const link = document.createElement('a');
+      // link.href = dataUrl;
+      // link.download = `haime_${ringName}_${colorName}.png`;
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
 
       // 2. 클립보드 복사 (지원 브라우저에서만)
-      if (navigator.clipboard && window.ClipboardItem) {
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        await navigator.clipboard.write([
-          new window.ClipboardItem({ [blob.type]: blob })
-        ]);
-        await navigator.clipboard.writeText(shareText);
-        alert('이미지와 정보가 클립보드에 복사되었습니다!');
-      }
+      // if (navigator.clipboard && window.ClipboardItem) {
+      //   const res = await fetch(dataUrl);
+      //   const blob = await res.blob();
+      //   await navigator.clipboard.write([
+      //     new window.ClipboardItem({ [blob.type]: blob })
+      //   ]);
+      //   await navigator.clipboard.writeText(shareText);
+      //   alert('이미지와 정보가 클립보드에 복사되었습니다!');
+      // }
 
       // 3. Web Share API (모바일 등 지원 브라우저에서만)
       if (navigator.canShare && navigator.canShare({ files: [new File([], 'haime_ring_share.png', { type: 'image/png' })] })) {
