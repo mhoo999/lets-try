@@ -204,6 +204,7 @@ export default function Home() {
                       key={pos.finger}
                       src={selection.color.imageUrl}
                       alt={`${pos.finger} ring`}
+                      crossOrigin="anonymous"
                       style={style}
                       onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
                     />
