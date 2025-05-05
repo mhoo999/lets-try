@@ -7,6 +7,7 @@ import FingerPills from './components/FingerPills';
 import CameraCapture from './components/CameraCapture';
 import HandLandmarkDetector from './components/HandLandmarkDetector';
 import RingSelectionModal, { Ring, RingColor } from './components/RingSelectionModal';
+import html2canvas from 'html2canvas';
 
 export default function Home() {
   const [selectedFinger, setSelectedFinger] = useState<string | undefined>(undefined);
@@ -20,6 +21,7 @@ export default function Home() {
   const [ringSelected, setRingSelected] = useState(false); // 반지 선택 여부
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
+  const handAreaRef = useRef<HTMLDivElement>(null);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -120,72 +122,29 @@ export default function Home() {
     console.log('selectedFinger', selectedFinger);
   }, [ringPositions, ringSelections, selectedFinger]);
 
-  const shareImage = async () => {
-    if (!imageUrl) {
-      alert('손 사진이 없습니다.');
-      return;
+  // html2canvas를 이용한 화면 캡처 및 공유 이미지 생성
+  const handleShare = async () => {
+    if (handAreaRef.current) {
+      const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null });
+      const dataUrl = canvas.toDataURL('image/png');
+      // dataUrl을 공유 이미지로 활용 (다운로드, 공유, 미리보기 등)
+      // 예시: 미리보기로 body에 추가
+      const preview = document.getElementById('share-preview-canvas');
+      if (preview) preview.remove();
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.id = 'share-preview-canvas';
+      img.style.position = 'fixed';
+      img.style.bottom = '10px';
+      img.style.left = '10px';
+      img.style.zIndex = '9999';
+      img.style.border = '2px solid red';
+      img.style.background = '#fff';
+      img.style.maxWidth = '40vw';
+      img.style.maxHeight = '40vw';
+      document.body.appendChild(img);
+      // 이후 dataUrl을 공유 로직에 활용 가능
     }
-    const handImg = new window.Image();
-    handImg.src = imageUrl;
-    handImg.onload = () => {
-      // 기존 합성 캔버스가 있으면 삭제
-      const oldCanvas = document.getElementById('share-preview-canvas');
-      if (oldCanvas) document.body.removeChild(oldCanvas);
-
-      const display = document.getElementById('hand-photo') as HTMLImageElement | null;
-      const displayWidth = display?.width || handImg.width;
-      const displayHeight = display?.height || handImg.height;
-
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = handImg.width;
-      tempCanvas.height = handImg.height;
-      tempCanvas.id = 'share-preview-canvas';
-      tempCanvas.style.position = 'fixed';
-      tempCanvas.style.bottom = '10px';
-      tempCanvas.style.left = '10px';
-      tempCanvas.style.zIndex = '9999';
-      tempCanvas.style.border = '2px solid red';
-      tempCanvas.style.background = '#fff';
-
-      const ctx = tempCanvas.getContext('2d');
-      if (!ctx) return;
-      ctx.drawImage(handImg, 0, 0, handImg.width, handImg.height);
-
-      // 모든 ringImg가 로드된 후 append
-      const overlayPromises = Object.entries(ringSelections).map(([finger, selection]) => {
-        return new Promise<void>((resolve) => {
-          const pos = ringPositions.find(p => p.finger === finger);
-          if (pos && selection) {
-            const ringImg = new window.Image();
-            ringImg.onload = () => {
-              // 화면(뷰포트) 대비 원본 이미지의 비율 계산
-              const scaleX = handImg.width / displayWidth;
-              const scaleY = handImg.height / displayHeight;
-              // 반지 위치를 원본 이미지 기준으로 변환
-              const realX = pos.centerX * scaleX;
-              const realY = pos.centerY * scaleY;
-              // 반지 크기(항상 1:1 비율, 손가락 길이 기반)
-              const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
-              ctx.save();
-              ctx.translate(realX, realY);
-              ctx.rotate(pos.angle + Math.PI / 2);
-              ctx.drawImage(ringImg, -base / 2, -base / 2, base, base); // width=base, height=base (정사각형)
-              ctx.restore();
-              resolve();
-            };
-            ringImg.onerror = () => resolve();
-            ringImg.src = selection.color.imageUrl;
-          } else {
-            resolve();
-          }
-        });
-      });
-
-      Promise.all(overlayPromises).then(() => {
-        document.body.appendChild(tempCanvas);
-        // 이후 공유 로직...
-      });
-    };
   };
 
   return (
@@ -197,7 +156,7 @@ export default function Home() {
         </div>
         <div className="mt-[1vh]">
           <button
-            className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-medium text-base"
+            className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base"
             type="button"
             onClick={handleCameraOrFile}
           >
@@ -217,7 +176,7 @@ export default function Home() {
         </div>
         {/* HandGuide가 남는 공간을 모두 차지 */}
         <div className="flex-1 w-full max-w-[300px] flex items-center justify-center">
-          <div className="w-[80vw] aspect-square relative">
+          <div ref={handAreaRef} className="w-[80vw] aspect-square relative">
             {imageUrl ? (
               <>
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
@@ -233,28 +192,19 @@ export default function Home() {
                     left: pos.centerX,
                     top: pos.centerY,
                     width: base,
-                    height: base,
-                    transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`, // 90도 추가 회전
+                    height: 'auto',
+                    transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
                     pointerEvents: 'none',
-                    zIndex: 10, // 모달보다 낮게
+                    zIndex: 10,
+                    objectFit: 'contain',
+                    borderRadius: '9999px',
                   } as React.CSSProperties;
-                  console.log('[오버레이 디버그]', {
-                    finger: pos.finger,
-                    src: selection.color.imageUrl,
-                    ...style
-                  });
                   return (
                     <img
                       key={pos.finger}
                       src={selection.color.imageUrl}
                       alt={`${pos.finger} ring`}
-                      style={{
-                        ...style,
-                        width: base,
-                        height: 'auto',
-                        objectFit: 'contain',
-                        borderRadius: '9999px',
-                      }}
+                      style={style}
                       onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
                     />
                   );
@@ -273,7 +223,7 @@ export default function Home() {
         <div className="flex flex-col gap-[1.5vh] items-center w-full mt-[2.5vh]">
           {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
           <button
-            className={`w-[50vw] h-[4vh] rounded-full font-medium text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             onClick={handleOpenRingModal}
             disabled={!imageUrl}
@@ -283,7 +233,7 @@ export default function Home() {
 
           {/* 네임택(Pill) */}
           <div
-            className="w-[50vw] h-[4vh] rounded-full font-medium text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
+            className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
             style={{ margin: '0 auto' }}
           >
             {lastSelectedRing ? lastSelectedRing.name : '-'}
@@ -291,10 +241,10 @@ export default function Home() {
 
           {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
           <button
-            className={`w-[50vw] h-[4vh] rounded-full font-medium text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
+            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
             type="button"
             disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
-            onClick={shareImage}
+            onClick={handleShare}
           >
             Share
           </button>
