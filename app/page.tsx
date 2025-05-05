@@ -158,15 +158,18 @@ export default function Home() {
           if (pos && selection) {
             const ringImg = new window.Image();
             ringImg.onload = () => {
+              // 화면(뷰포트) 대비 원본 이미지의 비율 계산
               const scaleX = handImg.width / displayWidth;
               const scaleY = handImg.height / displayHeight;
+              // 반지 위치를 원본 이미지 기준으로 변환
               const realX = pos.centerX * scaleX;
               const realY = pos.centerY * scaleY;
+              // 반지 크기(항상 1:1 비율, 손가락 길이 기반)
               const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
               ctx.save();
               ctx.translate(realX, realY);
               ctx.rotate(pos.angle + Math.PI / 2);
-              ctx.drawImage(ringImg, -base / 2, -base / 2, base, base);
+              ctx.drawImage(ringImg, -base / 2, -base / 2, base, base); // width=base, height=base (정사각형)
               ctx.restore();
               resolve();
             };
