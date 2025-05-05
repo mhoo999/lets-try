@@ -180,7 +180,6 @@ export default function Home() {
             {imageUrl ? (
               <>
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
-                <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
                 {/* 반지 합성 오버레이 */}
                 {ringPositions.map((pos) => {
                   if (pos.finger !== selectedFinger) return null;
