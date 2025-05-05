@@ -162,7 +162,7 @@ export default function Home() {
               const scaleY = handImg.height / displayHeight;
               const realX = pos.centerX * scaleX;
               const realY = pos.centerY * scaleY;
-              const base = 55 * scaleX;
+              const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
               ctx.save();
               ctx.translate(realX, realY);
               ctx.rotate(pos.angle + Math.PI / 2);
@@ -224,7 +224,7 @@ export default function Home() {
                   if (pos.finger !== selectedFinger) return null;
                   const selection = ringSelections[selectedFinger];
                   if (!selection) return null;
-                  const base = 55; // 크기 고정
+                  const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
                   const style = {
                     position: 'absolute',
                     left: pos.centerX,
@@ -247,11 +247,10 @@ export default function Home() {
                       alt={`${pos.finger} ring`}
                       style={{
                         ...style,
-                        width: base, // base는 이미 width로 사용됨
+                        width: base,
                         height: 'auto',
                         objectFit: 'contain',
                         borderRadius: '9999px',
-                        background: 'white',
                       }}
                       onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
                     />
