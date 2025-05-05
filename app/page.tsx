@@ -159,7 +159,7 @@ export default function Home() {
         const file = new File([blob], `haime_${ringName}_${colorName}.png`, { type: 'image/png' });
         try {
           await navigator.share({ files: [file], title: 'haime', text: shareText });
-        } catch (e) {
+        } catch {
           // 사용자가 취소할 수 있음
         }
       }
