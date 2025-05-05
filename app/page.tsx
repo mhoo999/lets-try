@@ -22,6 +22,8 @@ export default function Home() {
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
   const handAreaRef = useRef<HTMLDivElement>(null);
+  const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -125,46 +127,24 @@ export default function Home() {
   // html2canvas를 이용한 화면 캡처 및 공유 이미지 생성
   const handleShare = async () => {
     if (!handAreaRef.current) return;
-
     const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
     const dataUrl = canvas.toDataURL('image/png');
+    setShareImageUrl(dataUrl);
+    setShowShareModal(true);
+  };
+
+  // 다운로드 버튼 핸들러
+  const handleDownload = () => {
+    if (!shareImageUrl) return;
     const siteUrl = 'https://www.haime.shop/';
     const ringName = lastSelectedRing ? lastSelectedRing.name : '';
     const colorName = lastSelectedColor ? lastSelectedColor.name : '';
-    const shareText = `haime에서 만든 나만의 반지 착용샷!\n제품: ${ringName}\n보석: ${colorName}\n${siteUrl}`;
-
-    // Web Share API 지원 여부 확인
-    if (
-      navigator.canShare &&
-      typeof window !== 'undefined'
-    ) {
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const file = new File([blob], `haime_${ringName}_${colorName}.png`, { type: 'image/png' });
-
-      if (navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'haime',
-            text: shareText,
-          });
-          return; // 성공 시 종료
-        } catch {
-          // 사용자가 취소할 수 있음
-          // fallback으로 다운로드 진행
-        }
-      }
-    }
-
-    // Web Share API 미지원 또는 실패 시 자동 다운로드 fallback
     const link = document.createElement('a');
-    link.href = dataUrl;
+    link.href = shareImageUrl;
     link.download = `haime_${ringName}_${colorName}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    alert('공유가 지원되지 않는 환경입니다. 이미지를 자동으로 다운로드합니다.');
   };
 
   return (
@@ -280,6 +260,22 @@ export default function Home() {
       {/* 카메라 모달 */}
       {cameraOpen && (
         <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
+      )}
+      {/* 공유 이미지 팝업(모달) */}
+      {showShareModal && shareImageUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center relative w-[90vw] max-w-[400px]">
+            <button className="absolute top-2 right-4 text-2xl text-gray-400 hover:text-gray-600" onClick={() => setShowShareModal(false)}>×</button>
+            <div className="mb-2 font-bold text-lg">완성된 이미지</div>
+            <img src={shareImageUrl} alt="공유 이미지 미리보기" className="w-full rounded-xl border mb-4" style={{ maxHeight: 320, objectFit: 'contain' }} />
+            <button
+              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-bold text-base mt-2"
+              onClick={handleDownload}
+            >
+              이미지 다운로드
+            </button>
+          </div>
+        </div>
       )}
     </main>
   );
