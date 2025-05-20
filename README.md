@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# lets try (haime) – 반지 시뮬레이션 웹 서비스
 
-## Getting Started
+![haime 로고](public/haime-logo.png)
 
-First, run the development server:
+> **lets try**는 haime 브랜드에서 제공하는 혁신적인 반지 시뮬레이션 웹 서비스입니다. 사용자가 손등 사진을 업로드하면, 각 손가락에 다양한 반지를 가상으로 착용해볼 수 있고, 반지 종류·색상·위치를 자유롭게 선택할 수 있습니다. 완성된 이미지는 SNS, 메신저 등으로 공유할 수 있으며, 모든 과정은 개인정보 보호를 최우선으로 클라이언트에서만 처리됩니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📝 프로젝트 개요
+- 사용자가 손등 이미지를 업로드하면, 각 손가락에 다양한 반지를 시뮬레이션하여 착용해볼 수 있는 서비스입니다.
+- 반지 종류, 색상, 위치를 선택해 실제 착용 이미지를 미리 볼 수 있습니다.
+- 결과 이미지는 SNS, 메신저 등으로 공유할 수 있습니다.
+- 모든 처리는 100% 클라이언트에서 이루어지며, 개인정보(손 사진)는 서버에 저장하지 않습니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌟 주요 기능
+- **손등 이미지 업로드**: 가이드 이미지를 참고하거나 직접 촬영한 손등 사진을 업로드(브라우저 내에서만 처리)
+- **손가락 인식**: MediaPipe Hands를 활용한 클라이언트 손가락 위치 인식
+- **반지 시뮬레이션**: 각 손가락 pill을 클릭해 반지 종류/색상(컬러칩) 선택, 여러 손가락에 각각 다른 반지/색상 적용 가능
+- **직관적인 UI**: selectring 버튼, 팝업/모달, pill, 네임택 등 실시간 반지 선택 및 적용 UI
+- **반지 이미지 관리**: 운영자가 미리 업로드한 탑뷰 PNG 이미지만 사용([public/data/rings.json](public/data/rings.json) 참고)
+- **공유 및 다운로드**: Web Share API, 이미지 다운로드로 결과 이미지 공유(모든 합성·생성은 클라이언트에서만 처리)
+- **개인정보 보호**: 사용자의 손 사진은 절대 서버에 저장하지 않음
+- **모바일 최적화**: Figma 디자인 기반 반응형 UI, 터치 친화적
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🖼️ 사용자 플로우
+1. 서비스 접속 → 손등 사진 업로드/촬영([public/hand.png](public/hand.png) 샘플 참고)
+2. 손가락 자동 인식
+3. selectring 버튼 활성화 → 반지/컬러칩 선택 팝업 노출
+4. 반지 종류/색상 선택 → 네임택 실시간 표시, 팝업 닫힘과 동시에 해당 손가락에 반지 합성
+5. pill을 눌러 다른 손가락 선택, 반지/컬러칩 재선택 및 합성 반복 가능
+6. 결과 이미지 공유(다운로드/공유 시트)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ 기술 스택
+- **프론트엔드**: Next.js(React), TypeScript, Tailwind CSS
+- **손가락 인식**: MediaPipe Hands(클라이언트 라이브러리)
+- **반지 이미지**: S3, Supabase 등 외부 스토리지(운영자 업로드, 클라이언트는 URL로 접근)
+- **배포**: Vercel(정적, 서버리스)
+- **백엔드 없음**: 100% 클라이언트 사이드 처리
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
