@@ -6,9 +6,9 @@ interface ProgressStepsProps {
 
 export default function ProgressSteps({ currentStep }: ProgressStepsProps) {
   const steps = [
-    { number: 1, label: 'Take Photo' },
-    { number: 2, label: 'Select Ring' },
-    { number: 3, label: 'Preview' },
+    { number: 1, label: 'Select Ring' },
+    { number: 2, label: 'Take Photo' },
+    { number: 3, label: 'Adjust' },
   ];
 
   return (
