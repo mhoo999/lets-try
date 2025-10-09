@@ -112,6 +112,8 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
             setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
             // 반지 위치/각도/길이 계산
             const canvas = canvasRef.current;
+            if (!canvas) return;
+
             // 이미지가 실제로 그려진 영역 계산 (contain 방식)
             const img = imageRef.current;
             const imgW = img?.naturalWidth || 1;
@@ -132,7 +134,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
             }
 
             const ringPos = RING_PAIRS.map(({ finger, idxA, idxB }) => {
-              if (!points[idxA] || !points[idxB] || !canvas) return null;
+              if (!points[idxA] || !points[idxB]) return null;
               const a = points[idxA];
               const b = points[idxB];
               // MediaPipe 좌표 (0~1)를 실제 그려진 이미지 영역으로 변환
