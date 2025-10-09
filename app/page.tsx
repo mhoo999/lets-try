@@ -136,6 +136,15 @@ export default function Home() {
     setShowShareModal(true);
   };
 
+  // 손가락별 반지 위치 미세 조정값
+  const fingerOffsets = {
+    thumb: { x: 0, y: 5, angleOffset: 0, sizeMultiplier: 1 },
+    index: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
+    middle: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
+    ring: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
+    pinky: { x: 0, y: -40, angleOffset: 0, sizeMultiplier: 1.2 }
+  };
+
   // 단계별 제목 (설명 제거)
   const stepInfo = {
     1: { title: 'Upload Your Hand Photo' },
@@ -168,14 +177,22 @@ export default function Home() {
                     if (pos.finger !== selectedFinger) return null;
                     const selection = ringSelections[selectedFinger];
                     if (!selection) return null;
-                    const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
+
+                    // 손가락별 오프셋 가져오기
+                    const offset = fingerOffsets[pos.finger as keyof typeof fingerOffsets];
+
+                    // 반지 크기 계산 (손가락별 배율 적용)
+                    const base = pos.length
+                      ? Math.max(30, Math.min(90, pos.length * 0.7)) * offset.sizeMultiplier
+                      : 55 * offset.sizeMultiplier;
+
                     const style = {
                       position: 'absolute',
-                      left: pos.centerX,
-                      top: pos.centerY,
+                      left: pos.centerX + offset.x,
+                      top: pos.centerY + offset.y,
                       width: base,
                       height: 'auto',
-                      transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
+                      transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2 + offset.angleOffset}rad)`,
                       pointerEvents: 'none',
                       zIndex: 10,
                       objectFit: 'contain',
