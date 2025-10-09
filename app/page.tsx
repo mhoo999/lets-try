@@ -160,8 +160,7 @@ export default function Home() {
 
         {/* Image Display Card */}
         <div className="w-full max-w-md mb-4">
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5]">
+          <div ref={handAreaRef} className="w-full aspect-square relative bg-white rounded-2xl shadow-lg overflow-hidden">
               {imageUrl ? (
                 <>
                   <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
@@ -199,7 +198,6 @@ export default function Home() {
               ) : (
                 <HandGuide imageUrl={imageUrl} />
               )}
-            </div>
           </div>
         </div>
 
