@@ -138,11 +138,11 @@ export default function Home() {
 
   // 손가락별 반지 위치 미세 조정값
   const fingerOffsets = {
-    thumb: { x: -73, y: -130, angleOffset: 0, sizeMultiplier: 0.8 },
-    index: { x: -73, y: -130, angleOffset: 0, sizeMultiplier: 0.8 },
-    middle: { x: -73, y: -130, angleOffset: 0, sizeMultiplier: 0.8 },
-    ring: { x: -73, y: -130, angleOffset: 0, sizeMultiplier: 0.8 },
-    pinky: { x: -72, y: -130, angleOffset: 0, sizeMultiplier: 0.8 }
+    thumb: { x: -110, y: -130, angleOffset: 0, sizeMultiplier: 0.8 },
+    index: { x: -95, y: -130, angleOffset: 0, sizeMultiplier: 0.7 },
+    middle: { x: -80, y: -130, angleOffset: 0, sizeMultiplier: 0.7 },
+    ring: { x: -74, y: -130, angleOffset: 0, sizeMultiplier: 0.7 },
+    pinky: { x: -71, y: -130, angleOffset: 0, sizeMultiplier: 0.8 }
   };
 
   // 단계별 제목 (설명 제거)
