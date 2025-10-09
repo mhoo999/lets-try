@@ -131,7 +131,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
             const ctx = canvas?.getContext('2d');
             if (canvas && ctx && imageRef.current) {
               ctx.clearRect(0, 0, canvas.width, canvas.height);
-              // 이미지 비율 유지하며 캔버스에 최대한 크게 그리기 (object-fit: cover)
+              // 이미지 비율 유지하며 캔버스에 꽉 차게 그리기 (object-fit: contain)
               const img = imageRef.current;
               const imgW = img.naturalWidth;
               const imgH = img.naturalHeight;
@@ -140,14 +140,15 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
               const imgRatio = imgW / imgH;
               const canvasRatio = canvasW / canvasH;
               let drawW = canvasW, drawH = canvasH, offsetX = 0, offsetY = 0;
+              // contain: 이미지 전체가 보이도록
               if (imgRatio > canvasRatio) {
-                drawH = canvasH;
-                drawW = imgW * (canvasH / imgH);
-                offsetX = (canvasW - drawW) / 2;
-              } else {
                 drawW = canvasW;
                 drawH = imgH * (canvasW / imgW);
                 offsetY = (canvasH - drawH) / 2;
+              } else {
+                drawH = canvasH;
+                drawW = imgW * (canvasH / imgH);
+                offsetX = (canvasW - drawW) / 2;
               }
               ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
               if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
@@ -235,7 +236,7 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
         width={600}
         height={600}
         className="absolute top-0 left-0 w-full h-full z-10"
-        style={{ objectFit: 'cover', cursor: testMode ? 'pointer' : 'default' }}
+        style={{ objectFit: 'contain', cursor: testMode ? 'pointer' : 'default' }}
         onClick={handleCanvasClick}
       />
       <img
