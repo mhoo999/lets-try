@@ -23,8 +23,6 @@ export default function Home() {
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
   const handAreaRef = useRef<HTMLDivElement>(null);
-  const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
-  const [showShareModal, setShowShareModal] = useState(false);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -127,33 +125,17 @@ export default function Home() {
     console.log('selectedFinger', selectedFinger);
   }, [ringPositions, ringSelections, selectedFinger]);
 
-  // html2canvas를 이용한 화면 캡처 및 공유 이미지 생성
-  const handleShare = async () => {
-    if (!handAreaRef.current) return;
-    const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
-    const dataUrl = canvas.toDataURL('image/png');
-    setShareImageUrl(dataUrl);
-    setShowShareModal(true);
-  };
-
-  // 이미지 다운로드
-  const handleDownload = () => {
-    if (!shareImageUrl) return;
-    const link = document.createElement('a');
-    link.href = shareImageUrl;
-    link.download = `ring-try-on-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   // 네이티브 공유 기능 (모바일)
   const handleNativeShare = async () => {
-    if (!shareImageUrl) return;
+    if (!handAreaRef.current) return;
 
     try {
+      // html2canvas로 이미지 캡처
+      const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
+      const dataUrl = canvas.toDataURL('image/png');
+
       // dataURL을 Blob으로 변환
-      const response = await fetch(shareImageUrl);
+      const response = await fetch(dataUrl);
       const blob = await response.blob();
       const file = new File([blob], 'ring-try-on.png', { type: 'image/png' });
 
@@ -166,12 +148,15 @@ export default function Home() {
         });
       } else {
         // 지원하지 않으면 다운로드
-        handleDownload();
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `ring-try-on-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     } catch (error) {
       console.error('공유 실패:', error);
-      // 실패 시 다운로드
-      handleDownload();
     }
   };
 
@@ -376,13 +361,29 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Share Button */}
+            {/* Share Buttons */}
             <button
-              className="w-full h-12 rounded-full bg-[#595B60] hover:bg-[#44444a] text-white font-semibold text-base shadow-md transition-all"
+              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
               type="button"
-              onClick={handleShare}
+              onClick={handleNativeShare}
             >
-              📤 Share Image
+              📤 Share
+            </button>
+
+            <button
+              className="w-full h-10 rounded-full bg-black hover:bg-gray-800 text-white font-medium text-sm shadow-md transition-all flex items-center justify-center gap-1"
+              type="button"
+              onClick={handleTwitterShare}
+            >
+              <span className="text-base">𝕏</span> X로 공유하기
+            </button>
+
+            <button
+              className="w-full h-12 rounded-full bg-[#595B60] hover:bg-[#44444a] text-white font-semibold text-base shadow-md transition-all flex items-center justify-center gap-2"
+              type="button"
+              onClick={handleVisitStore}
+            >
+              <span className="text-lg">💍</span> Visit Haime Store
             </button>
 
             {/* Action Buttons */}
@@ -421,57 +422,6 @@ export default function Home() {
       {/* 카메라 모달 */}
       {cameraOpen && (
         <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
-      )}
-      {/* 공유 이미지 팝업(모달) */}
-      {showShareModal && shareImageUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-          <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center relative w-full max-w-[400px]">
-            <button
-              className="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-600 transition-colors"
-              onClick={() => setShowShareModal(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Your Ring Try-On</h3>
-
-            <img
-              src={shareImageUrl}
-              alt="Ring try-on result"
-              className="w-full rounded-xl mb-4 shadow-md"
-              style={{ maxHeight: 320, objectFit: 'contain' }}
-            />
-
-            {/* 공유 버튼 */}
-            <div className="w-full space-y-2">
-              <button
-                className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
-                onClick={handleNativeShare}
-              >
-                📤 Share
-              </button>
-
-              <button
-                className="w-full h-10 rounded-full bg-black hover:bg-gray-800 text-white font-medium text-sm shadow-md transition-all flex items-center justify-center gap-1"
-                onClick={handleTwitterShare}
-              >
-                <span className="text-base">𝕏</span> X로 공유하기
-              </button>
-
-              <button
-                className="w-full h-12 rounded-full bg-[#595B60] hover:bg-[#44444a] text-white font-semibold text-base shadow-md transition-all flex items-center justify-center gap-2"
-                onClick={handleVisitStore}
-              >
-                <span className="text-lg">💍</span> Visit Haime Store
-              </button>
-            </div>
-
-            <p className="text-xs text-gray-400 mt-3 text-center">
-              Share your try-on with friends!
-            </p>
-          </div>
-        </div>
       )}
     </main>
   );
