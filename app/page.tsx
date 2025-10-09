@@ -23,6 +23,7 @@ export default function Home() {
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
   const handAreaRef = useRef<HTMLDivElement>(null);
+  const [capturedImage, setCapturedImage] = useState<{ dataUrl: string; blob: Blob } | null>(null);
 
   // 모바일/PC 환경 감지
   const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -125,59 +126,56 @@ export default function Home() {
     console.log('selectedFinger', selectedFinger);
   }, [ringPositions, ringSelections, selectedFinger]);
 
-  // 네이티브 공유 기능 (모바일)
+  // Step 3에 진입할 때 이미지 캡처 (사용자 제스처 컨텍스트 문제 해결)
+  useEffect(() => {
+    if (currentStep === 3 && handAreaRef.current) {
+      const captureImage = async () => {
+        try {
+          console.log('이미지 캡처 시작...');
+          const canvas = await html2canvas(handAreaRef.current!, {
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            allowTaint: true,
+            scale: 2
+          });
+          const dataUrl = canvas.toDataURL('image/png');
+          const response = await fetch(dataUrl);
+          const blob = await response.blob();
+          setCapturedImage({ dataUrl, blob });
+          console.log('이미지 캡처 완료');
+        } catch (error) {
+          console.error('이미지 캡처 실패:', error);
+        }
+      };
+      captureImage();
+    }
+  }, [currentStep]);
+
+  // 네이티브 공유 기능 (이미 캡처된 이미지 사용)
   const handleNativeShare = async () => {
-    if (!handAreaRef.current) {
-      console.log('handAreaRef가 없습니다');
+    if (!capturedImage) {
+      alert('이미지를 준비 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
 
     try {
-      console.log('이미지 캡처 시작...');
-      // html2canvas로 이미지 캡처 (배경 흰색)
-      const canvas = await html2canvas(handAreaRef.current, {
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        allowTaint: true,
-        scale: 2 // 고해상도
-      });
-      console.log('캡처 완료');
-
-      const dataUrl = canvas.toDataURL('image/png');
-      console.log('dataUrl 생성 완료');
-
-      // dataURL을 Blob으로 변환
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      const file = new File([blob], 'ring-try-on.png', { type: 'image/png' });
-      console.log('파일 생성 완료:', file.size, 'bytes');
+      const file = new File([capturedImage.blob], 'ring-try-on.png', { type: 'image/png' });
+      console.log('공유 시도:', file.size, 'bytes');
 
       // Web Share API 지원 여부 확인
-      if (navigator.share) {
-        console.log('Web Share API 지원됨');
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          console.log('파일 공유 가능');
-          await navigator.share({
-            files: [file],
-            title: 'My Ring Try-On',
-            text: 'Check out my virtual ring try-on!'
-          });
-          console.log('공유 완료');
-        } else {
-          console.log('파일 공유 불가, 다운로드 시작');
-          // 다운로드
-          const link = document.createElement('a');
-          link.href = dataUrl;
-          link.download = `ring-try-on-${Date.now()}.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        console.log('Web Share API로 공유');
+        await navigator.share({
+          files: [file],
+          title: 'My Ring Try-On',
+          text: 'Check out my virtual ring try-on!'
+        });
+        console.log('공유 완료');
       } else {
-        console.log('Web Share API 미지원, 다운로드 시작');
-        // 지원하지 않으면 다운로드
+        console.log('다운로드로 대체');
+        // 다운로드
         const link = document.createElement('a');
-        link.href = dataUrl;
+        link.href = capturedImage.dataUrl;
         link.download = `ring-try-on-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
@@ -185,7 +183,10 @@ export default function Home() {
       }
     } catch (error) {
       console.error('공유 실패:', error);
-      alert('공유에 실패했습니다: ' + (error as Error).message);
+      // 공유가 취소된 경우는 에러로 처리하지 않음
+      if ((error as Error).name !== 'AbortError') {
+        alert('공유에 실패했습니다: ' + (error as Error).message);
+      }
     }
   };
 
@@ -386,9 +387,7 @@ export default function Home() {
             <button
               className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
               type="button"
-              onClick={async () => {
-                await handleNativeShare();
-              }}
+              onClick={handleNativeShare}
             >
               📤 Share
             </button>
