@@ -1,6 +1,6 @@
 import React from 'react';
 
-const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+const fingers = ['pinky', 'ring', 'middle', 'index', 'thumb'];
 
 interface FingerPillsProps {
   selected?: string;
