@@ -142,7 +142,7 @@ export default function Home() {
     index: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
     middle: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
     ring: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
-    pinky: { x: -70, y: -130, angleOffset: 0, sizeMultiplier: 0.8 }
+    pinky: { x: -75, y: -130, angleOffset: 0, sizeMultiplier: 0.8 }
   };
 
   // 단계별 제목 (설명 제거)
