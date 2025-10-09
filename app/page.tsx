@@ -191,6 +191,11 @@ export default function Home() {
     window.open(twitterUrl, '_blank', 'width=550,height=420');
   };
 
+  // 하이메 스토어 방문
+  const handleVisitStore = () => {
+    window.open('https://www.haime.shop/', '_blank');
+  };
+
   // 손가락별 반지 위치 미세 조정값
   const fingerOffsets = {
     thumb: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
@@ -470,6 +475,13 @@ export default function Home() {
                   <span className="text-base">𝕏</span> X
                 </button>
               </div>
+
+              <button
+                className="w-full h-12 rounded-full bg-[#595B60] hover:bg-[#44444a] text-white font-semibold text-base shadow-md transition-all flex items-center justify-center gap-2"
+                onClick={handleVisitStore}
+              >
+                <span className="text-lg">💍</span> Visit Haime Store
+              </button>
             </div>
 
             <p className="text-xs text-gray-400 mt-3 text-center">
