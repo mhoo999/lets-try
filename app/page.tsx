@@ -21,7 +21,6 @@ export default function Home() {
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length?: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [ringSelected, setRingSelected] = useState(false);
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
   const handAreaRef = useRef<HTMLDivElement>(null);
@@ -104,7 +103,6 @@ export default function Home() {
     setRingSelections({ [finger]: { ring, color } });
     setLastSelectedRing(ring);
     setLastSelectedColor(color);
-    setRingSelected(true);
     setModalOpen(false);
     setCurrentStep(3); // 반지 선택 후 Step 3으로 이동
   };
@@ -309,7 +307,6 @@ export default function Home() {
                   setImageUrl(undefined);
                   setSelectedFinger(undefined);
                   setRingSelections({});
-                  setRingSelected(false);
                   setLastSelectedRing(null);
                   setLastSelectedColor(null);
                   setCurrentStep(1);
