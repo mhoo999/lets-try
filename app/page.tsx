@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Header from './components/Header';
-import HandGuide from './components/HandGuide';
 import FingerPills from './components/FingerPills';
 import CameraCapture from './components/CameraCapture';
 import HandLandmarkDetector from './components/HandLandmarkDetector';
