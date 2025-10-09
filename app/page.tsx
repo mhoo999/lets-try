@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Header from './components/Header';
+import HandGuide from './components/HandGuide';
 import FingerPills from './components/FingerPills';
 import CameraCapture from './components/CameraCapture';
 import HandLandmarkDetector from './components/HandLandmarkDetector';
@@ -162,46 +163,50 @@ export default function Home() {
           description={stepInfo[currentStep as keyof typeof stepInfo].description}
         />
 
-        {/* Image Display Card - Show when image is uploaded */}
-        {imageUrl && (
-          <div className="w-full max-w-md mb-6">
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5]">
-                <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
-                <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
-                {/* 반지 합성 오버레이 - Step 2 이상에서만 표시 */}
-                {currentStep >= 2 && ringPositions.map((pos) => {
-                  if (pos.finger !== selectedFinger) return null;
-                  const selection = ringSelections[selectedFinger];
-                  if (!selection) return null;
-                  const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
-                  const style = {
-                    position: 'absolute',
-                    left: pos.centerX,
-                    top: pos.centerY,
-                    width: base,
-                    height: 'auto',
-                    transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
-                    pointerEvents: 'none',
-                    zIndex: 10,
-                    objectFit: 'contain',
-                    borderRadius: '9999px',
-                  } as React.CSSProperties;
-                  return (
-                    <img
-                      key={pos.finger}
-                      src={selection.color.imageUrl}
-                      alt={`${pos.finger} ring`}
-                      crossOrigin="anonymous"
-                      style={style}
-                      onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
-                    />
-                  );
-                })}
-              </div>
+        {/* Image Display Card */}
+        <div className="w-full max-w-md mb-6">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5]">
+              {imageUrl ? (
+                <>
+                  <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
+                  <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
+                  {/* 반지 합성 오버레이 - Step 2 이상에서만 표시 */}
+                  {currentStep >= 2 && ringPositions.map((pos) => {
+                    if (pos.finger !== selectedFinger) return null;
+                    const selection = ringSelections[selectedFinger];
+                    if (!selection) return null;
+                    const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
+                    const style = {
+                      position: 'absolute',
+                      left: pos.centerX,
+                      top: pos.centerY,
+                      width: base,
+                      height: 'auto',
+                      transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
+                      pointerEvents: 'none',
+                      zIndex: 10,
+                      objectFit: 'contain',
+                      borderRadius: '9999px',
+                    } as React.CSSProperties;
+                    return (
+                      <img
+                        key={pos.finger}
+                        src={selection.color.imageUrl}
+                        alt={`${pos.finger} ring`}
+                        crossOrigin="anonymous"
+                        style={style}
+                        onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
+                      />
+                    );
+                  })}
+                </>
+              ) : (
+                <HandGuide imageUrl={imageUrl} />
+              )}
             </div>
           </div>
-        )}
+        </div>
 
         {/* Step-specific Controls */}
         {currentStep === 1 && (
