@@ -127,26 +127,54 @@ export default function Home() {
 
   // 네이티브 공유 기능 (모바일)
   const handleNativeShare = async () => {
-    if (!handAreaRef.current) return;
+    if (!handAreaRef.current) {
+      console.log('handAreaRef가 없습니다');
+      return;
+    }
 
     try {
-      // html2canvas로 이미지 캡처
-      const canvas = await html2canvas(handAreaRef.current, { backgroundColor: null, useCORS: true });
+      console.log('이미지 캡처 시작...');
+      // html2canvas로 이미지 캡처 (배경 흰색)
+      const canvas = await html2canvas(handAreaRef.current, {
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        scale: 2 // 고해상도
+      });
+      console.log('캡처 완료');
+
       const dataUrl = canvas.toDataURL('image/png');
+      console.log('dataUrl 생성 완료');
 
       // dataURL을 Blob으로 변환
       const response = await fetch(dataUrl);
       const blob = await response.blob();
       const file = new File([blob], 'ring-try-on.png', { type: 'image/png' });
+      console.log('파일 생성 완료:', file.size, 'bytes');
 
       // Web Share API 지원 여부 확인
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'My Ring Try-On',
-          text: 'Check out my virtual ring try-on!'
-        });
+      if (navigator.share) {
+        console.log('Web Share API 지원됨');
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          console.log('파일 공유 가능');
+          await navigator.share({
+            files: [file],
+            title: 'My Ring Try-On',
+            text: 'Check out my virtual ring try-on!'
+          });
+          console.log('공유 완료');
+        } else {
+          console.log('파일 공유 불가, 다운로드 시작');
+          // 다운로드
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = `ring-try-on-${Date.now()}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
       } else {
+        console.log('Web Share API 미지원, 다운로드 시작');
         // 지원하지 않으면 다운로드
         const link = document.createElement('a');
         link.href = dataUrl;
@@ -157,6 +185,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error('공유 실패:', error);
+      alert('공유에 실패했습니다: ' + (error as Error).message);
     }
   };
 
