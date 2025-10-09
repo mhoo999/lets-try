@@ -112,16 +112,36 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
             setLandmarks(points.map((pt) => ({ x: pt.x, y: pt.y })));
             // 반지 위치/각도/길이 계산
             const canvas = canvasRef.current;
+            // 이미지가 실제로 그려진 영역 계산 (contain 방식)
+            const img = imageRef.current;
+            const imgW = img?.naturalWidth || 1;
+            const imgH = img?.naturalHeight || 1;
+            const canvasW = canvas.width;
+            const canvasH = canvas.height;
+            const imgRatio = imgW / imgH;
+            const canvasRatio = canvasW / canvasH;
+            let drawW = canvasW, drawH = canvasH, offsetX = 0, offsetY = 0;
+            if (imgRatio > canvasRatio) {
+              drawW = canvasW;
+              drawH = imgH * (canvasW / imgW);
+              offsetY = (canvasH - drawH) / 2;
+            } else {
+              drawH = canvasH;
+              drawW = imgW * (canvasH / imgH);
+              offsetX = (canvasW - drawW) / 2;
+            }
+
             const ringPos = RING_PAIRS.map(({ finger, idxA, idxB }) => {
               if (!points[idxA] || !points[idxB] || !canvas) return null;
               const a = points[idxA];
               const b = points[idxB];
-              const centerX = ((a.x + b.x) / 2) * canvas.width;
-              const centerY = ((a.y + b.y) / 2) * canvas.height;
+              // MediaPipe 좌표 (0~1)를 실제 그려진 이미지 영역으로 변환
+              const centerX = ((a.x + b.x) / 2) * drawW + offsetX;
+              const centerY = ((a.y + b.y) / 2) * drawH + offsetY;
               const angle = Math.atan2(b.y - a.y, b.x - a.x); // 라디안
               // 손가락 길이(픽셀)
-              const dx = (b.x - a.x) * canvas.width;
-              const dy = (b.y - a.y) * canvas.height;
+              const dx = (b.x - a.x) * drawW;
+              const dy = (b.y - a.y) * drawH;
               const length = Math.sqrt(dx * dx + dy * dy);
               return { finger, centerX, centerY, angle, length };
             }).filter(Boolean) as { finger: string; centerX: number; centerY: number; angle: number; length: number }[];
