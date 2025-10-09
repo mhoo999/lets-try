@@ -365,7 +365,9 @@ export default function Home() {
             <button
               className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
               type="button"
-              onClick={handleNativeShare}
+              onClick={async () => {
+                await handleNativeShare();
+              }}
             >
               📤 Share
             </button>
@@ -375,7 +377,7 @@ export default function Home() {
               type="button"
               onClick={handleTwitterShare}
             >
-              <span className="text-base">𝕏</span> X로 공유하기
+              <span className="text-base">𝕏</span> Share on X
             </button>
 
             <button
