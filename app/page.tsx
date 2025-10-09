@@ -8,7 +8,6 @@ import CameraCapture from './components/CameraCapture';
 import HandLandmarkDetector from './components/HandLandmarkDetector';
 import RingSelectionModal, { Ring, RingColor } from './components/RingSelectionModal';
 import ProgressSteps from './components/ProgressSteps';
-import StepIndicator from './components/StepIndicator';
 import html2canvas from 'html2canvas';
 
 export default function Home() {
@@ -137,11 +136,11 @@ export default function Home() {
     setShowShareModal(true);
   };
 
-  // 단계별 제목과 설명
+  // 단계별 제목 (설명 제거)
   const stepInfo = {
-    1: { title: 'Upload Your Hand Photo', description: 'Take a clear photo of your hand for the best results' },
-    2: { title: 'Choose Your Ring', description: 'Select your favorite ring and color' },
-    3: { title: 'Adjust & Share', description: 'Choose finger position and share your look' },
+    1: { title: 'Upload Your Hand Photo' },
+    2: { title: 'Choose Your Ring' },
+    3: { title: 'Preview & Share' },
   };
 
   return (
@@ -155,16 +154,12 @@ export default function Home() {
       <ProgressSteps currentStep={currentStep} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center px-4 pb-6">
-        {/* Step Indicator */}
-        <StepIndicator
-          step={currentStep}
-          title={stepInfo[currentStep as keyof typeof stepInfo].title}
-          description={stepInfo[currentStep as keyof typeof stepInfo].description}
-        />
+      <div className="flex-1 flex flex-col items-center px-4 pb-4">
+        {/* Step Title - Simplified */}
+        <h2 className="text-lg font-bold text-gray-800 mb-3">{stepInfo[currentStep as keyof typeof stepInfo].title}</h2>
 
         {/* Image Display Card */}
-        <div className="w-full max-w-md mb-6">
+        <div className="w-full max-w-md mb-4">
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5]">
               {imageUrl ? (
@@ -210,7 +205,7 @@ export default function Home() {
 
         {/* Step-specific Controls */}
         {currentStep === 1 && (
-          <div className="w-full max-w-md space-y-4">
+          <div className="w-full max-w-md space-y-3">
             {/* Photo Upload Button */}
             {!imageUrl ? (
               <>
@@ -257,7 +252,7 @@ export default function Home() {
         )}
 
         {currentStep === 2 && (
-          <div className="w-full max-w-md space-y-4">
+          <div className="w-full max-w-md space-y-3">
             {/* Ring Selection Button */}
             <button
               className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
@@ -276,8 +271,7 @@ export default function Home() {
                 </div>
 
                 {/* Finger Selection Card */}
-                <div className="bg-white rounded-xl p-4 shadow-md">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Choose Finger Position</h3>
+                <div className="bg-white rounded-xl p-3 shadow-md">
                   <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={false} />
                 </div>
 
@@ -304,7 +298,7 @@ export default function Home() {
         )}
 
         {currentStep === 3 && (
-          <div className="w-full max-w-md space-y-4">
+          <div className="w-full max-w-md space-y-3">
             {/* Ring & Finger Info Display */}
             <div className="bg-white rounded-xl p-4 shadow-md">
               <div className="flex items-center justify-between mb-2">

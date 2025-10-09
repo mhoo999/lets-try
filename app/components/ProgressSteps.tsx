@@ -12,7 +12,7 @@ export default function ProgressSteps({ currentStep }: ProgressStepsProps) {
   ];
 
   return (
-    <div className="flex items-center justify-center gap-2 w-full px-4 mb-6">
+    <div className="flex items-center justify-center gap-2 w-full px-4 mb-3">
       {steps.map((step, index) => (
         <React.Fragment key={step.number}>
           <div className="flex flex-col items-center gap-1">
