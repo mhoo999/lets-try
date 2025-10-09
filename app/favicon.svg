@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#d97a7c"/>
+
+  <!-- Ring outer circle -->
+  <circle cx="32" cy="32" r="18" fill="none" stroke="white" stroke-width="6"/>
+
+  <!-- Ring inner circle (hole) -->
+  <circle cx="32" cy="32" r="12" fill="#d97a7c"/>
+
+  <!-- Diamond/gem on top -->
+  <path d="M 32 8 L 36 16 L 32 20 L 28 16 Z" fill="white"/>
+
+  <!-- Sparkle effects -->
+  <circle cx="18" cy="18" r="2" fill="white" opacity="0.8"/>
+  <circle cx="46" cy="46" r="2" fill="white" opacity="0.8"/>
+  <circle cx="46" cy="18" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="18" cy="46" r="1.5" fill="white" opacity="0.6"/>
+</svg>
