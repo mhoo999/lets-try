@@ -166,7 +166,7 @@ export default function Home() {
         <h2 className="text-base font-bold text-gray-800 mb-2">{stepInfo[currentStep as keyof typeof stepInfo].title}</h2>
 
         {/* Image Display Card */}
-        <div className="w-full mb-3">
+        <div className="w-full max-w-[300px] mb-3 mx-auto">
           <div ref={handAreaRef} className="w-full aspect-square relative bg-white rounded-2xl shadow-lg overflow-hidden">
               {imageUrl ? (
                 <>
