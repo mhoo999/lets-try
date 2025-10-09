@@ -54,7 +54,7 @@ export default function Home() {
         }
         const url = URL.createObjectURL(file);
         setImageUrl(url);
-        setCurrentStep(2); // 사진 업로드 후 Step 2 (반지선택)으로 이동
+        // 사진 업로드 후 Step 1에 머물러서 이미지 확인
       };
       img.onerror = () => {
         setErrorMsg('이미지 파일을 불러올 수 없습니다.');
@@ -76,7 +76,7 @@ export default function Home() {
   const handleCameraCapture = (url: string) => {
     setImageUrl(url);
     setCameraOpen(false);
-    setCurrentStep(2); // 사진 촬영 후 Step 2 (반지선택)으로 이동
+    // 사진 촬영 후 Step 1에 머물러서 이미지 확인
   };
 
   // FingerPills에서 손가락 선택 시
@@ -103,7 +103,7 @@ export default function Home() {
     setLastSelectedRing(ring);
     setLastSelectedColor(color);
     setModalOpen(false);
-    setCurrentStep(3); // 반지 선택 후 Step 3 (위치조정&공유)으로 이동
+    // 반지 선택 후 Step 2에 머물러서 손가락 선택
   };
 
   // rings.json의 모든 반지/컬러 이미지 프리로드
@@ -169,8 +169,8 @@ export default function Home() {
               <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5]">
                 <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
                 <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
-                {/* 반지 합성 오버레이 */}
-                {ringPositions.map((pos) => {
+                {/* 반지 합성 오버레이 - Step 2 이상에서만 표시 */}
+                {currentStep >= 2 && ringPositions.map((pos) => {
                   if (pos.finger !== selectedFinger) return null;
                   const selection = ringSelections[selectedFinger];
                   if (!selection) return null;
@@ -207,23 +207,46 @@ export default function Home() {
         {currentStep === 1 && (
           <div className="w-full max-w-md space-y-4">
             {/* Photo Upload Button */}
-            <button
-              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
-              type="button"
-              onClick={handleCameraOrFile}
-            >
-              📸 Take a Photo
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            {errorMsg && (
-              <div className="text-red-500 text-sm mt-3 text-center bg-red-50 p-2 rounded-lg">{errorMsg}</div>
+            {!imageUrl ? (
+              <>
+                <button
+                  className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
+                  type="button"
+                  onClick={handleCameraOrFile}
+                >
+                  📸 Take a Photo
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                {errorMsg && (
+                  <div className="text-red-500 text-sm mt-3 text-center bg-red-50 p-2 rounded-lg">{errorMsg}</div>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Next Button */}
+                <button
+                  className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
+                  type="button"
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Next: Select Ring →
+                </button>
+                {/* Retake Photo Button */}
+                <button
+                  className="w-full h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
+                  type="button"
+                  onClick={handleCameraOrFile}
+                >
+                  📸 Retake Photo
+                </button>
+              </>
             )}
           </div>
         )}
@@ -236,15 +259,32 @@ export default function Home() {
               type="button"
               onClick={handleOpenRingModal}
             >
-              💍 Choose Ring & Color
+              💍 {lastSelectedRing ? 'Change Ring & Color' : 'Choose Ring & Color'}
             </button>
 
-            {/* Selected Ring Display */}
+            {/* Selected Ring & Finger Selection */}
             {lastSelectedRing && (
-              <div className="bg-white rounded-xl p-4 shadow-md text-center">
-                <p className="text-xs text-gray-500 mb-1">Selected Ring</p>
-                <p className="text-lg font-bold text-[#d97a7c]">{lastSelectedRing.name}</p>
-              </div>
+              <>
+                <div className="bg-white rounded-xl p-4 shadow-md text-center">
+                  <p className="text-xs text-gray-500 mb-1">Selected Ring</p>
+                  <p className="text-lg font-bold text-[#d97a7c]">{lastSelectedRing.name}</p>
+                </div>
+
+                {/* Finger Selection Card */}
+                <div className="bg-white rounded-xl p-4 shadow-md">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Choose Finger Position</h3>
+                  <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={false} />
+                </div>
+
+                {/* Next Button */}
+                <button
+                  className="w-full h-12 rounded-full bg-[#595B60] hover:bg-[#44444a] text-white font-semibold text-base shadow-md transition-all"
+                  type="button"
+                  onClick={() => setCurrentStep(3)}
+                >
+                  Next: Preview & Share →
+                </button>
+              </>
             )}
 
             {/* Back Button */}
@@ -260,17 +300,15 @@ export default function Home() {
 
         {currentStep === 3 && (
           <div className="w-full max-w-md space-y-4">
-            {/* Finger Selection Card */}
+            {/* Ring & Finger Info Display */}
             <div className="bg-white rounded-xl p-4 shadow-md">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Choose Finger Position</h3>
-              <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={false} />
-            </div>
-
-            {/* Ring Info Display */}
-            <div className="bg-white rounded-xl p-4 shadow-md">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-500">Ring</span>
                 <span className="font-semibold text-gray-800">{lastSelectedRing?.name || '-'}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Finger</span>
+                <span className="font-semibold text-gray-800 capitalize">{selectedFinger || '-'}</span>
               </div>
             </div>
 
@@ -290,7 +328,7 @@ export default function Home() {
                 type="button"
                 onClick={() => setCurrentStep(2)}
               >
-                ← Change Ring
+                ← Edit Selection
               </button>
               <button
                 className="flex-1 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
