@@ -229,11 +229,11 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full max-w-[300px] aspect-square bg-[#dadada] rounded-[8px] border border-[#dadada] overflow-hidden flex items-center justify-center">
       <canvas
         ref={canvasRef}
-        width={600}
-        height={600}
+        width={300}
+        height={300}
         className="absolute top-0 left-0 w-full h-full z-10"
         style={{ objectFit: 'cover', cursor: testMode ? 'pointer' : 'default' }}
         onClick={handleCanvasClick}
