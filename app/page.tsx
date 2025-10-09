@@ -144,22 +144,20 @@ export default function Home() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-b from-[#fef5f5] to-white flex flex-col">
-      {/* Header */}
-      <div className="pt-4 pb-2">
+    <main className="w-full h-screen bg-gradient-to-b from-[#fef5f5] to-white flex flex-col overflow-hidden">
+      {/* Header with Progress Steps */}
+      <div className="flex items-center justify-between px-4 py-3">
         <Header />
+        <ProgressSteps currentStep={currentStep} />
       </div>
 
-      {/* Progress Steps */}
-      <ProgressSteps currentStep={currentStep} />
-
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center px-4 pb-4">
+      <div className="flex-1 flex flex-col items-center px-4 pb-3 overflow-y-auto">
         {/* Step Title - Simplified */}
-        <h2 className="text-lg font-bold text-gray-800 mb-3">{stepInfo[currentStep as keyof typeof stepInfo].title}</h2>
+        <h2 className="text-base font-bold text-gray-800 mb-2">{stepInfo[currentStep as keyof typeof stepInfo].title}</h2>
 
         {/* Image Display Card */}
-        <div className="w-full max-w-md mb-4">
+        <div className="w-full mb-3">
           <div ref={handAreaRef} className="w-full aspect-square relative bg-white rounded-2xl shadow-lg overflow-hidden">
               {imageUrl ? (
                 <>
@@ -203,7 +201,7 @@ export default function Home() {
 
         {/* Step-specific Controls */}
         {currentStep === 1 && (
-          <div className="w-full max-w-md space-y-3">
+          <div className="w-full space-y-2">
             {/* Photo Upload Button */}
             {!imageUrl ? (
               <>
@@ -250,7 +248,7 @@ export default function Home() {
         )}
 
         {currentStep === 2 && (
-          <div className="w-full max-w-md space-y-3">
+          <div className="w-full space-y-2">
             {/* Ring Selection Button */}
             <button
               className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
@@ -296,9 +294,9 @@ export default function Home() {
         )}
 
         {currentStep === 3 && (
-          <div className="w-full max-w-md space-y-3">
+          <div className="w-full space-y-2">
             {/* Ring & Finger Info Display */}
-            <div className="bg-white rounded-xl p-4 shadow-md">
+            <div className="bg-white rounded-xl p-3 shadow-md">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-500">Ring</span>
                 <span className="font-semibold text-gray-800">{lastSelectedRing?.name || '-'}</span>
@@ -319,7 +317,7 @@ export default function Home() {
             </button>
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 className="flex-1 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
                 type="button"

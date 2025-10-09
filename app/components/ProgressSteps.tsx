@@ -12,33 +12,23 @@ export default function ProgressSteps({ currentStep }: ProgressStepsProps) {
   ];
 
   return (
-    <div className="flex items-center justify-center gap-2 w-full px-4 mb-3">
+    <div className="flex items-center gap-1.5">
       {steps.map((step, index) => (
         <React.Fragment key={step.number}>
-          <div className="flex flex-col items-center gap-1">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                currentStep >= step.number
-                  ? 'bg-[#d97a7c] text-white'
-                  : 'bg-[#e8e8e8] text-gray-400'
-              }`}
-            >
-              {step.number}
-            </div>
-            <span
-              className={`text-xs font-medium ${
-                currentStep >= step.number ? 'text-[#d97a7c]' : 'text-gray-400'
-              }`}
-            >
-              {step.label}
-            </span>
+          <div
+            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+              currentStep >= step.number
+                ? 'bg-[#d97a7c] text-white'
+                : 'bg-[#e8e8e8] text-gray-400'
+            }`}
+          >
+            {step.number}
           </div>
           {index < steps.length - 1 && (
             <div
-              className={`h-[2px] w-12 transition-all ${
+              className={`h-[2px] w-8 transition-all ${
                 currentStep > step.number ? 'bg-[#d97a7c]' : 'bg-[#e8e8e8]'
               }`}
-              style={{ marginBottom: '20px' }}
             />
           )}
         </React.Fragment>
