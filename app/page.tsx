@@ -175,6 +175,22 @@ export default function Home() {
     }
   };
 
+  // 인스타그램 공유
+  const handleInstagramShare = () => {
+    if (!shareImageUrl) return;
+    // 인스타그램은 앱을 통한 공유만 지원하므로 이미지 다운로드 후 안내
+    handleDownload();
+    alert('이미지가 다운로드되었습니다. 인스타그램 앱에서 업로드해주세요.');
+  };
+
+  // X(트위터) 공유
+  const handleTwitterShare = () => {
+    const text = 'Check out my virtual ring try-on! 💍✨';
+    const url = window.location.href;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank', 'width=550,height=420');
+  };
+
   // 손가락별 반지 위치 미세 조정값
   const fingerOffsets = {
     thumb: { x: 0, y: 0, angleOffset: 0, sizeMultiplier: 1 },
@@ -430,7 +446,7 @@ export default function Home() {
               style={{ maxHeight: 320, objectFit: 'contain' }}
             />
 
-            {/* 공유/다운로드 버튼 */}
+            {/* 공유 버튼 */}
             <div className="w-full space-y-2">
               <button
                 className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
@@ -439,16 +455,25 @@ export default function Home() {
                 📤 Share
               </button>
 
-              <button
-                className="w-full h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
-                onClick={handleDownload}
-              >
-                💾 Download Image
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="flex-1 h-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 text-white font-medium text-sm shadow-md transition-all flex items-center justify-center gap-1"
+                  onClick={handleInstagramShare}
+                >
+                  <span className="text-base">📷</span> Instagram
+                </button>
+
+                <button
+                  className="flex-1 h-10 rounded-full bg-black hover:bg-gray-800 text-white font-medium text-sm shadow-md transition-all flex items-center justify-center gap-1"
+                  onClick={handleTwitterShare}
+                >
+                  <span className="text-base">𝕏</span> X
+                </button>
+              </div>
             </div>
 
             <p className="text-xs text-gray-400 mt-3 text-center">
-              {isMobile ? 'Tap Share to save or send to your apps' : 'Click Download to save the image'}
+              Share your try-on with friends!
             </p>
           </div>
         </div>
