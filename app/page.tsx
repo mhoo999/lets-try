@@ -7,9 +7,12 @@ import FingerPills from './components/FingerPills';
 import CameraCapture from './components/CameraCapture';
 import HandLandmarkDetector from './components/HandLandmarkDetector';
 import RingSelectionModal, { Ring, RingColor } from './components/RingSelectionModal';
+import ProgressSteps from './components/ProgressSteps';
+import StepIndicator from './components/StepIndicator';
 import html2canvas from 'html2canvas';
 
 export default function Home() {
+  const [currentStep, setCurrentStep] = useState(1); // 1: 사진촬영, 2: 반지선택, 3: 미리보기
   const [selectedFinger, setSelectedFinger] = useState<string | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -18,7 +21,7 @@ export default function Home() {
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length?: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [ringSelected, setRingSelected] = useState(false); // 반지 선택 여부
+  const [ringSelected, setRingSelected] = useState(false);
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
   const handAreaRef = useRef<HTMLDivElement>(null);
@@ -53,6 +56,7 @@ export default function Home() {
         }
         const url = URL.createObjectURL(file);
         setImageUrl(url);
+        setCurrentStep(2); // 사진 업로드 후 Step 2로 이동
       };
       img.onerror = () => {
         setErrorMsg('이미지 파일을 불러올 수 없습니다.');
@@ -74,6 +78,7 @@ export default function Home() {
   const handleCameraCapture = (url: string) => {
     setImageUrl(url);
     setCameraOpen(false);
+    setCurrentStep(2); // 사진 촬영 후 Step 2로 이동
   };
 
   // FingerPills에서 손가락 선택 시
@@ -101,6 +106,7 @@ export default function Home() {
     setLastSelectedColor(color);
     setRingSelected(true);
     setModalOpen(false);
+    setCurrentStep(3); // 반지 선택 후 Step 3으로 이동
   };
 
   // rings.json의 모든 반지/컬러 이미지 프리로드
@@ -133,109 +139,187 @@ export default function Home() {
     setShowShareModal(true);
   };
 
+  // 단계별 제목과 설명
+  const stepInfo = {
+    1: { title: 'Upload Your Hand Photo', description: 'Take a clear photo of your hand for the best results' },
+    2: { title: 'Choose Your Ring', description: 'Select your favorite ring and color' },
+    3: { title: 'Preview & Share', description: 'See how it looks and share with friends' },
+  };
+
   return (
-    <main className="w-full h-screen overflow-hidden bg-white flex flex-col">
-      {/* 상단 영역: 헤더 + 업로드/카메라 버튼 + HandGuide */}
-      <div className="flex flex-col items-center w-full" style={{ height: '60vh' }}>
-        <div className="mt-[1vh]">
-          <Header />
+    <main className="w-full min-h-screen bg-gradient-to-b from-[#fef5f5] to-white flex flex-col">
+      {/* Header */}
+      <div className="pt-4 pb-2">
+        <Header />
+      </div>
+
+      {/* Progress Steps */}
+      <ProgressSteps currentStep={currentStep} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center px-4 pb-6">
+        {/* Step Indicator */}
+        <StepIndicator
+          step={currentStep}
+          title={stepInfo[currentStep as keyof typeof stepInfo].title}
+          description={stepInfo[currentStep as keyof typeof stepInfo].description}
+        />
+
+        {/* Image Display Card */}
+        <div className="w-full max-w-md mb-6">
+          <div className="bg-white rounded-2xl shadow-lg p-4">
+            <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5] rounded-xl overflow-hidden">
+              {imageUrl ? (
+                <>
+                  <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
+                  <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
+                  {/* 반지 합성 오버레이 */}
+                  {ringPositions.map((pos) => {
+                    if (pos.finger !== selectedFinger) return null;
+                    const selection = ringSelections[selectedFinger];
+                    if (!selection) return null;
+                    const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
+                    const style = {
+                      position: 'absolute',
+                      left: pos.centerX,
+                      top: pos.centerY,
+                      width: base,
+                      height: 'auto',
+                      transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
+                      pointerEvents: 'none',
+                      zIndex: 10,
+                      objectFit: 'contain',
+                      borderRadius: '9999px',
+                    } as React.CSSProperties;
+                    return (
+                      <img
+                        key={pos.finger}
+                        src={selection.color.imageUrl}
+                        alt={`${pos.finger} ring`}
+                        crossOrigin="anonymous"
+                        style={style}
+                        onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
+                      />
+                    );
+                  })}
+                </>
+              ) : (
+                <HandGuide imageUrl={imageUrl} />
+              )}
+            </div>
+          </div>
         </div>
-        <div className="mt-[1vh]">
-          <button
-            className="w-[50vw] h-[4vh] rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base"
-            type="button"
-            onClick={handleCameraOrFile}
-          >
-            Take a PIC
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          {errorMsg && (
-            <div className="text-red-500 text-xs mt-2 text-center">{errorMsg}</div>
-          )}
-        </div>
-        {/* HandGuide가 남는 공간을 모두 차지 */}
-        <div className="flex-1 w-full max-w-[300px] flex items-center justify-center">
-          <div ref={handAreaRef} className="w-[80vw] aspect-square relative">
-            {imageUrl ? (
-              <>
-                <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
-                <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
-                {/* 반지 합성 오버레이 */}
-                {ringPositions.map((pos) => {
-                  if (pos.finger !== selectedFinger) return null;
-                  const selection = ringSelections[selectedFinger];
-                  if (!selection) return null;
-                  const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
-                  const style = {
-                    position: 'absolute',
-                    left: pos.centerX,
-                    top: pos.centerY,
-                    width: base,
-                    height: 'auto',
-                    transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
-                    pointerEvents: 'none',
-                    zIndex: 10,
-                    objectFit: 'contain',
-                    borderRadius: '9999px',
-                  } as React.CSSProperties;
-                  return (
-                    <img
-                      key={pos.finger}
-                      src={selection.color.imageUrl}
-                      alt={`${pos.finger} ring`}
-                      crossOrigin="anonymous"
-                      style={style}
-                      onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
-                    />
-                  );
-                })}
-              </>
-            ) : (
-              <HandGuide imageUrl={imageUrl} />
+
+        {/* Step-specific Controls */}
+        {currentStep === 1 && (
+          <div className="w-full max-w-md">
+            <button
+              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
+              type="button"
+              onClick={handleCameraOrFile}
+            >
+              📸 Take a Photo
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            {errorMsg && (
+              <div className="text-red-500 text-sm mt-3 text-center bg-red-50 p-2 rounded-lg">{errorMsg}</div>
             )}
           </div>
-        </div>
-      </div>
-      {/* 하단 영역: FingerPills + 버튼 그룹 */}
-      <div className="flex flex-col items-center w-full mb-[2vh]">
-        {/* FingerPills: 반지 선택 전에는 비활성화 */}
-        <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={!ringSelected} />
-        <div className="flex flex-col gap-[1.5vh] items-center w-full mt-[2.5vh]">
-          {/* 반지 선택 버튼: 사진만 있으면 활성화 */}
-          <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl ? 'bg-[#d97a7c] hover:bg-[#c96a6c] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
-            type="button"
-            onClick={handleOpenRingModal}
-            disabled={!imageUrl}
-          >
-            Select a ring
-          </button>
+        )}
 
-          {/* 네임택(Pill) */}
-          <div
-            className="w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 bg-[#dadada] text-[#ffffff] flex items-center justify-center"
-            style={{ margin: '0 auto' }}
-          >
-            {lastSelectedRing ? lastSelectedRing.name : '-'}
+        {currentStep === 2 && (
+          <div className="w-full max-w-md space-y-4">
+            {/* Finger Selection */}
+            <div className="bg-white rounded-xl p-4 shadow-md">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Select Finger</h3>
+              <FingerPills selected={selectedFinger} onSelect={handleFingerSelect} disabled={false} />
+            </div>
+
+            {/* Ring Selection Button */}
+            <button
+              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
+              type="button"
+              onClick={handleOpenRingModal}
+            >
+              💍 Choose Ring & Color
+            </button>
+
+            {/* Selected Ring Display */}
+            {lastSelectedRing && (
+              <div className="bg-white rounded-xl p-4 shadow-md text-center">
+                <p className="text-xs text-gray-500 mb-1">Selected Ring</p>
+                <p className="text-lg font-bold text-[#d97a7c]">{lastSelectedRing.name}</p>
+              </div>
+            )}
+
+            {/* Back Button */}
+            <button
+              className="w-full h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
+              type="button"
+              onClick={() => setCurrentStep(1)}
+            >
+              ← Back to Photo
+            </button>
           </div>
+        )}
 
-          {/* 공유 버튼: 사진+손가락+반지/컬러까지 선택 시에만 활성화 */}
-          <button
-            className={`w-[50vw] h-[4vh] rounded-full font-semibold text-base mb-0 ${imageUrl && selectedFinger && ringSelections[selectedFinger] ? 'bg-[#595B60] hover:bg-[#44444a] text-white' : 'bg-[#dadada] text-gray-400 cursor-not-allowed'}`}
-            type="button"
-            disabled={!imageUrl || !selectedFinger || !ringSelections[selectedFinger]}
-            onClick={handleShare}
-          >
-            Share
-          </button>
-        </div>
+        {currentStep === 3 && (
+          <div className="w-full max-w-md space-y-4">
+            {/* Ring Info Card */}
+            <div className="bg-white rounded-xl p-4 shadow-md">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-500">Ring</span>
+                <span className="font-semibold text-gray-800">{lastSelectedRing?.name || '-'}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Finger</span>
+                <span className="font-semibold text-gray-800 capitalize">{selectedFinger || '-'}</span>
+              </div>
+            </div>
+
+            {/* Share Button */}
+            <button
+              className="w-full h-12 rounded-full bg-[#595B60] hover:bg-[#44444a] text-white font-semibold text-base shadow-md transition-all"
+              type="button"
+              onClick={handleShare}
+            >
+              📤 Share Image
+            </button>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                className="flex-1 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
+                type="button"
+                onClick={() => setCurrentStep(2)}
+              >
+                ← Edit Ring
+              </button>
+              <button
+                className="flex-1 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
+                type="button"
+                onClick={() => {
+                  setImageUrl(undefined);
+                  setSelectedFinger(undefined);
+                  setRingSelections({});
+                  setRingSelected(false);
+                  setLastSelectedRing(null);
+                  setLastSelectedColor(null);
+                  setCurrentStep(1);
+                }}
+              >
+                🔄 Start Over
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       {/* 반지 선택 모달 */}
       <RingSelectionModal

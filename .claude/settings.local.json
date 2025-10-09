@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where magick)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(del convert-favicon.js)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
