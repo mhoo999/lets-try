@@ -160,14 +160,6 @@ export default function Home() {
     }
   };
 
-  // X(트위터) 공유
-  const handleTwitterShare = () => {
-    const text = 'Check out my virtual ring try-on! 💍✨';
-    const url = window.location.href;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(twitterUrl, '_blank', 'width=550,height=420');
-  };
-
   // 하이메 스토어 방문
   const handleVisitStore = () => {
     window.open('https://www.haime.shop/', '_blank');
@@ -370,14 +362,6 @@ export default function Home() {
               }}
             >
               📤 Share
-            </button>
-
-            <button
-              className="w-full h-10 rounded-full bg-black hover:bg-gray-800 text-white font-medium text-sm shadow-md transition-all flex items-center justify-center gap-1"
-              type="button"
-              onClick={handleTwitterShare}
-            >
-              <span className="text-base">𝕏</span> Share on X
             </button>
 
             <button
