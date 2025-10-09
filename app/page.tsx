@@ -12,7 +12,7 @@ import StepIndicator from './components/StepIndicator';
 import html2canvas from 'html2canvas';
 
 export default function Home() {
-  const [currentStep, setCurrentStep] = useState(1); // 1: 반지선택, 2: 사진촬영, 3: 위치조정&공유
+  const [currentStep, setCurrentStep] = useState(1); // 1: 사진촬영, 2: 반지선택, 3: 위치조정&공유
   const [selectedFinger, setSelectedFinger] = useState<string>('thumb'); // 기본값 thumb
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -20,7 +20,7 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
   const [ringPositions, setRingPositions] = useState<{ finger: string; centerX: number; centerY: number; angle: number; length?: number }[]>([]);
   const [ringSelections, setRingSelections] = useState<{ [finger: string]: { ring: Ring; color: RingColor } }>({});
-  const [modalOpen, setModalOpen] = useState(true); // 시작 시 모달 열림
+  const [modalOpen, setModalOpen] = useState(false);
   const [lastSelectedRing, setLastSelectedRing] = useState<Ring | null>(null);
   const [lastSelectedColor, setLastSelectedColor] = useState<RingColor | null>(null);
   const handAreaRef = useRef<HTMLDivElement>(null);
@@ -55,7 +55,7 @@ export default function Home() {
         }
         const url = URL.createObjectURL(file);
         setImageUrl(url);
-        setCurrentStep(3); // 사진 업로드 후 Step 3 (위치조정&공유)으로 이동
+        setCurrentStep(2); // 사진 업로드 후 Step 2 (반지선택)으로 이동
       };
       img.onerror = () => {
         setErrorMsg('이미지 파일을 불러올 수 없습니다.');
@@ -77,7 +77,7 @@ export default function Home() {
   const handleCameraCapture = (url: string) => {
     setImageUrl(url);
     setCameraOpen(false);
-    setCurrentStep(3); // 사진 촬영 후 Step 3 (위치조정&공유)으로 이동
+    setCurrentStep(2); // 사진 촬영 후 Step 2 (반지선택)으로 이동
   };
 
   // FingerPills에서 손가락 선택 시
@@ -104,7 +104,7 @@ export default function Home() {
     setLastSelectedRing(ring);
     setLastSelectedColor(color);
     setModalOpen(false);
-    setCurrentStep(2); // 반지 선택 후 Step 2 (사진촬영)로 이동
+    setCurrentStep(3); // 반지 선택 후 Step 3 (위치조정&공유)으로 이동
   };
 
   // rings.json의 모든 반지/컬러 이미지 프리로드
@@ -139,8 +139,8 @@ export default function Home() {
 
   // 단계별 제목과 설명
   const stepInfo = {
-    1: { title: 'Choose Your Ring', description: 'Select your favorite ring and color' },
-    2: { title: 'Upload Your Hand Photo', description: 'Take a clear photo of your hand' },
+    1: { title: 'Upload Your Hand Photo', description: 'Take a clear photo of your hand for the best results' },
+    2: { title: 'Choose Your Ring', description: 'Select your favorite ring and color' },
     3: { title: 'Adjust & Share', description: 'Choose finger position and share your look' },
   };
 
@@ -163,48 +163,42 @@ export default function Home() {
           description={stepInfo[currentStep as keyof typeof stepInfo].description}
         />
 
-        {/* Image Display Card - Only show in Step 2 and 3 */}
-        {currentStep >= 2 && (
+        {/* Image Display Card - Show when image is uploaded */}
+        {imageUrl && (
           <div className="w-full max-w-md mb-6">
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div ref={handAreaRef} className="w-full aspect-square relative bg-[#f5f5f5]">
-                {imageUrl ? (
-                  <>
-                    <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
-                    <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
-                    {/* 반지 합성 오버레이 */}
-                    {ringPositions.map((pos) => {
-                      if (pos.finger !== selectedFinger) return null;
-                      const selection = ringSelections[selectedFinger];
-                      if (!selection) return null;
-                      const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
-                      const style = {
-                        position: 'absolute',
-                        left: pos.centerX,
-                        top: pos.centerY,
-                        width: base,
-                        height: 'auto',
-                        transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
-                        pointerEvents: 'none',
-                        zIndex: 10,
-                        objectFit: 'contain',
-                        borderRadius: '9999px',
-                      } as React.CSSProperties;
-                      return (
-                        <img
-                          key={pos.finger}
-                          src={selection.color.imageUrl}
-                          alt={`${pos.finger} ring`}
-                          crossOrigin="anonymous"
-                          style={style}
-                          onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
-                        />
-                      );
-                    })}
-                  </>
-                ) : (
-                  <HandGuide imageUrl={imageUrl} />
-                )}
+                <HandLandmarkDetector imageUrl={imageUrl} onRingPositions={setRingPositions} />
+                <img id="hand-photo" src={imageUrl} alt="손 사진" style={{ display: 'none' }} />
+                {/* 반지 합성 오버레이 */}
+                {ringPositions.map((pos) => {
+                  if (pos.finger !== selectedFinger) return null;
+                  const selection = ringSelections[selectedFinger];
+                  if (!selection) return null;
+                  const base = pos.length ? Math.max(30, Math.min(90, pos.length * 0.7)) : 55;
+                  const style = {
+                    position: 'absolute',
+                    left: pos.centerX,
+                    top: pos.centerY,
+                    width: base,
+                    height: 'auto',
+                    transform: `translate(-50%,-50%) rotate(${pos.angle + Math.PI / 2}rad)`,
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                    objectFit: 'contain',
+                    borderRadius: '9999px',
+                  } as React.CSSProperties;
+                  return (
+                    <img
+                      key={pos.finger}
+                      src={selection.color.imageUrl}
+                      alt={`${pos.finger} ring`}
+                      crossOrigin="anonymous"
+                      style={style}
+                      onError={() => alert('이미지 로드 실패: ' + selection.color.imageUrl)}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -213,38 +207,6 @@ export default function Home() {
         {/* Step-specific Controls */}
         {currentStep === 1 && (
           <div className="w-full max-w-md space-y-4">
-            {/* Ring Preview Card */}
-            {lastSelectedRing ? (
-              <div className="bg-white rounded-xl p-6 shadow-md text-center">
-                <p className="text-xs text-gray-500 mb-2">Selected Ring</p>
-                <p className="text-2xl font-bold text-[#d97a7c] mb-4">{lastSelectedRing.name}</p>
-                <button
-                  className="text-sm text-gray-600 underline"
-                  type="button"
-                  onClick={handleOpenRingModal}
-                >
-                  Change Ring
-                </button>
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl p-8 shadow-md text-center">
-                <div className="text-6xl mb-4">💍</div>
-                <p className="text-gray-500 text-sm">Select a ring to get started</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {currentStep === 2 && (
-          <div className="w-full max-w-md space-y-4">
-            {/* Selected Ring Display */}
-            {lastSelectedRing && (
-              <div className="bg-white rounded-xl p-4 shadow-md text-center">
-                <p className="text-xs text-gray-500 mb-1">Selected Ring</p>
-                <p className="text-lg font-bold text-[#d97a7c]">{lastSelectedRing.name}</p>
-              </div>
-            )}
-
             {/* Photo Upload Button */}
             <button
               className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
@@ -264,6 +226,27 @@ export default function Home() {
             {errorMsg && (
               <div className="text-red-500 text-sm mt-3 text-center bg-red-50 p-2 rounded-lg">{errorMsg}</div>
             )}
+          </div>
+        )}
+
+        {currentStep === 2 && (
+          <div className="w-full max-w-md space-y-4">
+            {/* Ring Selection Button */}
+            <button
+              className="w-full h-12 rounded-full bg-[#d97a7c] hover:bg-[#c96a6c] text-white font-semibold text-base shadow-md transition-all"
+              type="button"
+              onClick={handleOpenRingModal}
+            >
+              💍 Choose Ring & Color
+            </button>
+
+            {/* Selected Ring Display */}
+            {lastSelectedRing && (
+              <div className="bg-white rounded-xl p-4 shadow-md text-center">
+                <p className="text-xs text-gray-500 mb-1">Selected Ring</p>
+                <p className="text-lg font-bold text-[#d97a7c]">{lastSelectedRing.name}</p>
+              </div>
+            )}
 
             {/* Back Button */}
             <button
@@ -271,7 +254,7 @@ export default function Home() {
               type="button"
               onClick={() => setCurrentStep(1)}
             >
-              ← Back to Ring
+              ← Back to Photo
             </button>
           </div>
         )}
@@ -308,7 +291,7 @@ export default function Home() {
                 type="button"
                 onClick={() => setCurrentStep(2)}
               >
-                ← Change Photo
+                ← Change Ring
               </button>
               <button
                 className="flex-1 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-sm transition-all"
