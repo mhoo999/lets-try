@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { drawLandmarks } from '@mediapipe/drawing_utils';
 import type { Hands, Results } from '@mediapipe/hands';
 // <img> 사용: MediaPipe canvas와 겹치기 위해 SSR/최적화 목적이 아니라면 유지
 
@@ -59,6 +58,17 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
       }
       // 2. MediaPipe Hands 동적 import 및 생성자 체크
       try {
+        // testMode일 때 drawLandmarks 동적 import
+        let drawLandmarksFn: ((ctx: CanvasRenderingContext2D, landmarks: unknown[], options: { color: string; lineWidth: number; radius: number }) => void) | null = null;
+        if (testMode) {
+          try {
+            const drawingUtilsModule = await import('@mediapipe/drawing_utils');
+            drawLandmarksFn = drawingUtilsModule.drawLandmarks as any;
+          } catch (e) {
+            console.warn('drawLandmarks를 로드할 수 없습니다:', e);
+          }
+        }
+
         const handsModule = await import('@mediapipe/hands');
         let exportObj: unknown = handsModule;
         if (
@@ -151,9 +161,9 @@ export default function HandLandmarkDetector({ imageUrl, testMode = false, onRin
               }
               ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
               if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
-                if (testMode) {
+                if (testMode && drawLandmarksFn) {
                   // landmark 점/선
-                  drawLandmarks(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
+                  drawLandmarksFn(ctx, results.multiHandLandmarks[0], { color: '#d97a7c', lineWidth: 2, radius: 4 });
                   // 반지 위치 가이드 표시
                   ringPos.forEach((pos) => {
                     if (!pos) return;
